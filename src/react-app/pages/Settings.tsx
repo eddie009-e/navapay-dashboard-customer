@@ -1,0 +1,777 @@
+import { useState } from 'react';
+import MainLayout from '@/react-app/components/MainLayout';
+import { Settings as SettingsIcon, User, Store, Shield, Bell, CreditCard, Receipt, Upload, Save, Camera, Lock, Mail, Phone, MapPin, Loader2 } from 'lucide-react';
+import Button from '@/react-app/components/Button';
+import { useAuth } from '../contexts/AuthContext';
+
+type Tab = 'profile' | 'store' | 'security' | 'notifications' | 'billing' | 'receipt';
+
+export default function Settings() {
+  const [activeTab, setActiveTab] = useState<Tab>('profile');
+
+  const tabs = [
+    { id: 'profile' as Tab, label: 'الملف الشخصي', icon: User },
+    { id: 'store' as Tab, label: 'بيانات المتجر', icon: Store },
+    { id: 'security' as Tab, label: 'الأمان', icon: Shield },
+    { id: 'notifications' as Tab, label: 'الإشعارات', icon: Bell },
+    { id: 'billing' as Tab, label: 'الفواتير والباقة', icon: CreditCard },
+    { id: 'receipt' as Tab, label: 'تخصيص الإيصال', icon: Receipt },
+  ];
+
+  return (
+    <MainLayout>
+      <div className="animate-fadeIn">
+        {/* Header */}
+        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+              <SettingsIcon size={28} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">الإعدادات</h1>
+              <p className="text-gray-600">إدارة حسابك ومعلومات المتجر</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Sidebar Navigation */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-1">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                      activeTab === tab.id
+                        ? 'bg-primary text-white shadow-md'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Icon size={20} />
+                    <span className="font-medium">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Content Area */}
+          <div className="lg:col-span-3">
+            {activeTab === 'profile' && <ProfileSettings />}
+            {activeTab === 'store' && <StoreSettings />}
+            {activeTab === 'security' && <SecuritySettings />}
+            {activeTab === 'notifications' && <NotificationsSettings />}
+            {activeTab === 'billing' && <BillingSettings />}
+            {activeTab === 'receipt' && <ReceiptSettings />}
+          </div>
+        </div>
+      </div>
+    </MainLayout>
+  );
+}
+
+function ProfileSettings() {
+  const { user, updateProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || ''
+  });
+
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      await updateProfile({ businessName: formData.name });
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+      <div className="p-6 border-b border-gray-200">
+        <h2 className="text-xl font-bold text-gray-900">الملف الشخصي</h2>
+        <p className="text-sm text-gray-600">قم بتحديث معلوماتك الشخصية</p>
+      </div>
+
+      <div className="p-6 space-y-6">
+        {/* Avatar */}
+        <div className="flex items-center gap-6">
+          <div className="relative">
+            <div className="w-24 h-24 bg-gradient-to-br from-primary to-primary-600 rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-4xl">
+                {formData.name.charAt(0)}
+              </span>
+            </div>
+            <button className="absolute bottom-0 right-0 w-8 h-8 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm">
+              <Camera size={16} className="text-gray-600" />
+            </button>
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-900 mb-1">{formData.name}</h3>
+            <p className="text-sm text-gray-600 mb-2">{user?.role === 'owner' ? 'مالك' : user?.role === 'admin' ? 'مدير' : 'موظف'}</p>
+            <Button variant="outline" size="sm" leftIcon={<Upload size={16} />}>
+              تغيير الصورة
+            </Button>
+          </div>
+        </div>
+
+        {/* Form Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              الاسم الكامل
+            </label>
+            <div className="relative">
+              <User className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              البريد الإلكتروني
+            </label>
+            <div className="relative">
+              <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              رقم الجوال
+            </label>
+            <div className="relative">
+              <Phone className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors font-numbers"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Save Button */}
+        <div className="flex justify-end pt-4 border-t border-gray-200">
+          <Button
+            leftIcon={isLoading ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+            onClick={handleSave}
+            disabled={isLoading}
+          >
+            {isLoading ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StoreSettings() {
+  const { merchant, updateProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: merchant?.name || '',
+    type: merchant?.type || 'retail',
+    email: '',
+    phone: '',
+    address: ''
+  });
+
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      await updateProfile({ businessName: formData.name });
+    } catch (error) {
+      console.error('Failed to update store:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+      <div className="p-6 border-b border-gray-200">
+        <h2 className="text-xl font-bold text-gray-900">بيانات المتجر</h2>
+        <p className="text-sm text-gray-600">معلومات متجرك وبيانات الاتصال</p>
+      </div>
+
+      <div className="p-6 space-y-6">
+        {/* Store Logo */}
+        <div className="flex items-center gap-6">
+          <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
+            <Store size={32} className="text-gray-400" />
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-900 mb-1">شعار المتجر</h3>
+            <p className="text-sm text-gray-600 mb-2">سيظهر على الإيصالات وروابط الدفع</p>
+            <Button variant="outline" size="sm" leftIcon={<Upload size={16} />}>
+              رفع شعار
+            </Button>
+          </div>
+        </div>
+
+        {/* Form Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              اسم المتجر
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              نوع النشاط
+            </label>
+            <select
+              value={formData.type}
+              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+            >
+              <option value="retail">تجزئة</option>
+              <option value="restaurant">مطعم</option>
+              <option value="service">خدمات</option>
+              <option value="wholesale">جملة</option>
+              <option value="other">أخرى</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              البريد الإلكتروني
+            </label>
+            <div className="relative">
+              <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              رقم الهاتف
+            </label>
+            <div className="relative">
+              <Phone className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors font-numbers"
+              />
+            </div>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              العنوان
+            </label>
+            <div className="relative">
+              <MapPin className="absolute right-3 top-3 text-gray-400" size={20} />
+              <textarea
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                rows={3}
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors resize-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Store ID */}
+        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-1">معرف المتجر</p>
+              <p className="font-mono text-lg font-bold text-gray-900">{merchant?.id || '-'}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-1">نوع الباقة</p>
+              <p className="font-mono text-lg font-bold text-gray-900">{merchant?.plan === 'enterprise' ? 'Enterprise' : 'POS'}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Save Button */}
+        <div className="flex justify-end pt-4 border-t border-gray-200">
+          <Button
+            leftIcon={isLoading ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+            onClick={handleSave}
+            disabled={isLoading}
+          >
+            {isLoading ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SecuritySettings() {
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+      <div className="p-6 border-b border-gray-200">
+        <h2 className="text-xl font-bold text-gray-900">الأمان</h2>
+        <p className="text-sm text-gray-600">إعدادات الأمان وحماية الحساب</p>
+      </div>
+
+      <div className="p-6 space-y-4">
+        {/* Change Password */}
+        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-gray-900 mb-1">كلمة المرور</h3>
+              <p className="text-sm text-gray-600">آخر تغيير منذ 3 أشهر</p>
+            </div>
+            <Button variant="outline" size="sm" leftIcon={<Lock size={16} />}>
+              تغيير
+            </Button>
+          </div>
+        </div>
+
+        {/* Two-Factor Authentication */}
+        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-gray-900 mb-1">المصادقة الثنائية</h3>
+              <p className="text-sm text-gray-600">طبقة حماية إضافية لحسابك</p>
+            </div>
+            <Button variant="outline" size="sm">
+              تفعيل
+            </Button>
+          </div>
+        </div>
+
+        {/* Login History */}
+        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <h3 className="font-bold text-gray-900 mb-3">سجل تسجيل الدخول</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <div>
+                <p className="font-medium text-gray-900">جهاز Desktop - Chrome</p>
+                <p className="text-gray-600">دمشق، سوريا</p>
+              </div>
+              <p className="text-gray-600 font-numbers">اليوم، 09:30 ص</p>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <div>
+                <p className="font-medium text-gray-900">جهاز Mobile - Safari</p>
+                <p className="text-gray-600">دمشق، سوريا</p>
+              </div>
+              <p className="text-gray-600 font-numbers">أمس، 06:15 م</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Active Sessions */}
+        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-gray-900">الجلسات النشطة</h3>
+            <Button variant="outline" size="sm">
+              إنهاء الكل
+            </Button>
+          </div>
+          <p className="text-sm text-gray-600">
+            لديك <span className="font-bold text-gray-900">2</span> جلسة نشطة حالياً
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NotificationsSettings() {
+  const [settings, setSettings] = useState({
+    paymentNotifications: true,
+    invoiceNotifications: true,
+    refundNotifications: true,
+    systemNotifications: false,
+    emailNotifications: true,
+    smsNotifications: false
+  });
+
+  const toggle = (key: keyof typeof settings) => {
+    setSettings({ ...settings, [key]: !settings[key] });
+  };
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+      <div className="p-6 border-b border-gray-200">
+        <h2 className="text-xl font-bold text-gray-900">الإشعارات</h2>
+        <p className="text-sm text-gray-600">تحكم في كيفية تلقي الإشعارات</p>
+      </div>
+
+      <div className="p-6 space-y-6">
+        {/* Notification Types */}
+        <div>
+          <h3 className="font-bold text-gray-900 mb-4">أنواع الإشعارات</h3>
+          <div className="space-y-3">
+            <ToggleSetting
+              label="إشعارات الدفع"
+              description="تنبيهات عند استلام دفعات جديدة"
+              enabled={settings.paymentNotifications}
+              onToggle={() => toggle('paymentNotifications')}
+            />
+            <ToggleSetting
+              label="إشعارات الفواتير"
+              description="تنبيهات عن الفواتير المستحقة والمدفوعة"
+              enabled={settings.invoiceNotifications}
+              onToggle={() => toggle('invoiceNotifications')}
+            />
+            <ToggleSetting
+              label="إشعارات الاسترجاع"
+              description="تنبيهات عند معالجة عمليات الاسترجاع"
+              enabled={settings.refundNotifications}
+              onToggle={() => toggle('refundNotifications')}
+            />
+            <ToggleSetting
+              label="إشعارات النظام"
+              description="تحديثات وأخبار المنصة"
+              enabled={settings.systemNotifications}
+              onToggle={() => toggle('systemNotifications')}
+            />
+          </div>
+        </div>
+
+        {/* Notification Channels */}
+        <div className="pt-6 border-t border-gray-200">
+          <h3 className="font-bold text-gray-900 mb-4">قنوات الإشعارات</h3>
+          <div className="space-y-3">
+            <ToggleSetting
+              label="البريد الإلكتروني"
+              description="إرسال الإشعارات عبر البريد"
+              enabled={settings.emailNotifications}
+              onToggle={() => toggle('emailNotifications')}
+            />
+            <ToggleSetting
+              label="الرسائل النصية"
+              description="إرسال الإشعارات عبر SMS"
+              enabled={settings.smsNotifications}
+              onToggle={() => toggle('smsNotifications')}
+            />
+          </div>
+        </div>
+
+        {/* Save Button */}
+        <div className="flex justify-end pt-4 border-t border-gray-200">
+          <Button leftIcon={<Save size={20} />}>
+            حفظ التغييرات
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BillingSettings() {
+  const { merchant } = useAuth();
+  const currentPlan = merchant?.plan || 'pos';
+
+  return (
+    <div className="space-y-6">
+      {/* Current Plan */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900">الباقة الحالية</h2>
+          <p className="text-sm text-gray-600">معلومات اشتراكك وطرق الدفع</p>
+        </div>
+
+        <div className="p-6">
+          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-6 border-2 border-primary/20">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                  {currentPlan === 'enterprise' ? 'Enterprise' : 'POS'}
+                </h3>
+                <p className="text-gray-600">
+                  {currentPlan === 'enterprise' ? 'للشركات الكبيرة' : 'للشركات الصغيرة'}
+                </p>
+              </div>
+              <div className="text-left">
+                <p className="text-3xl font-bold text-primary font-numbers">$99</p>
+                <p className="text-sm text-gray-600">شهرياً</p>
+              </div>
+            </div>
+
+            {currentPlan === 'pos' ? (
+              <Button fullWidth>
+                الترقية إلى Enterprise
+              </Button>
+            ) : (
+              <div className="bg-white rounded-lg p-4">
+                <p className="text-sm text-gray-600 mb-2">
+                  تاريخ التجديد التالي: <span className="font-bold text-gray-900">1 فبراير 2026</span>
+                </p>
+                <Button variant="outline" size="sm">
+                  إلغاء الاشتراك
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Payment Method */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900">طريقة الدفع</h2>
+        </div>
+
+        <div className="p-6">
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded flex items-center justify-center">
+                  <CreditCard size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900">•••• •••• •••• 4242</p>
+                  <p className="text-sm text-gray-600">تنتهي في 12/26</p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm">
+                تعديل
+              </Button>
+            </div>
+          </div>
+
+          <Button variant="outline" fullWidth>
+            إضافة طريقة دفع جديدة
+          </Button>
+        </div>
+      </div>
+
+      {/* Billing History */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900">سجل الفواتير</h2>
+        </div>
+
+        <div className="divide-y divide-gray-200">
+          {[
+            { date: '2026-01-01', amount: 99, status: 'paid' },
+            { date: '2025-12-01', amount: 99, status: 'paid' },
+            { date: '2025-11-01', amount: 99, status: 'paid' },
+          ].map((invoice, i) => (
+            <div key={i} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+              <div>
+                <p className="font-bold text-gray-900 font-numbers">
+                  {new Date(invoice.date).toLocaleDateString('ar-SY', { year: 'numeric', month: 'long' })}
+                </p>
+                <p className="text-sm text-gray-600">فاتورة شهرية</p>
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-gray-900 font-numbers">${invoice.amount}</p>
+                <p className="text-sm text-success">مدفوعة</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReceiptSettings() {
+  const [settings, setSettings] = useState({
+    showLogo: true,
+    showAddress: true,
+    showPhone: true,
+    showEmail: false,
+    footerText: 'شكراً لتعاملكم معنا',
+    showQR: true
+  });
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Settings */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900">تخصيص الإيصال</h2>
+          <p className="text-sm text-gray-600">خصص شكل الإيصالات المطبوعة</p>
+        </div>
+
+        <div className="p-6 space-y-6">
+          <div>
+            <h3 className="font-bold text-gray-900 mb-4">عناصر الإيصال</h3>
+            <div className="space-y-3">
+              <ToggleSetting
+                label="إظهار الشعار"
+                enabled={settings.showLogo}
+                onToggle={() => setSettings({ ...settings, showLogo: !settings.showLogo })}
+              />
+              <ToggleSetting
+                label="إظهار العنوان"
+                enabled={settings.showAddress}
+                onToggle={() => setSettings({ ...settings, showAddress: !settings.showAddress })}
+              />
+              <ToggleSetting
+                label="إظهار الهاتف"
+                enabled={settings.showPhone}
+                onToggle={() => setSettings({ ...settings, showPhone: !settings.showPhone })}
+              />
+              <ToggleSetting
+                label="إظهار البريد الإلكتروني"
+                enabled={settings.showEmail}
+                onToggle={() => setSettings({ ...settings, showEmail: !settings.showEmail })}
+              />
+              <ToggleSetting
+                label="إظهار رمز QR"
+                enabled={settings.showQR}
+                onToggle={() => setSettings({ ...settings, showQR: !settings.showQR })}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              نص التذييل
+            </label>
+            <textarea
+              value={settings.footerText}
+              onChange={(e) => setSettings({ ...settings, footerText: e.target.value })}
+              rows={3}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors resize-none"
+              placeholder="أضف رسالة شكر أو ملاحظة"
+            />
+          </div>
+
+          <div className="flex justify-end pt-4 border-t border-gray-200">
+            <Button leftIcon={<Save size={20} />}>
+              حفظ التغييرات
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Preview */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900">معاينة</h2>
+          <p className="text-sm text-gray-600">شكل الإيصال النهائي</p>
+        </div>
+
+        <div className="p-6">
+          <div className="bg-white border-2 border-gray-300 rounded-lg p-8 font-mono text-sm">
+            {/* Logo */}
+            {settings.showLogo && (
+              <div className="text-center mb-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-lg mx-auto flex items-center justify-center mb-2">
+                  <Store size={32} className="text-primary" />
+                </div>
+                <h3 className="font-bold text-lg">اسم المتجر</h3>
+              </div>
+            )}
+
+            {/* Store Info */}
+            <div className="text-center mb-6 space-y-1 text-gray-700">
+              {settings.showAddress && <p>عنوان المتجر</p>}
+              {settings.showPhone && <p className="font-numbers">+963 XXX XXX XXX</p>}
+              {settings.showEmail && <p>email@example.com</p>}
+            </div>
+
+            {/* Divider */}
+            <div className="border-t-2 border-dashed border-gray-300 my-4"></div>
+
+            {/* Transaction Details */}
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between">
+                <span>التاريخ:</span>
+                <span className="font-numbers">2026-01-20</span>
+              </div>
+              <div className="flex justify-between">
+                <span>رقم العملية:</span>
+                <span className="font-numbers">TXN-123456</span>
+              </div>
+              <div className="flex justify-between">
+                <span>الطريقة:</span>
+                <span>NFC</span>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t-2 border-dashed border-gray-300 my-4"></div>
+
+            {/* Amount */}
+            <div className="flex justify-between text-lg font-bold mb-6">
+              <span>المبلغ:</span>
+              <span className="font-numbers">250,000 ل.س</span>
+            </div>
+
+            {/* QR Code */}
+            {settings.showQR && (
+              <div className="flex justify-center mb-4">
+                <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center">
+                  <span className="text-xs text-gray-500">QR Code</span>
+                </div>
+              </div>
+            )}
+
+            {/* Footer */}
+            {settings.footerText && (
+              <div className="text-center text-gray-600 mt-4 pt-4 border-t border-gray-300">
+                {settings.footerText}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ToggleSetting({ label, description, enabled, onToggle }: {
+  label: string;
+  description?: string;
+  enabled: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+      <div className="flex-1">
+        <p className="font-medium text-gray-900">{label}</p>
+        {description && <p className="text-sm text-gray-600">{description}</p>}
+      </div>
+      <button
+        onClick={onToggle}
+        className={`relative w-12 h-6 rounded-full transition-colors ${
+          enabled ? 'bg-primary' : 'bg-gray-300'
+        }`}
+      >
+        <div
+          className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
+            enabled ? 'translate-x-6' : 'translate-x-0.5'
+          }`}
+        />
+      </button>
+    </div>
+  );
+}
