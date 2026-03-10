@@ -95,11 +95,15 @@ export const developersService = {
    * List API keys
    */
   async listApiKeys(): Promise<ApiKey[]> {
-    const response = await api.get<ApiResponse<ApiKey[]>>('/merchant/api-keys');
-    if (response.success && response.data) {
-      return response.data;
+    try {
+      const response = await api.get<ApiResponse<ApiKey[]>>('/merchant/api-keys');
+      if (response.success && response.data) {
+        return response.data;
+      }
+    } catch {
+      // API not available
     }
-    throw new Error('Failed to get API keys');
+    return [];
   },
 
   /**
@@ -129,11 +133,15 @@ export const developersService = {
    * List webhooks
    */
   async listWebhooks(): Promise<Webhook[]> {
-    const response = await api.get<ApiResponse<Webhook[]>>('/merchant/webhooks');
-    if (response.success && response.data) {
-      return response.data;
+    try {
+      const response = await api.get<ApiResponse<Webhook[]>>('/merchant/webhooks');
+      if (response.success && response.data) {
+        return response.data;
+      }
+    } catch {
+      // API not available
     }
-    throw new Error('Failed to get webhooks');
+    return [];
   },
 
   /**
@@ -190,8 +198,13 @@ export const developersService = {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponse<ApiLog>> {
-    const response = await api.get<PaginatedResponse<ApiLog>>('/merchant/api-logs', params);
-    return response;
+    try {
+      const response = await api.get<PaginatedResponse<ApiLog>>('/merchant/api-logs', params);
+      return response;
+    } catch {
+      // API not available
+    }
+    return { success: false, data: [], page: 1, total: 0, totalPages: 0 };
   },
 };
 

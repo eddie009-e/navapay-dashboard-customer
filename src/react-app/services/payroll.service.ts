@@ -88,29 +88,26 @@ export const payrollService = {
     status?: 'draft' | 'pending' | 'approved' | 'processing' | 'completed' | 'partial_failed';
     search?: string;
   }): Promise<PaginatedResponse<BulkTransfer>> {
-    const response = await api.get<ApiResponse<BulkTransfer[]> & { pagination?: any }>('/merchant/bulk-transfers', {
-      page: params?.page || 1,
-      limit: params?.limit || 20,
-      status: params?.status,
-    });
+    try {
+      const response = await api.get<ApiResponse<BulkTransfer[]> & { pagination?: any }>('/merchant/bulk-transfers', {
+        page: params?.page || 1,
+        limit: params?.limit || 20,
+        status: params?.status,
+      });
 
-    if (response.success && response.data) {
-      return {
-        success: true,
-        data: response.data,
-        page: response.pagination?.page || params?.page || 1,
-        total: response.pagination?.total || response.data.length,
-        totalPages: response.pagination?.totalPages || Math.ceil((response.pagination?.total || response.data.length) / (params?.limit || 20)),
-      };
+      if (response.success && response.data) {
+        return {
+          success: true,
+          data: response.data,
+          page: response.pagination?.page || params?.page || 1,
+          total: response.pagination?.total || response.data.length,
+          totalPages: response.pagination?.totalPages || Math.ceil((response.pagination?.total || response.data.length) / (params?.limit || 20)),
+        };
+      }
+    } catch {
+      // API not available
     }
-
-    return {
-      success: false,
-      data: [],
-      page: 1,
-      total: 0,
-      totalPages: 0,
-    };
+    return { success: false, data: [], page: 1, total: 0, totalPages: 0 };
   },
 
   /**
@@ -231,17 +228,15 @@ export const payrollService = {
    * GET /api/v1/merchant/bulk-transfers/stats
    */
   async getStats(): Promise<BulkTransferStats> {
-    const response = await api.get<ApiResponse<BulkTransferStats>>('/merchant/bulk-transfers/stats');
-    if (response.success && response.data) {
-      return response.data;
+    try {
+      const response = await api.get<ApiResponse<BulkTransferStats>>('/merchant/bulk-transfers/stats');
+      if (response.success && response.data) {
+        return response.data;
+      }
+    } catch {
+      // API not available
     }
-
-    return {
-      totalTransfers: 0,
-      completedTransfers: 0,
-      totalAmount: 0,
-      totalRecipients: 0,
-    };
+    return { totalTransfers: 0, completedTransfers: 0, totalAmount: 0, totalRecipients: 0 };
   },
 
   /**

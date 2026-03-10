@@ -53,8 +53,13 @@ export const recurringInvoicesService = {
     limit?: number;
     status?: 'active' | 'paused' | 'ended';
   }): Promise<PaginatedResponse<RecurringInvoice>> {
-    const response = await api.get<PaginatedResponse<RecurringInvoice>>('/merchant/recurring-invoices', params);
-    return response;
+    try {
+      const response = await api.get<PaginatedResponse<RecurringInvoice>>('/merchant/recurring-invoices', params);
+      return response;
+    } catch {
+      // API not available
+    }
+    return { success: false, data: [], page: 1, total: 0, totalPages: 0 };
   },
 
   /**
@@ -148,11 +153,16 @@ export const recurringInvoicesService = {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponse<{ id: string; amount: number; status: string; createdAt: string }>> {
-    const response = await api.get<PaginatedResponse<{ id: string; amount: number; status: string; createdAt: string }>>(
-      `/merchant/recurring-invoices/${id}/invoices`,
-      params
-    );
-    return response;
+    try {
+      const response = await api.get<PaginatedResponse<{ id: string; amount: number; status: string; createdAt: string }>>(
+        `/merchant/recurring-invoices/${id}/invoices`,
+        params
+      );
+      return response;
+    } catch {
+      // API not available
+    }
+    return { success: false, data: [], page: 1, total: 0, totalPages: 0 };
   },
 };
 

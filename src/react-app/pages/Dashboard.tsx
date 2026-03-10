@@ -114,8 +114,8 @@ export default function Dashboard() {
         } catch {
           setRecentTransactions([]);
         }
-      } catch (error) {
-        showToast('error', 'فشل في تحميل بيانات لوحة التحكم');
+      } catch {
+        // Promise.allSettled never rejects, so this is unreachable
       } finally {
         setIsLoading(false);
       }

@@ -57,8 +57,13 @@ export const customersService = {
     sortBy?: string;
     sortOrder?: 'ASC' | 'DESC';
   }): Promise<PaginatedResponse<Customer>> {
-    const response = await api.get<PaginatedResponse<Customer>>('/merchant/customers', params);
-    return response;
+    try {
+      const response = await api.get<PaginatedResponse<Customer>>('/merchant/customers', params);
+      return response;
+    } catch {
+      // API not available
+    }
+    return { success: false, data: [], page: 1, total: 0, totalPages: 0 };
   },
 
   /**
@@ -111,11 +116,16 @@ export const customersService = {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponse<CustomerTransaction>> {
-    const response = await api.get<PaginatedResponse<CustomerTransaction>>(
-      `/merchant/customers/${id}/transactions`,
-      params,
-    );
-    return response;
+    try {
+      const response = await api.get<PaginatedResponse<CustomerTransaction>>(
+        `/merchant/customers/${id}/transactions`,
+        params,
+      );
+      return response;
+    } catch {
+      // API not available
+    }
+    return { success: false, data: [], page: 1, total: 0, totalPages: 0 };
   },
 };
 

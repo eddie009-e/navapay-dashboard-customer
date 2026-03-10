@@ -38,7 +38,7 @@ export default function Wallet() {
           setBankAccounts(accountsData.value);
         }
       } catch {
-        showToast('error', 'فشل في تحميل بيانات المحفظة');
+        // Promise.allSettled never rejects, so this is unreachable
       } finally {
         setIsLoading(false);
       }

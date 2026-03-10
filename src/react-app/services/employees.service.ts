@@ -89,8 +89,13 @@ export const employeesService = {
     branchId?: string;
     role?: string;
   }): Promise<PaginatedResponse<Employee>> {
-    const response = await api.get<PaginatedResponse<Employee>>('/merchant/employees', params);
-    return response;
+    try {
+      const response = await api.get<PaginatedResponse<Employee>>('/merchant/employees', params);
+      return response;
+    } catch {
+      // API not available
+    }
+    return { success: false, data: [], page: 1, total: 0, totalPages: 0 };
   },
 
   /**

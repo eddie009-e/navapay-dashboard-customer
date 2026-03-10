@@ -5,6 +5,7 @@ import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
 import { invoicesService } from '../services';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '@/react-app/contexts/ToastContext';
 
 interface InvoiceItem {
   description: string;
@@ -15,6 +16,7 @@ interface InvoiceItem {
 export default function CreateInvoice() {
   const navigate = useNavigate();
   const { merchant } = useAuth();
+  const { showToast } = useToast();
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail] = useState('');
@@ -80,9 +82,8 @@ export default function CreateInvoice() {
 
       await invoicesService.create(invoiceData);
       navigate('/invoices');
-    } catch (error) {
-      console.error('Failed to create invoice:', error);
-      alert('فشل في إنشاء الفاتورة');
+    } catch {
+      showToast('error', 'فشل في إنشاء الفاتورة');
     } finally {
       setIsSubmitting(false);
     }

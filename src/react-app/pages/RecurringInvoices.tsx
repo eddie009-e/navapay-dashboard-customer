@@ -4,6 +4,7 @@ import Button from '@/react-app/components/Button';
 import { SkeletonList } from '@/react-app/components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import { recurringInvoicesService, RecurringInvoice, CreateRecurringInvoiceDto } from '../services';
+import { useToast } from '@/react-app/contexts/ToastContext';
 
 type TabType = 'active' | 'paused' | 'ended';
 
@@ -252,6 +253,7 @@ export default function RecurringInvoices() {
 }
 
 function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+  const { showToast } = useToast();
   const [name, setName] = useState('');
   const [customerId, setCustomerId] = useState('');
   const [amount, setAmount] = useState('');
@@ -277,9 +279,8 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
       };
       await recurringInvoicesService.create(data);
       onSuccess();
-    } catch (error) {
-      console.error('Failed to create recurring invoice:', error);
-      alert('فشل في إنشاء الفاتورة الدورية');
+    } catch {
+      showToast('error', 'فشل في إنشاء الفاتورة الدورية');
     } finally {
       setIsSubmitting(false);
     }

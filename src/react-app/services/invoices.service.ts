@@ -76,26 +76,21 @@ export const invoicesService = {
     customerPhone?: string;
     search?: string;
   }): Promise<PaginatedResponse<Invoice>> {
-    const response = await api.get<ApiResponse<Invoice[]> & { pagination?: any }>('/merchant/invoices', params);
-
-    // تحويل Response للشكل المتوقع
-    if (response.success && response.data) {
-      return {
-        success: true,
-        data: response.data,
-        page: (response as any).pagination?.page || params?.page || 1,
-        total: (response as any).pagination?.total || response.data.length,
-        totalPages: (response as any).pagination?.totalPages || 1,
-      };
+    try {
+      const response = await api.get<ApiResponse<Invoice[]> & { pagination?: any }>('/merchant/invoices', params);
+      if (response.success && response.data) {
+        return {
+          success: true,
+          data: response.data,
+          page: (response as any).pagination?.page || params?.page || 1,
+          total: (response as any).pagination?.total || response.data.length,
+          totalPages: (response as any).pagination?.totalPages || 1,
+        };
+      }
+    } catch {
+      // API not available
     }
-
-    return {
-      success: false,
-      data: [],
-      page: 1,
-      total: 0,
-      totalPages: 0,
-    };
+    return { success: false, data: [], page: 1, total: 0, totalPages: 0 };
   },
 
   /**

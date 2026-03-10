@@ -73,11 +73,15 @@ export const branchesService = {
    * List branches
    */
   async list(): Promise<Branch[]> {
-    const response = await api.get<ApiResponse<Branch[]>>('/merchant/branches');
-    if (response.success && response.data) {
-      return response.data;
+    try {
+      const response = await api.get<ApiResponse<Branch[]>>('/merchant/branches');
+      if (response.success && response.data) {
+        return response.data;
+      }
+    } catch {
+      // API not available
     }
-    throw new Error('Failed to get branches');
+    return [];
   },
 
   /**
@@ -127,11 +131,15 @@ export const branchesService = {
    * Get branch statistics
    */
   async getStats(id: string): Promise<BranchStats> {
-    const response = await api.get<ApiResponse<BranchStats>>(`/merchant/branches/${id}/stats`);
-    if (response.success && response.data) {
-      return response.data;
+    try {
+      const response = await api.get<ApiResponse<BranchStats>>(`/merchant/branches/${id}/stats`);
+      if (response.success && response.data) {
+        return response.data;
+      }
+    } catch {
+      // API not available
     }
-    throw new Error('Failed to get branch stats');
+    return { todaySales: 0, todayTransactions: 0, monthSales: 0, monthTransactions: 0, employeesCount: 0, activeEmployees: 0 };
   },
 
   /**

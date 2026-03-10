@@ -6,9 +6,11 @@ import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { payrollService, BulkTransferDetails, BulkTransferRecipient } from '../services';
+import { useToast } from '@/react-app/contexts/ToastContext';
 
 export default function PayrollDetails() {
   const { id } = useParams<{ id: string }>();
+  const { showToast } = useToast();
   const [transfer, setTransfer] = useState<BulkTransferDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,9 +38,8 @@ export default function PayrollDetails() {
       // Refresh the data
       const data = await payrollService.getById(id);
       setTransfer(data);
-    } catch (error) {
-      console.error('Failed to retry:', error);
-      alert('فشل في إعادة المحاولة');
+    } catch {
+      showToast('error', 'فشل في إعادة المحاولة');
     }
   };
 

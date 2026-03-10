@@ -3,6 +3,7 @@ import { Plus, Copy, QrCode, MoreVertical, Link as LinkIcon, X, Loader2 } from '
 import Button from '@/react-app/components/Button';
 import { SkeletonList } from '@/react-app/components/LoadingSpinner';
 import { paymentLinksService, PaymentLink, CreatePaymentLinkDto } from '../services';
+import { useToast } from '@/react-app/contexts/ToastContext';
 
 export default function PaymentLinks() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -169,6 +170,7 @@ export default function PaymentLinks() {
 }
 
 function CreateLinkModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+  const { showToast } = useToast();
   const [name, setName] = useState('');
   const [amountType, setAmountType] = useState<'fixed' | 'open'>('fixed');
   const [amount, setAmount] = useState('');
@@ -187,9 +189,8 @@ function CreateLinkModal({ onClose, onSuccess }: { onClose: () => void; onSucces
       };
       await paymentLinksService.create(data);
       onSuccess();
-    } catch (error) {
-      console.error('Failed to create payment link:', error);
-      alert('فشل في إنشاء رابط الدفع');
+    } catch {
+      showToast('error', 'فشل في إنشاء رابط الدفع');
     } finally {
       setIsSubmitting(false);
     }

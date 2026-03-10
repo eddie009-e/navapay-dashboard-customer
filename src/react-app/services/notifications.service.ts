@@ -43,58 +43,54 @@ export const notificationsService = {
     unreadOnly?: boolean;
     read?: boolean;
   }): Promise<PaginatedResponse<Notification>> {
-    const response = await api.get<ApiResponse<{
-      notifications: Array<{
-        id: string;
-        type: string;
-        title: string;
-        body: string;
-        status: 'sent' | 'read';
-        data?: Record<string, any>;
-        createdAt: string;
-      }>;
-      pagination: {
-        page: number;
-        limit: number;
-        total: number;
-        totalPages: number;
-      };
-    }>>('/notifications', {
-      page: params?.page || 1,
-      limit: params?.limit || 20,
-      unreadOnly: params?.unreadOnly || (params?.read === false),
-    });
+    try {
+      const response = await api.get<ApiResponse<{
+        notifications: Array<{
+          id: string;
+          type: string;
+          title: string;
+          body: string;
+          status: 'sent' | 'read';
+          data?: Record<string, any>;
+          createdAt: string;
+        }>;
+        pagination: {
+          page: number;
+          limit: number;
+          total: number;
+          totalPages: number;
+        };
+      }>>('/notifications', {
+        page: params?.page || 1,
+        limit: params?.limit || 20,
+        unreadOnly: params?.unreadOnly || (params?.read === false),
+      });
 
-    if (response.success && response.data) {
-      // تحويل من شكل النواة لشكل اللوحة
-      const notifications: Notification[] = response.data.notifications.map(n => ({
-        id: n.id,
-        type: n.type as any,
-        title: n.title,
-        message: n.body, // النواة تستخدم body
-        body: n.body,
-        status: n.status,
-        read: n.status === 'read',
-        data: n.data,
-        createdAt: n.createdAt,
-      }));
+      if (response.success && response.data) {
+        const notifications: Notification[] = response.data.notifications.map(n => ({
+          id: n.id,
+          type: n.type as any,
+          title: n.title,
+          message: n.body,
+          body: n.body,
+          status: n.status,
+          read: n.status === 'read',
+          data: n.data,
+          createdAt: n.createdAt,
+        }));
 
-      return {
-        success: true,
-        data: notifications,
-        page: response.data.pagination.page,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages,
-      };
+        return {
+          success: true,
+          data: notifications,
+          page: response.data.pagination.page,
+          total: response.data.pagination.total,
+          totalPages: response.data.pagination.totalPages,
+        };
+      }
+    } catch {
+      // API not available
     }
-
-    return {
-      success: false,
-      data: [],
-      page: 1,
-      total: 0,
-      totalPages: 0,
-    };
+    return { success: false, data: [], page: 1, total: 0, totalPages: 0 };
   },
 
   /**
@@ -102,19 +98,18 @@ export const notificationsService = {
    * GET /api/v1/notifications/unread-count
    */
   async getStats(): Promise<NotificationStats> {
-    const response = await api.get<ApiResponse<{ count: number }>>('/notifications/unread-count');
-
-    if (response.success && response.data) {
-      return {
-        total: 0, // النواة لا توفر total
-        unread: response.data.count,
-      };
+    try {
+      const response = await api.get<ApiResponse<{ count: number }>>('/notifications/unread-count');
+      if (response.success && response.data) {
+        return {
+          total: 0,
+          unread: response.data.count,
+        };
+      }
+    } catch {
+      // API not available
     }
-
-    return {
-      total: 0,
-      unread: 0,
-    };
+    return { total: 0, unread: 0 };
   },
 
   /**

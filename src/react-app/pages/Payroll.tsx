@@ -6,10 +6,12 @@ import CreateBulkTransferModal from '@/react-app/components/CreateBulkTransferMo
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import { payrollService, BulkTransfer, BulkTransferStats } from '../services';
+import { useToast } from '@/react-app/contexts/ToastContext';
 import { Link } from 'react-router';
 
 export default function Payroll() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [bulkTransfers, setBulkTransfers] = useState<BulkTransfer[]>([]);
   const [stats, setStats] = useState<BulkTransferStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,9 +80,8 @@ export default function Payroll() {
         }))
       });
       fetchBulkTransfers();
-    } catch (error) {
-      console.error('Failed to create bulk transfer:', error);
-      alert('فشل في إنشاء الدفعة الجماعية');
+    } catch {
+      showToast('error', 'فشل في إنشاء الدفعة الجماعية');
     }
   };
 
