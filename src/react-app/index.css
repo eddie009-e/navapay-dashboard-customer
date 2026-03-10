@@ -15,7 +15,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background-color: #F8F9FA;
+  background-color: #F0F4F8;
   color: #1A1A1A;
   font-feature-settings: "kern" 1;
   -webkit-font-smoothing: antialiased;
@@ -28,21 +28,21 @@ body {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F8F9FA;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E5E7EB;
-  border-radius: 4px;
+  background: #D4DEE9;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #D1D5DB;
+  background: #A9BDD3;
 }
 
 /* Arabic number font */
@@ -52,14 +52,52 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Animations */
+/* ===== Glass Effects ===== */
+@layer components {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(30, 58, 95, 0.08);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Fallback for browsers without backdrop-filter */
+  @supports not (backdrop-filter: blur(20px)) {
+    .glass-card {
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 8px 32px rgba(30, 58, 95, 0.12);
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.95);
+    }
+  }
+}
+
+/* ===== Skeleton Loading ===== */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #EEF2F7 25%,
+    #D4DEE9 50%,
+    #EEF2F7 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* ===== Animations ===== */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
@@ -96,9 +134,12 @@ body {
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .animate-fadeIn {
@@ -121,24 +162,32 @@ body {
   animation: slideDown 0.3s ease-out;
 }
 
-/* Focus styles */
+/* ===== POS Scanner & NFC Animations ===== */
+@keyframes scanLine {
+  0%, 100% { top: 8px; }
+  50% { top: calc(100% - 8px); }
+}
+
+.animate-scan-line {
+  animation: scanLine 2.5s ease-in-out infinite;
+  position: absolute;
+}
+
+/* ===== Focus styles ===== */
 *:focus-visible {
   outline: 2px solid #1E3A5F;
   outline-offset: 2px;
 }
 
-/* Button focus */
 button:focus-visible {
   outline: 2px solid #1E3A5F;
   outline-offset: 2px;
 }
 
-/* Input focus */
 input:focus,
 textarea:focus,
 select:focus {
   outline: none;
   border-color: #1E3A5F;
-  ring: 2px;
-  ring-color: rgba(30, 58, 95, 0.2);
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.15);
 }

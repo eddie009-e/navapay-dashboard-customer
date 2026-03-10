@@ -101,14 +101,14 @@ export default function CustomerDisplay() {
               <p className="text-white text-7xl font-bold font-numbers mb-8">
                 {formatCurrency(amount)}
               </p>
-              
+
               {/* QR Code */}
               <div className="inline-block bg-white p-8 rounded-2xl shadow-xl">
-                <div className="w-64 h-64 bg-gray-900 rounded-lg flex items-center justify-center">
+                <div className="w-64 h-64 bg-gray-900 rounded-xl flex items-center justify-center">
                   <QrCode size={200} className="text-white" />
                 </div>
               </div>
-              
+
               <p className="text-white text-2xl mt-8">امسح للدفع بتطبيق NavaPay</p>
             </div>
             <p className="text-white/60 text-xl">{storeName}</p>
@@ -138,7 +138,7 @@ export default function CustomerDisplay() {
         {/* Success State */}
         {state === 'success' && (
           <div className="text-center animate-scaleIn">
-            <div className="w-48 h-48 mx-auto mb-8 bg-success rounded-full flex items-center justify-center shadow-2xl animate-scaleIn">
+            <div className="w-48 h-48 mx-auto mb-8 bg-accent-700 rounded-full flex items-center justify-center shadow-2xl animate-scaleIn">
               <Check size={120} className="text-white" strokeWidth={3} />
             </div>
             <h1 className="text-7xl font-bold text-white mb-4">شكراً لك! 🎉</h1>

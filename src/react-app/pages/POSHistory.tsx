@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Download, Search, Loader2 } from 'lucide-react';
+import { Download, Search } from 'lucide-react';
 import BackButton from '@/react-app/components/BackButton';
+import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { transactionsService, reportsService, Transaction } from '../services';
 
 export default function POSHistory() {
@@ -102,10 +103,10 @@ export default function POSHistory() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       <BackButton to="/pos" label="نقطة البيع" />
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4">
+      <div className="glass-card rounded-none border-x-0 border-t-0 p-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-gray-900">سجل العمليات</h1>
@@ -121,13 +122,13 @@ export default function POSHistory() {
                 placeholder="بحث برقم العملية أو اسم العميل..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pr-10 pl-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+                className="w-full pr-10 pl-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
               />
             </div>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+              className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
             >
               <option value="today">اليوم</option>
               <option value="yesterday">أمس</option>
@@ -137,7 +138,7 @@ export default function POSHistory() {
             </select>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-600 transition-colors"
             >
               <Download size={20} />
               <span>تصدير</span>
@@ -149,53 +150,51 @@ export default function POSHistory() {
       {/* Summary Cards */}
       <div className="max-w-6xl mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">الإجمالي (صافي)</p>
+          <div className="glass-card p-4">
+            <p className="text-sm text-gray-500 mb-1">الإجمالي (صافي)</p>
             <p className="text-2xl font-bold text-gray-900 font-numbers">{formatCurrency(totalAmount)}</p>
           </div>
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">المدفوعات</p>
-            <p className="text-2xl font-bold text-success font-numbers">{formatCurrency(totalPayments)}</p>
+          <div className="glass-card p-4">
+            <p className="text-sm text-gray-500 mb-1">المدفوعات</p>
+            <p className="text-2xl font-bold text-accent-700 font-numbers">{formatCurrency(totalPayments)}</p>
           </div>
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">الاسترجاعات</p>
+          <div className="glass-card p-4">
+            <p className="text-sm text-gray-500 mb-1">الاسترجاعات</p>
             <p className="text-2xl font-bold text-error font-numbers">{formatCurrency(totalRefunds)}</p>
           </div>
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-            <p className="text-sm text-gray-600 mb-1">عدد العمليات</p>
+          <div className="glass-card p-4">
+            <p className="text-sm text-gray-500 mb-1">عدد العمليات</p>
             <p className="text-2xl font-bold text-gray-900 font-numbers">{transactionCount}</p>
           </div>
         </div>
 
         {/* Transactions List */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="glass-card overflow-hidden">
           {isLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="animate-spin text-primary" size={48} />
-            </div>
+            <SkeletonTable rows={6} />
           ) : transactions.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-gray-600">لا توجد عمليات</p>
+              <p className="text-gray-500">لا توجد عمليات</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="border-b border-gray-100">
                   <tr>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">رقم العملية</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">اسم العميل</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">طريقة الدفع</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">المبلغ</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">الوقت</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">رقم العملية</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">اسم العميل</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">طريقة الدفع</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">المبلغ</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الوقت</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {transactions.map((transaction) => {
                     const { date, time } = formatDateTime(transaction.createdAt);
                     return (
                       <tr
                         key={transaction.id}
-                        className="hover:bg-gray-50 cursor-pointer transition-colors"
+                        className="hover:bg-primary-50/20 cursor-pointer transition-colors"
                       >
                         <td className="px-4 py-4">
                           <span className="font-mono text-sm text-gray-900">{transaction.id}</span>
@@ -203,7 +202,7 @@ export default function POSHistory() {
                         <td className="px-4 py-4">
                           <div>
                             <p className="font-medium text-gray-900">{transaction.customerName}</p>
-                            <p className="text-sm text-gray-600 font-numbers">{transaction.customerPhone}</p>
+                            <p className="text-sm text-gray-500 font-numbers">{transaction.customerPhone}</p>
                           </div>
                         </td>
                         <td className="px-4 py-4">
@@ -214,7 +213,7 @@ export default function POSHistory() {
                         </td>
                         <td className="px-4 py-4">
                           <span className={`font-bold font-numbers ${
-                            transaction.type === 'payment' ? 'text-success' : 'text-error'
+                            transaction.type === 'payment' ? 'text-accent-700' : 'text-error'
                           }`}>
                             {transaction.type === 'payment' ? '+' : '-'}{formatCurrency(transaction.amount)}
                           </span>
@@ -222,7 +221,7 @@ export default function POSHistory() {
                         <td className="px-4 py-4">
                           <div className="text-sm">
                             <p className="text-gray-900">{date}</p>
-                            <p className="text-gray-600 font-numbers">{time}</p>
+                            <p className="text-gray-500 font-numbers">{time}</p>
                           </div>
                         </td>
                       </tr>

@@ -4,6 +4,7 @@ import { Wallet, TrendingUp, Receipt, FileWarning, CreditCard, FileText, Send, U
 import MainLayout from '@/react-app/components/MainLayout';
 import StatCard from '@/react-app/components/StatCard';
 import Button from '@/react-app/components/Button';
+import { SkeletonDashboard } from '@/react-app/components/LoadingSpinner';
 import { useAuth } from '@/react-app/contexts/AuthContext';
 import { useToast } from '@/react-app/contexts/ToastContext';
 import {
@@ -13,7 +14,7 @@ import {
   TodayStats,
   SalesDataPoint
 } from '@/react-app/services';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 // Fallback mock data for development
 const mockTodayStats: TodayStats = {
@@ -52,6 +53,13 @@ interface PendingInvoice {
   dueDate: string;
 }
 
+const quickActions = [
+  { label: 'POS جديد', icon: CreditCard, path: '/pos', color: 'bg-primary-50 text-primary' },
+  { label: 'فاتورة', icon: FileText, path: '/invoices/create', color: 'bg-accent-50 text-accent-700' },
+  { label: 'تحويل', icon: Send, path: '/payroll/create', color: 'bg-purple-50 text-purple-600' },
+  { label: 'عميل', icon: UserPlus, path: '/customers', color: 'bg-orange-50 text-orange-600' },
+];
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -69,7 +77,6 @@ export default function Dashboard() {
     const fetchDashboardData = async () => {
       setIsLoading(true);
       try {
-        // Fetch all data in parallel
         const [walletData, stats, sales, invoicesData] = await Promise.allSettled([
           walletService.getWallet(),
           dashboardService.getTodayStats(),
@@ -101,12 +108,10 @@ export default function Dashboard() {
           setPendingInvoicesCount(invoicesData.value.total || 0);
         }
 
-        // Fetch recent transactions
         try {
           const transactions = await dashboardService.getRecentTransactions(5);
           setRecentTransactions(transactions as RecentTransaction[]);
         } catch {
-          // Use empty array if failed
           setRecentTransactions([]);
         }
       } catch (error) {
@@ -151,9 +156,7 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        </div>
+        <SkeletonDashboard />
       </MainLayout>
     );
   }
@@ -161,19 +164,21 @@ export default function Dashboard() {
   return (
     <MainLayout>
       {/* Welcome Section */}
-      <div className="mb-6 md:mb-8 animate-fadeIn">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+      <div className="mb-6 md:mb-8 bg-gradient-to-l from-primary to-primary-400 rounded-2xl p-6 text-white animate-fadeIn shadow-glass">
+        <h1 className="text-2xl md:text-3xl font-bold mb-1">
           {getGreeting()}، {user?.name || 'التاجر'}
         </h1>
-        <p className="text-gray-600">{getCurrentDate()}</p>
+        <p className="text-white/70 text-sm">{getCurrentDate()}</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8 animate-slideUp">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
         <StatCard
           title="رصيد المحفظة"
           value={formatCurrency(walletBalance)}
           icon={<Wallet size={24} />}
+          variant="gradient"
+          color="green"
           onClick={() => navigate('/wallet')}
         />
         <StatCard
@@ -194,130 +199,128 @@ export default function Dashboard() {
           title="فواتير معلقة"
           value={pendingInvoicesCount.toString()}
           icon={<FileWarning size={24} />}
+          color="orange"
           onClick={() => navigate('/invoices?status=pending')}
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
         {/* Sales Chart */}
-        <div className="lg:col-span-2 bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 animate-slideUp">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">المبيعات - آخر 7 أيام</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={salesData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+        <div className="lg:col-span-2 glass-card p-4 md:p-6 animate-slideUp">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">المبيعات - آخر 7 أيام</h2>
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={salesData}>
+              <defs>
+                <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#1E3A5F" stopOpacity={0.15}/>
+                  <stop offset="95%" stopColor="#1E3A5F" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#EEF2F7" />
               <XAxis
                 dataKey="date"
-                stroke="#6B7280"
+                stroke="#A9BDD3"
                 style={{ fontSize: '12px' }}
+                tickLine={false}
+                axisLine={false}
               />
               <YAxis
-                stroke="#6B7280"
+                stroke="#A9BDD3"
                 style={{ fontSize: '12px' }}
                 tickFormatter={(value) => `${(value / 1000)}k`}
+                tickLine={false}
+                axisLine={false}
               />
               <Tooltip
                 formatter={(value) => formatCurrency(value as number)}
                 contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '8px',
-                  direction: 'rtl'
+                  backgroundColor: 'rgba(255,255,255,0.95)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid #EEF2F7',
+                  borderRadius: '12px',
+                  direction: 'rtl',
+                  boxShadow: '0 8px 32px rgba(30,58,95,0.12)'
                 }}
               />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="amount"
                 stroke="#1E3A5F"
-                strokeWidth={3}
-                dot={{ fill: '#1E3A5F', r: 4 }}
-                activeDot={{ r: 6 }}
+                strokeWidth={2.5}
+                fill="url(#colorAmount)"
+                dot={{ fill: '#1E3A5F', r: 4, strokeWidth: 2, stroke: '#fff' }}
+                activeDot={{ r: 6, stroke: '#1E3A5F', strokeWidth: 2 }}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 animate-slideUp">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">إجراءات سريعة</h2>
-          <div className="space-y-3">
-            <Button
-              fullWidth
-              leftIcon={<CreditCard size={20} />}
-              onClick={() => navigate('/pos')}
-            >
-              POS جديد
-            </Button>
-            <Button
-              fullWidth
-              variant="outline"
-              leftIcon={<FileText size={20} />}
-              onClick={() => navigate('/invoices/create')}
-            >
-              فاتورة جديدة
-            </Button>
-            <Button
-              fullWidth
-              variant="outline"
-              leftIcon={<Send size={20} />}
-              onClick={() => navigate('/payroll/create')}
-            >
-              تحويل جماعي
-            </Button>
-            <Button
-              fullWidth
-              variant="outline"
-              leftIcon={<UserPlus size={20} />}
-              onClick={() => navigate('/customers')}
-            >
-              إضافة عميل
-            </Button>
+        <div className="glass-card p-4 md:p-6 animate-slideUp">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">إجراءات سريعة</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <button
+                  key={action.path}
+                  onClick={() => navigate(action.path)}
+                  className="flex flex-col items-center gap-2 p-4 rounded-xl hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 bg-white border border-gray-100"
+                >
+                  <div className={`w-12 h-12 ${action.color} rounded-xl flex items-center justify-center`}>
+                    <Icon size={22} />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">{action.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* Recent Transactions */}
-        <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 animate-slideUp">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">آخر العمليات</h2>
+        <div className="glass-card p-4 md:p-6 animate-slideUp">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900">آخر العمليات</h2>
             <button
               onClick={() => navigate('/transactions')}
-              className="text-sm text-primary hover:text-primary-600 font-medium"
+              className="text-sm text-primary hover:text-primary-400 font-medium"
             >
               عرض الكل
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {recentTransactions.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">لا توجد عمليات حديثة</p>
+              <p className="text-gray-400 text-center py-8 text-sm">لا توجد عمليات حديثة</p>
             ) : (
               recentTransactions.map((transaction) => (
                 <div
                   key={transaction.id}
                   onClick={() => navigate(`/transactions/${transaction.id}`)}
-                  className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                  className="flex items-center justify-between p-3 hover:bg-primary-50/50 rounded-xl cursor-pointer transition-all duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      transaction.type === 'payment' ? 'bg-success/10 text-success' : 'bg-error/10 text-error'
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
+                      transaction.type === 'payment' ? 'bg-accent-50 text-accent' : 'bg-red-50 text-error'
                     }`}>
                       {transaction.type === 'payment' ? '↓' : '↑'}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{transaction.customerName}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-medium text-gray-900 text-sm">{transaction.customerName}</p>
+                      <p className="text-xs text-gray-400">
                         {transaction.method === 'nfc' ? 'NFC' :
                          transaction.method === 'qr' ? 'QR' : 'رقم الجوال'}
                       </p>
                     </div>
                   </div>
                   <div className="text-left">
-                    <p className={`font-bold font-numbers ${
-                      transaction.type === 'payment' ? 'text-success' : 'text-error'
+                    <p className={`font-bold font-numbers text-sm ${
+                      transaction.type === 'payment' ? 'text-accent' : 'text-error'
                     }`}>
                       {transaction.type === 'payment' ? '+' : '-'}{formatCurrency(transaction.amount)}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs text-gray-400">
                       {new Date(transaction.createdAt).toLocaleTimeString('ar-SY', {
                         hour: '2-digit',
                         minute: '2-digit'
@@ -331,19 +334,19 @@ export default function Dashboard() {
         </div>
 
         {/* Pending Invoices */}
-        <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 animate-slideUp">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">فواتير تحتاج انتباه</h2>
+        <div className="glass-card p-4 md:p-6 animate-slideUp">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900">فواتير تحتاج انتباه</h2>
             <button
               onClick={() => navigate('/invoices')}
-              className="text-sm text-primary hover:text-primary-600 font-medium"
+              className="text-sm text-primary hover:text-primary-400 font-medium"
             >
               عرض الكل
             </button>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {pendingInvoices.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">لا توجد فواتير معلقة</p>
+              <p className="text-gray-400 text-center py-8 text-sm">لا توجد فواتير معلقة</p>
             ) : (
               pendingInvoices.slice(0, 3).map((invoice) => {
                 const dueDate = new Date(invoice.dueDate);
@@ -355,32 +358,32 @@ export default function Dashboard() {
 
                 if (invoice.status === 'overdue' || daysUntilDue < 0) {
                   statusText = `متأخرة ${Math.abs(daysUntilDue)} يوم`;
-                  statusColor = 'text-error bg-error/10';
+                  statusColor = 'text-error bg-red-50';
                 } else if (daysUntilDue === 0) {
                   statusText = 'تستحق اليوم';
-                  statusColor = 'text-warning bg-warning/10';
+                  statusColor = 'text-warning bg-amber-50';
                 } else if (daysUntilDue === 1) {
                   statusText = 'تستحق غداً';
-                  statusColor = 'text-warning bg-warning/10';
+                  statusColor = 'text-warning bg-amber-50';
                 } else {
                   statusText = `تستحق خلال ${daysUntilDue} يوم`;
-                  statusColor = 'text-gray-600 bg-gray-100';
+                  statusColor = 'text-gray-500 bg-gray-50';
                 }
 
                 return (
                   <div
                     key={invoice.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-primary-200 transition-colors"
+                    className="border border-gray-100 rounded-xl p-4 hover:border-primary-200 hover:shadow-sm transition-all duration-200"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <p className="font-medium text-gray-900">{invoice.customerName}</p>
-                      <span className={`text-xs font-medium px-2 py-1 rounded ${statusColor}`}>
+                      <p className="font-medium text-gray-900 text-sm">{invoice.customerName}</p>
+                      <span className={`text-xs font-medium px-2 py-1 rounded-lg ${statusColor}`}>
                         {statusText}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600">{invoice.id}</p>
-                      <p className="font-bold text-gray-900 font-numbers">{formatCurrency(invoice.amount)}</p>
+                      <p className="text-xs text-gray-400">{invoice.id}</p>
+                      <p className="font-bold text-gray-900 font-numbers text-sm">{formatCurrency(invoice.amount)}</p>
                     </div>
                     <div className="flex gap-2 mt-3">
                       <Button
@@ -393,7 +396,7 @@ export default function Dashboard() {
                       </Button>
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="ghost"
                         fullWidth
                         onClick={() => navigate(`/invoices/${invoice.id}`)}
                       >

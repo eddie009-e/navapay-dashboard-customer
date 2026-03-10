@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Play, Pause, Eye, X, MoreVertical, Loader2 } from 'lucide-react';
 import Button from '@/react-app/components/Button';
+import { SkeletonList } from '@/react-app/components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import { recurringInvoicesService, RecurringInvoice, CreateRecurringInvoiceDto } from '../services';
 
@@ -61,7 +62,7 @@ export default function RecurringInvoices() {
 
   const getStatusBadge = (status: RecurringInvoice['status']) => {
     const badges = {
-      active: { text: 'نشط', class: 'bg-success/10 text-success' },
+      active: { text: 'نشط', class: 'bg-accent-50 text-accent-700' },
       paused: { text: 'متوقف', class: 'bg-warning/10 text-warning' },
       ended: { text: 'منتهي', class: 'bg-gray-100 text-gray-500' }
     };
@@ -81,13 +82,13 @@ export default function RecurringInvoices() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-6">
+      <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">الفواتير الدورية</h1>
-            <p className="text-gray-600 mt-1">إنشاء فواتير تلقائية بشكل دوري</p>
+            <p className="text-gray-500 mt-1">إنشاء فواتير تلقائية بشكل دوري</p>
           </div>
           <Button leftIcon={<Plus size={20} />} onClick={() => setShowCreateModal(true)}>
             فاتورة دورية جديدة
@@ -100,7 +101,7 @@ export default function RecurringInvoices() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-xl font-medium transition-colors ${
                 activeTab === tab.id
                   ? 'bg-primary text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -115,18 +116,16 @@ export default function RecurringInvoices() {
       {/* Invoices List */}
       <div className="p-6">
         {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="animate-spin text-primary" size={48} />
-          </div>
+          <SkeletonList />
         ) : (
         <div className="space-y-4">
           {filteredInvoices.length === 0 ? (
-            <div className="bg-white rounded-lg p-12 text-center">
+            <div className="glass-card p-12 text-center">
               <div className="text-6xl mb-4">🔄</div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">
                 لا توجد فواتير {activeTab === 'active' ? 'نشطة' : activeTab === 'paused' ? 'متوقفة' : 'منتهية'}
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-500 mb-6">
                 أنشئ فواتير دورية لأتمتة عملية الفوترة
               </p>
               <Button leftIcon={<Plus size={20} />} onClick={() => setShowCreateModal(true)}>
@@ -136,28 +135,28 @@ export default function RecurringInvoices() {
           ) : (
             filteredInvoices.map(invoice => {
               const badge = getStatusBadge(invoice.status);
-              
+
               return (
                 <div
                   key={invoice.id}
-                  className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                  className="glass-card p-6 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                           <span className="text-xl">🔄</span>
                         </div>
                         <div>
                           <h3 className="text-lg font-bold text-gray-900">{invoice.name}</h3>
-                          <p className="text-sm text-gray-600">{invoice.customerName}</p>
+                          <p className="text-sm text-gray-500">{invoice.customerName}</p>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${badge.class}`}>
+                        <span className={`px-3 py-1 rounded-lg text-sm font-medium ${badge.class}`}>
                           {badge.text}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-6 text-sm text-gray-600 mt-4">
+                      <div className="flex items-center gap-6 text-sm text-gray-500 mt-4">
                         <div>
                           <span className="text-gray-500">المبلغ: </span>
                           <span className="font-bold text-gray-900 font-numbers">
@@ -225,8 +224,8 @@ export default function RecurringInvoices() {
                       <Button size="sm" variant="outline" leftIcon={<Eye size={16} />}>
                         عرض
                       </Button>
-                      <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <MoreVertical size={18} className="text-gray-600" />
+                      <button className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors">
+                        <MoreVertical size={18} className="text-gray-500" />
                       </button>
                     </div>
                   </div>
@@ -287,13 +286,13 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-2xl w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold text-gray-900">إنشاء فاتورة دورية جديدة</h3>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors"
           >
             <X size={20} />
           </button>
@@ -309,7 +308,7 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="مثال: اشتراك صيانة شهري"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+              className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
             />
           </div>
 
@@ -322,7 +321,7 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
               value={customerId}
               onChange={(e) => setCustomerId(e.target.value)}
               placeholder="ابحث عن عميل أو أدخل رقم الجوال"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+              className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
             />
           </div>
 
@@ -335,7 +334,7 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 font-numbers"
+              className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10 font-numbers"
             />
           </div>
 
@@ -348,7 +347,7 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
                 <button
                   key={freq}
                   onClick={() => setFrequency(freq)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-xl font-medium transition-colors ${
                     frequency === freq
                       ? 'bg-primary text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -371,7 +370,7 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+                className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
               />
             </div>
             <div>
@@ -382,12 +381,12 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+                className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
               />
             </div>
           </div>
 
-          <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+          <div className="space-y-3 p-4 bg-surface rounded-xl">
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
@@ -429,25 +428,25 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
 
 function UpgradeModal() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-8 text-center">
+    <div className="min-h-screen bg-surface flex items-center justify-center p-4">
+      <div className="glass-card max-w-2xl w-full p-8 text-center">
         <div className="w-20 h-20 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-6">
           <span className="text-4xl">🔒</span>
         </div>
-        
+
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
           الفواتير الدورية متاحة في باقة Enterprise
         </h2>
-        
-        <p className="text-gray-600 mb-8">
+
+        <p className="text-gray-500 mb-8">
           قم بالترقية إلى باقة Enterprise للحصول على الفواتير الدورية وميزات متقدمة أخرى
         </p>
 
         {/* Comparison */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="border-2 border-gray-200 rounded-lg p-6 text-right">
+          <div className="border-2 border-gray-100 rounded-xl p-6 text-right">
             <h3 className="text-lg font-bold text-gray-900 mb-4">باقة POS</h3>
-            <div className="space-y-2 text-sm text-gray-600">
+            <div className="space-y-2 text-sm text-gray-500">
               <p>✓ نقطة البيع</p>
               <p>✓ 50 فاتورة/شهر</p>
               <p>✓ روابط الدفع</p>
@@ -457,10 +456,10 @@ function UpgradeModal() {
             </div>
           </div>
 
-          <div className="border-2 border-primary rounded-lg p-6 text-right bg-primary/5">
+          <div className="border-2 border-primary rounded-xl p-6 text-right bg-primary/5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-primary">باقة Enterprise</h3>
-              <span className="bg-primary text-white text-xs px-2 py-1 rounded-full">موصى به</span>
+              <span className="bg-primary text-white text-xs px-2 py-1 rounded-lg">موصى به</span>
             </div>
             <div className="space-y-2 text-sm text-gray-900">
               <p>✓ كل ميزات POS</p>
@@ -471,9 +470,9 @@ function UpgradeModal() {
               <p>✓ التقارير المتقدمة</p>
               <p>✓ API Access</p>
             </div>
-            <div className="mt-6 p-4 bg-white rounded-lg">
+            <div className="mt-6 p-4 bg-white rounded-xl">
               <p className="text-2xl font-bold text-primary mb-1">500,000 ل.س/شهر</p>
-              <p className="text-xs text-gray-600">تُدفع سنوياً</p>
+              <p className="text-xs text-gray-500">تُدفع سنوياً</p>
             </div>
           </div>
         </div>

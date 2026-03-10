@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Code2, Key, Activity, Book, Plus, Copy, Eye, EyeOff, Trash2, CheckCircle, AlertCircle, Clock, Webhook, Send, Loader2 } from 'lucide-react';
+import { Code2, Key, Activity, Book, Plus, Copy, Eye, EyeOff, Trash2, CheckCircle, AlertCircle, Clock, Webhook, Send } from 'lucide-react';
 import Button from '@/react-app/components/Button';
+import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { developersService, ApiKey, Webhook as WebhookType, ApiLog, CreateApiKeyDto, CreateWebhookDto } from '../services';
 
 export default function Developers() {
@@ -112,7 +113,7 @@ export default function Developers() {
 
   const formatDateTime = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleString('ar-SY', { 
+    return date.toLocaleString('ar-SY', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -122,14 +123,14 @@ export default function Developers() {
   };
 
   const getStatusColor = (status: number) => {
-    if (status >= 200 && status < 300) return 'text-success';
+    if (status >= 200 && status < 300) return 'text-accent-700';
     if (status >= 400 && status < 500) return 'text-warning';
     return 'text-error';
   };
 
   /* Reserved for future webhook delivery status display
   const getDeliveryStatusColor = (status: 'success' | 'failed' | 'pending') => {
-    if (status === 'success') return 'bg-success/20 text-success';
+    if (status === 'success') return 'bg-success/20 text-accent-700';
     if (status === 'failed') return 'bg-error/20 text-error';
     return 'bg-warning/20 text-warning';
   }; */
@@ -138,20 +139,20 @@ export default function Developers() {
     <MainLayout>
       <div className="animate-fadeIn">
         {/* Header */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
               <Code2 size={28} className="text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">المطورين</h1>
-              <p className="text-gray-600">إدارة مفاتيح API ومراقبة الطلبات والأحداث</p>
+              <p className="text-gray-500">إدارة مفاتيح API ومراقبة الطلبات والأحداث</p>
             </div>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+            <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
               <div className="flex items-center gap-2 mb-2">
                 <Key size={20} className="text-primary" />
                 <p className="text-sm text-gray-700">مفاتيح API</p>
@@ -159,10 +160,10 @@ export default function Developers() {
               <p className="text-3xl font-bold text-primary font-numbers">
                 {apiKeys.filter(k => k.isActive).length}
               </p>
-              <p className="text-xs text-gray-600 mt-1">نشط من أصل {apiKeys.length}</p>
+              <p className="text-xs text-gray-500 mt-1">نشط من أصل {apiKeys.length}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-lg p-4 border border-accent/20">
+            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-4 border border-accent/20">
               <div className="flex items-center gap-2 mb-2">
                 <Webhook size={20} className="text-accent" />
                 <p className="text-sm text-gray-700">Webhooks</p>
@@ -170,23 +171,23 @@ export default function Developers() {
               <p className="text-3xl font-bold text-accent font-numbers">
                 {webhooks.filter(w => w.isActive).length}
               </p>
-              <p className="text-xs text-gray-600 mt-1">نشط من أصل {webhooks.length}</p>
+              <p className="text-xs text-gray-500 mt-1">نشط من أصل {webhooks.length}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-lg p-4 border border-success/20">
+            <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-xl p-4 border border-success/20">
               <div className="flex items-center gap-2 mb-2">
-                <Activity size={20} className="text-success" />
+                <Activity size={20} className="text-accent-700" />
                 <p className="text-sm text-gray-700">الطلبات اليوم</p>
               </div>
-              <p className="text-3xl font-bold text-success font-numbers">{apiLogs.length}</p>
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-3xl font-bold text-accent-700 font-numbers">{apiLogs.length}</p>
+              <p className="text-xs text-gray-500 mt-1">
                 {apiLogs.length > 0
                   ? `معدل النجاح ${Math.round((apiLogs.filter(l => l.statusCode >= 200 && l.statusCode < 300).length / apiLogs.length) * 100)}%`
                   : '-'}
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-warning/5 to-warning/10 rounded-lg p-4 border border-warning/20">
+            <div className="bg-gradient-to-br from-warning/5 to-warning/10 rounded-xl p-4 border border-warning/20">
               <div className="flex items-center gap-2 mb-2">
                 <Clock size={20} className="text-warning" />
                 <p className="text-sm text-gray-700">متوسط الاستجابة</p>
@@ -196,20 +197,20 @@ export default function Developers() {
                   ? Math.round(apiLogs.reduce((sum, l) => sum + l.responseTimeMs, 0) / apiLogs.length)
                   : '-'}
               </p>
-              <p className="text-xs text-gray-600 mt-1">ميلي ثانية</p>
+              <p className="text-xs text-gray-500 mt-1">ميلي ثانية</p>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
-          <div className="flex border-b border-gray-200 overflow-x-auto">
+        <div className="glass-card mb-6">
+          <div className="flex border-b border-gray-100 overflow-x-auto">
             <button
               onClick={() => setActiveTab('keys')}
               className={`flex-1 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'keys'
                   ? 'text-primary border-b-2 border-primary bg-primary/5'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-primary-50/20'
               }`}
             >
               <div className="flex items-center justify-center gap-2">
@@ -222,7 +223,7 @@ export default function Developers() {
               className={`flex-1 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'webhooks'
                   ? 'text-primary border-b-2 border-primary bg-primary/5'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-primary-50/20'
               }`}
             >
               <div className="flex items-center justify-center gap-2">
@@ -235,7 +236,7 @@ export default function Developers() {
               className={`flex-1 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'logs'
                   ? 'text-primary border-b-2 border-primary bg-primary/5'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-primary-50/20'
               }`}
             >
               <div className="flex items-center justify-center gap-2">
@@ -248,7 +249,7 @@ export default function Developers() {
               className={`flex-1 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'docs'
                   ? 'text-primary border-b-2 border-primary bg-primary/5'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-primary-50/20'
               }`}
             >
               <div className="flex items-center justify-center gap-2">
@@ -264,7 +265,7 @@ export default function Developers() {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-xl font-bold text-gray-900">مفاتيح API</h2>
-                    <p className="text-sm text-gray-600">إدارة مفاتيح الوصول إلى API</p>
+                    <p className="text-sm text-gray-500">إدارة مفاتيح الوصول إلى API</p>
                   </div>
                   <Button leftIcon={<Plus size={20} />} onClick={() => setIsCreateModalOpen(true)}>
                     إنشاء مفتاح جديد
@@ -272,14 +273,12 @@ export default function Developers() {
                 </div>
 
                 {isLoading ? (
-                  <div className="flex items-center justify-center py-16">
-                    <Loader2 size={48} className="animate-spin text-primary" />
-                  </div>
+                  <SkeletonTable rows={5} />
                 ) : apiKeys.length === 0 ? (
                   <div className="text-center py-16">
                     <Key size={64} className="mx-auto text-gray-300 mb-4" />
                     <h3 className="text-xl font-bold text-gray-900 mb-2">لا توجد مفاتيح API</h3>
-                    <p className="text-gray-600 mb-6">قم بإنشاء مفتاح API للبدء</p>
+                    <p className="text-gray-500 mb-6">قم بإنشاء مفتاح API للبدء</p>
                     <Button leftIcon={<Plus size={20} />} onClick={() => setIsCreateModalOpen(true)}>
                       إنشاء مفتاح جديد
                     </Button>
@@ -292,7 +291,7 @@ export default function Developers() {
                       className={`border-2 rounded-xl p-6 transition-all ${
                         key.isActive
                           ? 'border-success/30 bg-success/5'
-                          : 'border-gray-200 bg-gray-50'
+                          : 'border-gray-100 bg-surface'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -301,7 +300,7 @@ export default function Developers() {
                             <h3 className="text-lg font-bold text-gray-900">{key.name}</h3>
                             <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
                               key.isActive
-                                ? 'bg-success/20 text-success'
+                                ? 'bg-accent-50 text-accent-700'
                                 : 'bg-gray-200 text-gray-700'
                             }`}>
                               {key.isActive ? (
@@ -317,19 +316,19 @@ export default function Developers() {
                               )}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-600 mb-3">
+                          <p className="text-sm text-gray-500 mb-3">
                             تم الإنشاء في {formatDateTime(key.createdAt)}
                           </p>
 
                           <div className="flex items-center gap-3 mb-4">
-                            <div className="flex-1 bg-gray-100 rounded-lg px-4 py-3 font-mono text-sm">
+                            <div className="flex-1 bg-gray-100 rounded-xl px-4 py-3 font-mono text-sm">
                               {visibleKeys.has(key.id)
                                 ? `****${key.lastFour}`
                                 : `••••••••••••${key.lastFour}`}
                             </div>
                             <button
                               onClick={() => toggleKeyVisibility(key.id)}
-                              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                              className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors"
                               title={visibleKeys.has(key.id) ? 'إخفاء' : 'عرض'}
                             >
                               {visibleKeys.has(key.id) ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -337,20 +336,20 @@ export default function Developers() {
                           </div>
 
                           <div className="grid grid-cols-3 gap-4">
-                            <div className="bg-white rounded-lg p-3 border border-gray-200">
-                              <p className="text-xs text-gray-600 mb-1">الصلاحيات</p>
+                            <div className="glass-card p-3">
+                              <p className="text-xs text-gray-500 mb-1">الصلاحيات</p>
                               <p className="text-sm font-medium text-gray-900">
                                 {key.permissions.length > 0 ? key.permissions.join(', ') : 'كل الصلاحيات'}
                               </p>
                             </div>
-                            <div className="bg-white rounded-lg p-3 border border-gray-200">
-                              <p className="text-xs text-gray-600 mb-1">آخر استخدام</p>
+                            <div className="glass-card p-3">
+                              <p className="text-xs text-gray-500 mb-1">آخر استخدام</p>
                               <p className="text-sm font-medium text-gray-900">
                                 {key.lastUsedAt ? formatDateTime(key.lastUsedAt).split(',')[0] : 'لم يستخدم'}
                               </p>
                             </div>
-                            <div className="bg-white rounded-lg p-3 border border-gray-200">
-                              <p className="text-xs text-gray-600 mb-1">تاريخ الانتهاء</p>
+                            <div className="glass-card p-3">
+                              <p className="text-xs text-gray-500 mb-1">تاريخ الانتهاء</p>
                               <p className="text-sm font-medium text-gray-900">
                                 {key.expiresAt ? formatDateTime(key.expiresAt).split(',')[0] : 'لا ينتهي'}
                               </p>
@@ -360,7 +359,7 @@ export default function Developers() {
 
                         <button
                           onClick={() => handleRevokeApiKey(key.id)}
-                          className="p-2 hover:bg-error/10 text-error rounded-lg transition-colors"
+                          className="p-2 hover:bg-error/10 text-error rounded-xl transition-colors"
                           title="إلغاء"
                         >
                           <Trash2 size={20} />
@@ -378,7 +377,7 @@ export default function Developers() {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-xl font-bold text-gray-900">Webhooks</h2>
-                    <p className="text-sm text-gray-600">استقبال إشعارات الأحداث في تطبيقك</p>
+                    <p className="text-sm text-gray-500">استقبال إشعارات الأحداث في تطبيقك</p>
                   </div>
                   <Button leftIcon={<Plus size={20} />} onClick={() => setIsCreateWebhookModalOpen(true)}>
                     إنشاء Webhook
@@ -386,14 +385,12 @@ export default function Developers() {
                 </div>
 
                 {isLoading ? (
-                  <div className="flex items-center justify-center py-16">
-                    <Loader2 size={48} className="animate-spin text-primary" />
-                  </div>
+                  <SkeletonTable rows={5} />
                 ) : webhooks.length === 0 ? (
                   <div className="text-center py-16">
                     <Webhook size={64} className="mx-auto text-gray-300 mb-4" />
                     <h3 className="text-xl font-bold text-gray-900 mb-2">لا توجد Webhooks</h3>
-                    <p className="text-gray-600 mb-6">قم بإنشاء Webhook لاستقبال الإشعارات</p>
+                    <p className="text-gray-500 mb-6">قم بإنشاء Webhook لاستقبال الإشعارات</p>
                     <Button leftIcon={<Plus size={20} />} onClick={() => setIsCreateWebhookModalOpen(true)}>
                       إنشاء Webhook
                     </Button>
@@ -408,7 +405,7 @@ export default function Developers() {
                       className={`border-2 rounded-xl p-6 transition-all ${
                         webhook.isActive
                           ? 'border-success/30 bg-success/5'
-                          : 'border-gray-200 bg-gray-50'
+                          : 'border-gray-100 bg-surface'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -417,7 +414,7 @@ export default function Developers() {
                             <h3 className="text-lg font-bold text-gray-900">{webhook.name}</h3>
                             <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
                               webhook.isActive
-                                ? 'bg-success/20 text-success'
+                                ? 'bg-accent-50 text-accent-700'
                                 : 'bg-gray-200 text-gray-700'
                             }`}>
                               {webhook.isActive ? (
@@ -435,12 +432,12 @@ export default function Developers() {
                           </div>
 
                           <div className="flex items-center gap-3 mb-3">
-                            <div className="flex-1 bg-gray-100 rounded-lg px-4 py-3 font-mono text-sm break-all">
+                            <div className="flex-1 bg-gray-100 rounded-xl px-4 py-3 font-mono text-sm break-all">
                               {webhook.url}
                             </div>
                             <button
                               onClick={() => copyToClipboard(webhook.url)}
-                              className="p-2 hover:bg-gray-200 rounded-lg transition-colors flex-shrink-0"
+                              className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors flex-shrink-0"
                               title="نسخ"
                             >
                               <Copy size={20} />
@@ -448,22 +445,22 @@ export default function Developers() {
                           </div>
 
                           <div className="flex items-center gap-3 mb-4">
-                            <p className="text-xs text-gray-600">Signing Secret:</p>
-                            <div className="flex-1 bg-gray-100 rounded-lg px-4 py-2 font-mono text-xs">
+                            <p className="text-xs text-gray-500">Signing Secret:</p>
+                            <div className="flex-1 bg-gray-100 rounded-xl px-4 py-2 font-mono text-xs">
                               {visibleSecrets.has(webhook.id)
                                 ? webhook.secret
                                 : webhook.secret.slice(0, 15) + '•••••••••••'}
                             </div>
                             <button
                               onClick={() => toggleSecretVisibility(webhook.id)}
-                              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                              className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors"
                               title={visibleSecrets.has(webhook.id) ? 'إخفاء' : 'عرض'}
                             >
                               {visibleSecrets.has(webhook.id) ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                             <button
                               onClick={() => copyToClipboard(webhook.secret)}
-                              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                              className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors"
                               title="نسخ"
                             >
                               <Copy size={18} />
@@ -471,7 +468,7 @@ export default function Developers() {
                           </div>
 
                           <div className="mb-4">
-                            <p className="text-xs text-gray-600 mb-2">الأحداث المفعلة:</p>
+                            <p className="text-xs text-gray-500 mb-2">الأحداث المفعلة:</p>
                             <div className="flex flex-wrap gap-2">
                               {webhook.events.map((event) => (
                                 <span
@@ -485,20 +482,20 @@ export default function Developers() {
                           </div>
 
                           <div className="grid grid-cols-3 gap-4">
-                            <div className="bg-white rounded-lg p-3 border border-gray-200">
-                              <p className="text-xs text-gray-600 mb-1">التسليمات الناجحة</p>
-                              <p className="text-lg font-bold text-success font-numbers">
+                            <div className="glass-card p-3">
+                              <p className="text-xs text-gray-500 mb-1">التسليمات الناجحة</p>
+                              <p className="text-lg font-bold text-accent-700 font-numbers">
                                 {webhook.successCount.toLocaleString()}
                               </p>
                             </div>
-                            <div className="bg-white rounded-lg p-3 border border-gray-200">
-                              <p className="text-xs text-gray-600 mb-1">التسليمات الفاشلة</p>
+                            <div className="glass-card p-3">
+                              <p className="text-xs text-gray-500 mb-1">التسليمات الفاشلة</p>
                               <p className="text-lg font-bold text-error font-numbers">
                                 {webhook.failureCount.toLocaleString()}
                               </p>
                             </div>
-                            <div className="bg-white rounded-lg p-3 border border-gray-200">
-                              <p className="text-xs text-gray-600 mb-1">آخر تفعيل</p>
+                            <div className="glass-card p-3">
+                              <p className="text-xs text-gray-500 mb-1">آخر تفعيل</p>
                               <p className="text-sm font-medium text-gray-900">
                                 {webhook.lastTriggeredAt ? formatDateTime(webhook.lastTriggeredAt).split(',')[0] : 'لم يفعل'}
                               </p>
@@ -509,7 +506,7 @@ export default function Developers() {
                         <div className="flex flex-col gap-2">
                           <button
                             onClick={() => handleDeleteWebhook(webhook.id)}
-                            className="p-2 hover:bg-error/10 text-error rounded-lg transition-colors"
+                            className="p-2 hover:bg-error/10 text-error rounded-xl transition-colors"
                             title="حذف"
                           >
                             <Trash2 size={20} />
@@ -529,35 +526,33 @@ export default function Developers() {
               <div>
                 <div className="mb-6">
                   <h2 className="text-xl font-bold text-gray-900">سجل الطلبات</h2>
-                  <p className="text-sm text-gray-600">مراقبة استخدام API في الوقت الفعلي</p>
+                  <p className="text-sm text-gray-500">مراقبة استخدام API في الوقت الفعلي</p>
                 </div>
 
                 {isLoading ? (
-                  <div className="flex items-center justify-center py-16">
-                    <Loader2 size={48} className="animate-spin text-primary" />
-                  </div>
+                  <SkeletonTable rows={8} />
                 ) : apiLogs.length === 0 ? (
                   <div className="text-center py-16">
                     <Activity size={64} className="mx-auto text-gray-300 mb-4" />
                     <h3 className="text-xl font-bold text-gray-900 mb-2">لا توجد طلبات</h3>
-                    <p className="text-gray-600">لم يتم تسجيل أي طلبات API بعد</p>
+                    <p className="text-gray-500">لم يتم تسجيل أي طلبات API بعد</p>
                   </div>
                 ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-200">
+                    <thead className="border-b border-gray-100">
                       <tr>
-                        <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الوقت</th>
-                        <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الطريقة</th>
-                        <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">نقطة النهاية</th>
-                        <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الحالة</th>
-                        <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">زمن الاستجابة</th>
-                        <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">IP</th>
+                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الوقت</th>
+                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الطريقة</th>
+                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">نقطة النهاية</th>
+                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الحالة</th>
+                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">زمن الاستجابة</th>
+                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">IP</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-100">
                       {apiLogs.map((log) => (
-                          <tr key={log.id} className="hover:bg-gray-50 transition-colors">
+                          <tr key={log.id} className="hover:bg-primary-50/20 transition-colors">
                             <td className="px-6 py-4">
                               <span className="text-sm text-gray-900 font-numbers">
                                 {formatDateTime(log.createdAt)}
@@ -566,7 +561,7 @@ export default function Developers() {
                             <td className="px-6 py-4">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-mono ${
                                 log.method === 'GET' ? 'bg-primary/10 text-primary' :
-                                log.method === 'POST' ? 'bg-success/10 text-success' :
+                                log.method === 'POST' ? 'bg-accent-50 text-accent-700' :
                                 log.method === 'PUT' || log.method === 'PATCH' ? 'bg-accent/10 text-accent' :
                                 'bg-error/10 text-error'
                               }`}>
@@ -587,7 +582,7 @@ export default function Developers() {
                               </span>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="text-sm text-gray-600 truncate max-w-[150px] inline-block font-mono">
+                              <span className="text-sm text-gray-500 truncate max-w-[150px] inline-block font-mono">
                                 {log.ipAddress || '-'}
                               </span>
                             </td>
@@ -607,9 +602,9 @@ export default function Developers() {
                   استخدم NavaPay API لدمج نظام الدفع في تطبيقاتك وخدماتك.
                 </p>
 
-                <div className="bg-gray-50 rounded-lg p-6 border border-gray-200 mb-6">
+                <div className="bg-surface rounded-xl p-6 border border-gray-100 mb-6">
                   <h3 className="text-lg font-bold text-gray-900 mb-3">نقطة النهاية الأساسية</h3>
-                  <code className="block bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+                  <code className="block bg-gray-900 text-green-400 p-4 rounded-xl font-mono text-sm">
                     https://api.navapay.com/v1
                   </code>
                 </div>
@@ -620,7 +615,7 @@ export default function Developers() {
                     <p className="text-gray-700 mb-3">
                       استخدم مفتاح API في رأس Authorization:
                     </p>
-                    <div className="bg-gray-900 text-white p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                    <div className="bg-gray-900 text-white p-4 rounded-xl font-mono text-sm overflow-x-auto">
                       <div className="text-gray-500">// cURL</div>
                       <div className="text-green-400">curl -X GET \</div>
                       <div className="text-green-400 mr-4">https://api.navapay.com/v1/payments \</div>
@@ -633,7 +628,7 @@ export default function Developers() {
                     <p className="text-gray-700 mb-3">
                       استقبل إشعارات فورية عند حدوث أحداث معينة في حسابك. يتم إرسال POST request إلى URL المسجل مع توقيع HMAC للتحقق.
                     </p>
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-3">
+                    <div className="bg-surface rounded-xl p-4 border border-gray-100 mb-3">
                       <p className="text-sm font-bold text-gray-900 mb-2">الأحداث المتاحة:</p>
                       <ul className="space-y-1 text-sm text-gray-700">
                         <li><code className="bg-gray-200 px-2 py-0.5 rounded text-xs">payment.completed</code> - اكتملت عملية الدفع</li>
@@ -644,7 +639,7 @@ export default function Developers() {
                         <li><code className="bg-gray-200 px-2 py-0.5 rounded text-xs">refund.completed</code> - اكتمل الاسترجاع</li>
                       </ul>
                     </div>
-                    <div className="bg-gray-900 text-white p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                    <div className="bg-gray-900 text-white p-4 rounded-xl font-mono text-sm overflow-x-auto">
                       <div className="text-gray-500">// التحقق من التوقيع (Node.js)</div>
                       <div className="text-green-400">const crypto = require('crypto');</div>
                       <div className="text-green-400">const signature = req.headers['x-navapay-signature'];</div>
@@ -658,7 +653,7 @@ export default function Developers() {
 
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-3">إنشاء دفعة</h3>
-                    <div className="bg-gray-900 text-white p-4 rounded-lg font-mono text-sm overflow-x-auto mb-3">
+                    <div className="bg-gray-900 text-white p-4 rounded-xl font-mono text-sm overflow-x-auto mb-3">
                       <div className="text-gray-500">// POST /v1/payments</div>
                       <div className="text-green-400">{'{'}</div>
                       <div className="text-green-400 mr-4">"amount": 250000,</div>
@@ -671,14 +666,14 @@ export default function Developers() {
 
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-3">رموز الحالة</h3>
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="bg-surface rounded-xl p-4 border border-gray-100">
                       <ul className="space-y-2 text-sm">
                         <li className="flex items-center gap-3">
-                          <span className="font-mono text-success font-bold">200</span>
+                          <span className="font-mono text-accent-700 font-bold">200</span>
                           <span className="text-gray-700">نجح الطلب</span>
                         </li>
                         <li className="flex items-center gap-3">
-                          <span className="font-mono text-success font-bold">201</span>
+                          <span className="font-mono text-accent-700 font-bold">201</span>
                           <span className="text-gray-700">تم الإنشاء بنجاح</span>
                         </li>
                         <li className="flex items-center gap-3">
@@ -740,24 +735,24 @@ function CreateAPIKeyModal({ onClose, onCreate }: { onClose: () => void; onCreat
   };
 
   const togglePermission = (permission: string) => {
-    setPermissions(prev => 
-      prev.includes(permission) 
+    setPermissions(prev =>
+      prev.includes(permission)
         ? prev.filter(p => p !== permission)
         : [...prev, permission]
     );
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fadeIn">
-      <div className="bg-white rounded-xl max-w-lg w-full p-8 shadow-2xl animate-slideUp">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-lg w-full p-8 shadow-2xl animate-slideUp">
         <div className="flex items-start justify-between mb-6">
           <div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">إنشاء مفتاح API جديد</h3>
-            <p className="text-gray-600">قم بإنشاء مفتاح API للوصول إلى خدمات NavaPay</p>
+            <p className="text-gray-500">قم بإنشاء مفتاح API للوصول إلى خدمات NavaPay</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors"
           >
             <span className="text-2xl">×</span>
           </button>
@@ -773,7 +768,7 @@ function CreateAPIKeyModal({ onClose, onCreate }: { onClose: () => void; onCreat
               value={keyName}
               onChange={(e) => setKeyName(e.target.value)}
               placeholder="مثال: Production API Key"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-primary/10 focus:border-primary transition-colors"
             />
           </div>
 
@@ -784,10 +779,10 @@ function CreateAPIKeyModal({ onClose, onCreate }: { onClose: () => void; onCreat
             <div className="space-y-3">
               <button
                 onClick={() => togglePermission('read')}
-                className={`w-full p-4 rounded-lg border-2 text-right transition-all ${
+                className={`w-full p-4 rounded-xl border-2 text-right transition-all ${
                   permissions.includes('read')
                     ? 'border-primary bg-primary/5'
-                    : 'border-gray-200 hover:border-gray-300'
+                    : 'border-gray-100 hover:border-gray-200'
                 }`}
               >
                 <div className="flex items-start gap-3">
@@ -802,17 +797,17 @@ function CreateAPIKeyModal({ onClose, onCreate }: { onClose: () => void; onCreat
                   </div>
                   <div className="flex-1">
                     <p className="font-bold text-gray-900 mb-1">قراءة (Read)</p>
-                    <p className="text-sm text-gray-600">الوصول لقراءة البيانات فقط</p>
+                    <p className="text-sm text-gray-500">الوصول لقراءة البيانات فقط</p>
                   </div>
                 </div>
               </button>
 
               <button
                 onClick={() => togglePermission('write')}
-                className={`w-full p-4 rounded-lg border-2 text-right transition-all ${
+                className={`w-full p-4 rounded-xl border-2 text-right transition-all ${
                   permissions.includes('write')
                     ? 'border-primary bg-primary/5'
-                    : 'border-gray-200 hover:border-gray-300'
+                    : 'border-gray-100 hover:border-gray-200'
                 }`}
               >
                 <div className="flex items-start gap-3">
@@ -827,14 +822,14 @@ function CreateAPIKeyModal({ onClose, onCreate }: { onClose: () => void; onCreat
                   </div>
                   <div className="flex-1">
                     <p className="font-bold text-gray-900 mb-1">كتابة (Write)</p>
-                    <p className="text-sm text-gray-600">إنشاء وتعديل البيانات</p>
+                    <p className="text-sm text-gray-500">إنشاء وتعديل البيانات</p>
                   </div>
                 </div>
               </button>
             </div>
           </div>
 
-          <div className="bg-warning/10 border border-warning/30 rounded-lg p-4">
+          <div className="bg-warning/10 border border-warning/30 rounded-xl p-4">
             <div className="flex gap-3">
               <AlertCircle size={20} className="text-warning flex-shrink-0 mt-0.5" />
               <div>
@@ -847,7 +842,7 @@ function CreateAPIKeyModal({ onClose, onCreate }: { onClose: () => void; onCreat
           </div>
         </div>
 
-        <div className="flex gap-3 pt-4 border-t border-gray-200">
+        <div className="flex gap-3 pt-4 border-t border-gray-100">
           <Button variant="outline" onClick={onClose} fullWidth>
             إلغاء
           </Button>
@@ -900,16 +895,16 @@ function CreateWebhookModal({ onClose, onCreate }: { onClose: () => void; onCrea
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fadeIn overflow-y-auto">
-      <div className="bg-white rounded-xl max-w-2xl w-full p-8 shadow-2xl animate-slideUp my-8">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn overflow-y-auto">
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-2xl w-full p-8 shadow-2xl animate-slideUp my-8">
         <div className="flex items-start justify-between mb-6">
           <div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">إنشاء Webhook جديد</h3>
-            <p className="text-gray-600">استقبل إشعارات الأحداث في تطبيقك</p>
+            <p className="text-gray-500">استقبل إشعارات الأحداث في تطبيقك</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors"
           >
             <span className="text-2xl">×</span>
           </button>
@@ -925,7 +920,7 @@ function CreateWebhookModal({ onClose, onCreate }: { onClose: () => void; onCrea
               value={webhookName}
               onChange={(e) => setWebhookName(e.target.value)}
               placeholder="مثال: Production Webhook"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-primary/10 focus:border-primary transition-colors"
             />
           </div>
 
@@ -938,7 +933,7 @@ function CreateWebhookModal({ onClose, onCreate }: { onClose: () => void; onCrea
               value={webhookUrl}
               onChange={(e) => setWebhookUrl(e.target.value)}
               placeholder="https://example.com/api/webhooks/navapay"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors font-mono text-sm"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-primary/10 focus:border-primary transition-colors font-mono text-sm"
             />
             <p className="text-xs text-gray-500 mt-2">
               سيتم إرسال POST requests إلى هذا العنوان عند حدوث الأحداث المختارة
@@ -954,10 +949,10 @@ function CreateWebhookModal({ onClose, onCreate }: { onClose: () => void; onCrea
                 <button
                   key={event}
                   onClick={() => toggleEvent(event)}
-                  className={`p-4 rounded-lg border-2 text-right transition-all ${
+                  className={`p-4 rounded-xl border-2 text-right transition-all ${
                     selectedEvents.includes(event)
                       ? 'border-primary bg-primary/5'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-gray-100 hover:border-gray-200'
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -979,7 +974,7 @@ function CreateWebhookModal({ onClose, onCreate }: { onClose: () => void; onCrea
             </div>
           </div>
 
-          <div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
+          <div className="bg-primary/10 border border-primary/30 rounded-xl p-4">
             <div className="flex gap-3">
               <Send size={20} className="text-primary flex-shrink-0 mt-0.5" />
               <div>
@@ -992,7 +987,7 @@ function CreateWebhookModal({ onClose, onCreate }: { onClose: () => void; onCrea
           </div>
         </div>
 
-        <div className="flex gap-3 pt-4 border-t border-gray-200">
+        <div className="flex gap-3 pt-4 border-t border-gray-100">
           <Button variant="outline" onClick={onClose} fullWidth>
             إلغاء
           </Button>

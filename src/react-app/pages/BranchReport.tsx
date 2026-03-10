@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Building2, DollarSign, Award, Lock, Crown, Users, Loader2 } from 'lucide-react';
+import { Building2, DollarSign, Award, Lock, Crown, Users } from 'lucide-react';
 import Button from '@/react-app/components/Button';
+import { SkeletonDashboard } from '@/react-app/components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import { branchesService, Branch, BranchStats } from '../services';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -88,76 +89,76 @@ export default function BranchReport() {
     return (
       <MainLayout>
         <div className="animate-fadeIn">
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center max-w-3xl mx-auto mt-12">
+          <div className="glass-card p-12 text-center max-w-3xl mx-auto mt-12">
             <div className="w-20 h-20 bg-gradient-to-br from-warning to-warning-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
               <Lock size={40} className="text-white" />
             </div>
-            
+
             <h1 className="text-3xl font-bold text-gray-900 mb-3">
               تقارير الفروع - ميزة Enterprise
             </h1>
-            <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
+            <p className="text-lg text-gray-500 mb-8 max-w-xl mx-auto">
               قارن أداء فروعك المختلفة وتتبع المبيعات والإنتاجية لكل موقع
             </p>
 
-            <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl p-8 mb-8 border-2 border-primary/20">
+            <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-8 mb-8 border-2 border-primary/20">
               <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-2">
                 <Crown size={24} className="text-warning" />
                 ماذا ستحصل مع Enterprise؟
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-success text-sm">✓</span>
+                  <div className="w-6 h-6 rounded-full bg-accent-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-accent-700 text-sm">✓</span>
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">تقارير أداء الفروع</p>
-                    <p className="text-sm text-gray-600">قارن مبيعات وأداء فروعك</p>
+                    <p className="text-sm text-gray-500">قارن مبيعات وأداء فروعك</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-success text-sm">✓</span>
+                  <div className="w-6 h-6 rounded-full bg-accent-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-accent-700 text-sm">✓</span>
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">إدارة عدة فروع</p>
-                    <p className="text-sm text-gray-600">تحكم في جميع مواقعك من مكان واحد</p>
+                    <p className="text-sm text-gray-500">تحكم في جميع مواقعك من مكان واحد</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-success text-sm">✓</span>
+                  <div className="w-6 h-6 rounded-full bg-accent-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-accent-700 text-sm">✓</span>
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">تحليلات متقدمة</p>
-                    <p className="text-sm text-gray-600">رسوم بيانية ومقاييس تفصيلية</p>
+                    <p className="text-sm text-gray-500">رسوم بيانية ومقاييس تفصيلية</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-success text-sm">✓</span>
+                  <div className="w-6 h-6 rounded-full bg-accent-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-accent-700 text-sm">✓</span>
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">تعيين المديرين</p>
-                    <p className="text-sm text-gray-600">حدد مدير لكل فرع</p>
+                    <p className="text-sm text-gray-500">حدد مدير لكل فرع</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-success text-sm">✓</span>
+                  <div className="w-6 h-6 rounded-full bg-accent-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-accent-700 text-sm">✓</span>
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">تقارير الموظفين</p>
-                    <p className="text-sm text-gray-600">أداء الموظفين في كل فرع</p>
+                    <p className="text-sm text-gray-500">أداء الموظفين في كل فرع</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-success text-sm">✓</span>
+                  <div className="w-6 h-6 rounded-full bg-accent-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-accent-700 text-sm">✓</span>
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">إدارة الرواتب</p>
-                    <p className="text-sm text-gray-600">نظام متكامل لدفع رواتب الفريق</p>
+                    <p className="text-sm text-gray-500">نظام متكامل لدفع رواتب الفريق</p>
                   </div>
                 </div>
               </div>
@@ -186,9 +187,7 @@ export default function BranchReport() {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="animate-spin text-primary" size={48} />
-        </div>
+        <SkeletonDashboard />
       </MainLayout>
     );
   }
@@ -197,20 +196,20 @@ export default function BranchReport() {
     <MainLayout>
       <div className="animate-fadeIn">
         {/* Header */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-14 h-14 bg-gradient-to-br from-accent to-accent-600 rounded-xl flex items-center justify-center shadow-lg">
               <Building2 size={28} className="text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">تقارير الفروع</h1>
-              <p className="text-gray-600">تحليل أداء ومبيعات الفروع المختلفة</p>
+              <p className="text-gray-500">تحليل أداء ومبيعات الفروع المختلفة</p>
             </div>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-lg p-4 border border-accent/20">
+            <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-4 border border-accent/20">
               <div className="flex items-center gap-2 mb-2">
                 <Building2 size={20} className="text-accent" />
                 <p className="text-sm text-gray-700">إجمالي الفروع</p>
@@ -218,36 +217,36 @@ export default function BranchReport() {
               <p className="text-3xl font-bold text-accent font-numbers">
                 {branches.length}
               </p>
-              <p className="text-xs text-gray-600 mt-1">فرع نشط</p>
+              <p className="text-xs text-gray-500 mt-1">فرع نشط</p>
             </div>
 
-            <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-lg p-4 border border-success/20">
+            <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-4 border border-success/20">
               <div className="flex items-center gap-2 mb-2">
-                <DollarSign size={20} className="text-success" />
+                <DollarSign size={20} className="text-accent-700" />
                 <p className="text-sm text-gray-700">إجمالي المبيعات</p>
               </div>
-              <p className="text-3xl font-bold text-success font-numbers">
+              <p className="text-3xl font-bold text-accent-700 font-numbers">
                 {(totalSales / 1000000).toFixed(1)}M
               </p>
-              <p className="text-xs text-gray-600 mt-1">ليرة سورية</p>
+              <p className="text-xs text-gray-500 mt-1">ليرة سورية</p>
             </div>
 
-            <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+            <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-4 border border-primary/20">
               <div className="flex items-center gap-2 mb-2">
                 <Users size={20} className="text-primary" />
                 <p className="text-sm text-gray-700">إجمالي الموظفين</p>
               </div>
               <p className="text-3xl font-bold text-primary font-numbers">{totalEmployees}</p>
-              <p className="text-xs text-gray-600 mt-1">موظف</p>
+              <p className="text-xs text-gray-500 mt-1">موظف</p>
             </div>
 
-            <div className="bg-gradient-to-br from-warning/5 to-warning/10 rounded-lg p-4 border border-warning/20">
+            <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-4 border border-warning/20">
               <div className="flex items-center gap-2 mb-2">
                 <Award size={20} className="text-warning" />
                 <p className="text-sm text-gray-700">أفضل فرع</p>
               </div>
               <p className="text-lg font-bold text-warning">{topBranch?.name}</p>
-              <p className="text-xs text-gray-600 mt-1 font-numbers">
+              <p className="text-xs text-gray-500 mt-1 font-numbers">
                 {(topBranch?.sales / 1000000).toFixed(1)}M ل.س
               </p>
             </div>
@@ -256,19 +255,19 @@ export default function BranchReport() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Bar Chart */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">مبيعات الفروع</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={branchPerformance}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="name" 
+                <XAxis
+                  dataKey="name"
                   tick={{ fill: '#6b7280', fontSize: 12 }}
                   angle={-20}
                   textAnchor="end"
                   height={80}
                 />
-                <YAxis 
+                <YAxis
                   tick={{ fill: '#6b7280', fontSize: 12 }}
                   tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
                 />
@@ -287,7 +286,7 @@ export default function BranchReport() {
           </div>
 
           {/* Pie Chart */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">توزيع المبيعات</h2>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -320,30 +319,30 @@ export default function BranchReport() {
         </div>
 
         {/* Detailed Table */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
+        <div className="glass-card overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
             <h2 className="text-xl font-bold text-gray-900">تفاصيل الأداء</h2>
-            <p className="text-sm text-gray-600">مقاييس تفصيلية لكل فرع</p>
+            <p className="text-sm text-gray-500">مقاييس تفصيلية لكل فرع</p>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="border-b border-gray-100">
                 <tr>
-                  <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الترتيب</th>
-                  <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الفرع</th>
-                  <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">المبيعات</th>
-                  <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الموظفين</th>
-                  <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">المبيعات/موظف</th>
-                  <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">المساهمة</th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الترتيب</th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الفرع</th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">المبيعات</th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الموظفين</th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">المبيعات/موظف</th>
+                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">المساهمة</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-100">
                 {branchPerformance.map((branch, index) => {
                   const contribution = ((branch.sales / totalSales) * 100).toFixed(1);
-                  
+
                   return (
-                    <tr key={branch.name} className="hover:bg-gray-50 transition-colors">
+                    <tr key={branch.name} className="hover:bg-primary-50/20 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           {index === 0 && (
@@ -363,7 +362,7 @@ export default function BranchReport() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="font-bold text-success font-numbers">
+                        <span className="font-bold text-accent-700 font-numbers">
                           {branch.sales.toLocaleString()} ل.س
                         </span>
                       </td>
@@ -380,7 +379,7 @@ export default function BranchReport() {
                           <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
                             <div
                               className="h-full rounded-full transition-all"
-                              style={{ 
+                              style={{
                                 width: `${contribution}%`,
                                 backgroundColor: COLORS[index % COLORS.length]
                               }}

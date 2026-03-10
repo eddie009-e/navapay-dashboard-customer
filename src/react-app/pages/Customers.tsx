@@ -4,12 +4,31 @@ import { Users, Search, Plus, Mail, Phone, TrendingUp, DollarSign, ShoppingBag, 
 import Button from '@/react-app/components/Button';
 import AddCustomerModal from '@/react-app/components/AddCustomerModal';
 import EmptyState from '@/react-app/components/EmptyState';
+import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { useToast } from '@/react-app/contexts/ToastContext';
+import { useAuth } from '@/react-app/contexts/AuthContext';
 import { customersService, Customer, CreateCustomerDto } from '@/react-app/services';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
+
+const getSubTabs = (isEnterprise: boolean) => {
+  const tabs = [
+    { label: 'العملاء', path: '/customers' },
+  ];
+  if (isEnterprise) {
+    tabs.push(
+      { label: 'الموظفين', path: '/employees' },
+      { label: 'الفروع', path: '/branches' },
+      { label: 'الرواتب', path: '/payroll' },
+      { label: 'المطورين', path: '/developers' },
+    );
+  }
+  return tabs;
+};
 
 export default function Customers() {
   const { showToast } = useToast();
+  const { merchant } = useAuth();
+  const location = useLocation();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,6 +36,9 @@ export default function Customers() {
   const [sortBy, setSortBy] = useState<'name' | 'totalSpent' | 'lastTransaction'>('name');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const isEnterprise = merchant?.plan === 'enterprise';
+  const subTabs = getSubTabs(isEnterprise);
 
   const fetchCustomers = useCallback(async () => {
     setIsLoading(true);
@@ -92,8 +114,19 @@ export default function Customers() {
   if (isLoading && customers.length === 0) {
     return (
       <MainLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-fadeIn">
+          <div className="glass-card p-6 mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-400 rounded-xl flex items-center justify-center shadow-lg">
+                <Users size={28} className="text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">العملاء</h1>
+                <p className="text-gray-500">إدارة وتتبع عملائك</p>
+              </div>
+            </div>
+          </div>
+          <SkeletonTable rows={8} />
         </div>
       </MainLayout>
     );
@@ -103,15 +136,15 @@ export default function Customers() {
     <MainLayout>
       <div className="animate-fadeIn">
         {/* Header */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
+        <div className="glass-card p-6 mb-6">
+          <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-400 rounded-xl flex items-center justify-center shadow-lg">
                 <Users size={28} className="text-white" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">العملاء</h1>
-                <p className="text-gray-600">إدارة وتتبع عملائك</p>
+                <p className="text-gray-500">إدارة وتتبع عملائك</p>
               </div>
             </div>
             <Button leftIcon={<Plus size={20} />} onClick={() => setIsAddModalOpen(true)}>
@@ -119,46 +152,65 @@ export default function Customers() {
             </Button>
           </div>
 
+          {/* Sub-navigation tabs */}
+          {subTabs.length > 1 && (
+            <div className="flex gap-1 mb-5 bg-gray-100 p-1 rounded-xl overflow-x-auto">
+              {subTabs.map(tab => (
+                <Link
+                  key={tab.path}
+                  to={tab.path}
+                  className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+                    location.pathname === tab.path
+                      ? 'bg-white text-primary shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              ))}
+            </div>
+          )}
+
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-gradient-to-br from-primary-50 to-primary-100/50 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Users size={20} className="text-primary" />
-                <p className="text-sm text-gray-700">إجمالي العملاء</p>
+                <Users size={18} className="text-primary" />
+                <p className="text-xs text-gray-600">إجمالي العملاء</p>
               </div>
-              <p className="text-3xl font-bold text-primary font-numbers">{totalCustomers}</p>
+              <p className="text-2xl font-bold text-primary font-numbers">{totalCustomers}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-lg p-4 border border-success/20">
+            <div className="bg-gradient-to-br from-accent-50 to-accent-100/50 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
-                <DollarSign size={20} className="text-success" />
-                <p className="text-sm text-gray-700">إجمالي الإيرادات</p>
+                <DollarSign size={18} className="text-accent-700" />
+                <p className="text-xs text-gray-600">إجمالي الإيرادات</p>
               </div>
-              <p className="text-2xl font-bold text-success font-numbers">{formatCurrency(totalRevenue)}</p>
+              <p className="text-xl font-bold text-accent-700 font-numbers">{formatCurrency(totalRevenue)}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-lg p-4 border border-accent/20">
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
-                <ShoppingBag size={20} className="text-accent" />
-                <p className="text-sm text-gray-700">متوسط الإنفاق</p>
+                <ShoppingBag size={18} className="text-orange-600" />
+                <p className="text-xs text-gray-600">متوسط الإنفاق</p>
               </div>
-              <p className="text-2xl font-bold text-accent font-numbers">{formatCurrency(averageSpent)}</p>
+              <p className="text-xl font-bold text-orange-600 font-numbers">{formatCurrency(averageSpent)}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-lg p-4 border border-secondary/20">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
-                <TrendingUp size={20} className="text-secondary" />
-                <p className="text-sm text-gray-700">أفضل عميل</p>
+                <TrendingUp size={18} className="text-purple-600" />
+                <p className="text-xs text-gray-600">أفضل عميل</p>
               </div>
-              <p className="text-lg font-bold text-secondary truncate">{topCustomer?.name || '-'}</p>
-              <p className="text-sm text-gray-600 font-numbers">{topCustomer ? formatCurrency(topCustomer.totalSpent) : '-'}</p>
+              <p className="text-sm font-bold text-purple-600 truncate">{topCustomer?.name || '-'}</p>
+              <p className="text-xs text-gray-500 font-numbers">{topCustomer ? formatCurrency(topCustomer.totalSpent) : '-'}</p>
             </div>
           </div>
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="glass-card p-4 md:p-6 mb-6">
+          <div className="flex flex-col md:flex-row gap-3">
             {/* Search */}
             <div className="flex-1 relative">
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -167,7 +219,7 @@ export default function Customers() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث بالاسم، الجوال، أو البريد الإلكتروني..."
-                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 transition-all"
               />
             </div>
 
@@ -176,7 +228,7 @@ export default function Customers() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'name' | 'totalSpent' | 'lastTransaction')}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 transition-all"
               >
                 <option value="name">الترتيب: الاسم</option>
                 <option value="totalSpent">الترتيب: الإنفاق</option>
@@ -187,7 +239,7 @@ export default function Customers() {
         </div>
 
         {/* Customers List */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden animate-slideUp">
+        <div className="glass-card overflow-hidden animate-slideUp">
           {customers.length === 0 ? (
             searchQuery ? (
               <EmptyState
@@ -208,22 +260,22 @@ export default function Customers() {
             <>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">العميل</th>
-                      <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">معلومات الاتصال</th>
-                      <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">إجمالي الإنفاق</th>
-                      <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">العمليات</th>
-                      <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">آخر تعامل</th>
-                      <th className="px-6 py-4 text-right text-sm font-medium text-gray-700"></th>
+                  <thead>
+                    <tr className="border-b border-gray-100">
+                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">العميل</th>
+                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">معلومات الاتصال</th>
+                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">إجمالي الإنفاق</th>
+                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">العمليات</th>
+                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">آخر تعامل</th>
+                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-50">
                     {customers.map((customer) => (
-                      <tr key={customer.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={customer.id} className="hover:bg-primary-50/20 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="w-10 h-10 bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl flex items-center justify-center flex-shrink-0">
                               <span className="text-primary font-bold text-lg">
                                 {customer.name.charAt(0)}
                               </span>
@@ -235,12 +287,12 @@ export default function Customers() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="space-y-1">
-                            <div className="flex items-center gap-2 text-sm text-gray-700">
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
                               <Phone size={14} />
                               <span className="font-numbers">{customer.phone}</span>
                             </div>
                             {customer.email && (
-                              <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <div className="flex items-center gap-2 text-sm text-gray-500">
                                 <Mail size={14} />
                                 <span>{customer.email}</span>
                               </div>
@@ -256,7 +308,7 @@ export default function Customers() {
                           <p className="text-gray-900 font-numbers">{customer.transactionsCount}</p>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="text-sm text-gray-600">{formatDate(customer.lastTransactionAt)}</p>
+                          <p className="text-sm text-gray-500">{formatDate(customer.lastTransactionAt)}</p>
                         </td>
                         <td className="px-6 py-4">
                           <Link
@@ -275,7 +327,7 @@ export default function Customers() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 p-4 border-t border-gray-200">
+                <div className="flex items-center justify-center gap-2 p-4 border-t border-gray-100">
                   <Button
                     variant="outline"
                     size="sm"
@@ -284,7 +336,7 @@ export default function Customers() {
                   >
                     السابق
                   </Button>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-500">
                     صفحة {page} من {totalPages}
                   </span>
                   <Button

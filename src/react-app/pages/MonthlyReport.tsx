@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Calendar, TrendingUp, TrendingDown, Download, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Calendar, TrendingUp, TrendingDown, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import Button from '@/react-app/components/Button';
+import { SkeletonDashboard } from '@/react-app/components/LoadingSpinner';
 import { reportsService, MonthlyReport as MonthlyReportData } from '../services';
 
 export default function MonthlyReport() {
@@ -89,7 +90,7 @@ export default function MonthlyReport() {
     <MainLayout>
       <div className="animate-fadeIn">
         {/* Header */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-br from-accent to-accent/80 rounded-xl flex items-center justify-center shadow-lg">
@@ -97,19 +98,19 @@ export default function MonthlyReport() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">التقرير الشهري</h1>
-                <p className="text-gray-600">{monthName}</p>
+                <p className="text-gray-500">{monthName}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={goToPreviousMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors"
               >
                 <ChevronRight size={24} />
               </button>
               <button
                 onClick={() => setSelectedMonth(new Date())}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-4 py-2 rounded-xl font-medium transition-colors ${
                   isCurrentMonth ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -118,7 +119,7 @@ export default function MonthlyReport() {
               <button
                 onClick={goToNextMonth}
                 disabled={isCurrentMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={24} />
               </button>
@@ -145,19 +146,17 @@ export default function MonthlyReport() {
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="animate-spin text-primary" size={48} />
-          </div>
+          <SkeletonDashboard />
         ) : (
           <>
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-primary to-primary-600 rounded-xl p-6 text-white shadow-lg">
+          <div className="bg-gradient-to-br from-primary to-primary-400 rounded-xl p-6 text-white shadow-lg">
             <p className="text-white/80 text-sm mb-2">إجمالي المبيعات</p>
             <p className="text-3xl font-bold font-numbers mb-2">{formatCurrency(monthlyStats.totalSales)}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-success to-success/80 rounded-xl p-6 text-white shadow-lg">
+          <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-6 text-white shadow-lg">
             <p className="text-white/80 text-sm mb-2">متوسط المبيعات اليومية</p>
             <p className="text-3xl font-bold font-numbers mb-2">{formatCurrency(monthlyStats.averageDaily)}</p>
           </div>
@@ -184,7 +183,7 @@ export default function MonthlyReport() {
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Daily Sales Trend */}
-          <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="lg:col-span-2 glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">المبيعات اليومية</h2>
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={dailyData}>
@@ -206,20 +205,20 @@ export default function MonthlyReport() {
                     direction: 'rtl'
                   }}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="sales" 
-                  stroke="#1E3A5F" 
+                <Area
+                  type="monotone"
+                  dataKey="sales"
+                  stroke="#1E3A5F"
                   strokeWidth={2}
-                  fillOpacity={1} 
-                  fill="url(#colorSales)" 
+                  fillOpacity={1}
+                  fill="url(#colorSales)"
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
 
           {/* Weekly Comparison */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">مقارنة الأسابيع</h2>
             <div className="space-y-4">
               {weeklyData.map((week) => {
@@ -233,7 +232,7 @@ export default function MonthlyReport() {
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div 
+                      <div
                         className="bg-primary h-2.5 rounded-full transition-all"
                         style={{ width: `${percentage}%` }}
                       />
@@ -248,7 +247,7 @@ export default function MonthlyReport() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Category Breakdown */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">المبيعات حسب الفئة</h2>
             <div className="space-y-4">
               {categoryBreakdown.map((category, index) => (
@@ -263,7 +262,7 @@ export default function MonthlyReport() {
                     </div>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div 
+                    <div
                       className={`h-2.5 rounded-full transition-all ${
                         index === 0 ? 'bg-primary' :
                         index === 1 ? 'bg-success' :
@@ -278,7 +277,7 @@ export default function MonthlyReport() {
           </div>
 
           {/* Comparison with Last Month */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">مقارنة مع الشهر الماضي</h2>
             <div className="space-y-6">
               {comparisonData.map((item) => {
@@ -287,12 +286,12 @@ export default function MonthlyReport() {
                 const isPositive = change > 0;
 
                 return (
-                  <div key={item.metric} className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600 mb-2">{item.metric}</p>
+                  <div key={item.metric} className="p-4 bg-surface rounded-xl">
+                    <p className="text-sm text-gray-500 mb-2">{item.metric}</p>
                     <div className="flex items-end justify-between">
                       <div>
                         <p className="text-2xl font-bold text-gray-900 font-numbers mb-1">
-                          {typeof item.current === 'number' && item.current > 1000 
+                          {typeof item.current === 'number' && item.current > 1000
                             ? formatCurrency(item.current)
                             : item.current}
                         </p>
@@ -302,8 +301,8 @@ export default function MonthlyReport() {
                             : item.previous}
                         </p>
                       </div>
-                      <div className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
-                        isPositive ? 'bg-success/10 text-success' : 'bg-error/10 text-error'
+                      <div className={`flex items-center gap-1 px-3 py-1.5 rounded-xl ${
+                        isPositive ? 'bg-accent-50 text-accent-700' : 'bg-error/10 text-error'
                       }`}>
                         {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                         <span className="font-bold text-sm">{isPositive ? '+' : ''}{changePercentage}%</span>

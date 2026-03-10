@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Calendar, TrendingUp, DollarSign, Receipt, RefreshCw, Download, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Calendar, TrendingUp, DollarSign, Receipt, RefreshCw, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Button from '@/react-app/components/Button';
+import { SkeletonDashboard } from '@/react-app/components/LoadingSpinner';
 import { reportsService, DailyReport as DailyReportData } from '../services';
 
 export default function DailyReport() {
@@ -76,7 +77,7 @@ export default function DailyReport() {
     <MainLayout>
       <div className="animate-fadeIn">
         {/* Header */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-br from-secondary to-secondary/80 rounded-xl flex items-center justify-center shadow-lg">
@@ -84,12 +85,12 @@ export default function DailyReport() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">التقرير اليومي</h1>
-                <p className="text-gray-600">
-                  {selectedDate.toLocaleDateString('ar-SY', { 
+                <p className="text-gray-500">
+                  {selectedDate.toLocaleDateString('ar-SY', {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
-                    day: 'numeric' 
+                    day: 'numeric'
                   })}
                 </p>
               </div>
@@ -97,13 +98,13 @@ export default function DailyReport() {
             <div className="flex items-center gap-2">
               <button
                 onClick={goToPreviousDay}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors"
               >
                 <ChevronRight size={24} />
               </button>
               <button
                 onClick={() => setSelectedDate(new Date())}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-4 py-2 rounded-xl font-medium transition-colors ${
                   isToday ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -112,7 +113,7 @@ export default function DailyReport() {
               <button
                 onClick={goToNextDay}
                 disabled={isToday}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={24} />
               </button>
@@ -140,14 +141,12 @@ export default function DailyReport() {
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="animate-spin text-primary" size={48} />
-          </div>
+          <SkeletonDashboard />
         ) : (
           <>
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-primary to-primary-600 rounded-xl p-6 text-white shadow-lg">
+          <div className="bg-gradient-to-br from-primary to-primary-400 rounded-xl p-6 text-white shadow-lg">
             <div className="flex items-center justify-between mb-2">
               <p className="text-white/80 text-sm">إجمالي المبيعات</p>
               <DollarSign size={24} className="text-white/80" />
@@ -155,33 +154,33 @@ export default function DailyReport() {
             <p className="text-3xl font-bold font-numbers mb-2">{formatCurrency(dailyStats.sales)}</p>
           </div>
 
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-gray-600 text-sm">صافي الإيرادات</p>
-              <TrendingUp size={24} className="text-success" />
+              <p className="text-gray-500 text-sm">صافي الإيرادات</p>
+              <TrendingUp size={24} className="text-accent-700" />
             </div>
             <p className="text-3xl font-bold text-gray-900 font-numbers mb-2">
               {formatCurrency(dailyStats.netRevenue)}
             </p>
-            <p className="text-sm text-gray-600">بعد الاسترجاعات</p>
+            <p className="text-sm text-gray-500">بعد الاسترجاعات</p>
           </div>
 
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-gray-600 text-sm">عدد العمليات</p>
+              <p className="text-gray-500 text-sm">عدد العمليات</p>
               <Receipt size={24} className="text-accent" />
             </div>
             <p className="text-3xl font-bold text-gray-900 font-numbers mb-2">
               {dailyStats.transactions}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-500">
               متوسط {formatCurrency(dailyStats.averageTransaction)}
             </p>
           </div>
 
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-gray-600 text-sm">الاسترجاعات</p>
+              <p className="text-gray-500 text-sm">الاسترجاعات</p>
               <RefreshCw size={24} className="text-error" />
             </div>
             <p className="text-3xl font-bold text-error font-numbers mb-2">
@@ -192,7 +191,7 @@ export default function DailyReport() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Hourly Sales Chart */}
-          <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="lg:col-span-2 glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">المبيعات حسب الساعة</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={hourlyData}>
@@ -214,7 +213,7 @@ export default function DailyReport() {
           </div>
 
           {/* Payment Methods */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">طرق الدفع</h2>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
@@ -256,17 +255,17 @@ export default function DailyReport() {
         {/* Top Products and Additional Stats */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Products */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">المنتجات الأكثر مبيعاً</h2>
             <div className="space-y-4">
               {topProducts.map((product, index) => (
                 <div key={product.name} className="flex items-center gap-4">
-                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <span className="font-bold text-primary">{index + 1}</span>
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{product.name}</p>
-                    <p className="text-sm text-gray-600">{product.quantity} وحدات</p>
+                    <p className="text-sm text-gray-500">{product.quantity} وحدات</p>
                   </div>
                   <p className="font-bold text-gray-900 font-numbers">
                     {formatCurrency(product.sales)}
@@ -277,10 +276,10 @@ export default function DailyReport() {
           </div>
 
           {/* Additional Metrics */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">معلومات إضافية</h2>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-error/5 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-error/5 rounded-xl">
                 <div className="flex items-center gap-3">
                   <RefreshCw size={20} className="text-error" />
                   <span className="font-medium text-gray-900">الاسترجاعات</span>
@@ -290,24 +289,24 @@ export default function DailyReport() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
                 <span className="font-medium text-gray-900">ساعات الذروة</span>
                 <p className="font-bold text-gray-900">12:00 - 14:00</p>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
                 <span className="font-medium text-gray-900">أول عملية</span>
                 <p className="font-bold text-gray-900">08:15 صباحاً</p>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
                 <span className="font-medium text-gray-900">آخر عملية</span>
                 <p className="font-bold text-gray-900">21:45 مساءً</p>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-success/5 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-accent-50 rounded-xl">
                 <span className="font-medium text-gray-900">أكبر عملية</span>
-                <p className="font-bold text-success font-numbers">
+                <p className="font-bold text-accent-700 font-numbers">
                   {formatCurrency(125000)}
                 </p>
               </div>

@@ -81,20 +81,25 @@ export default function LoginPin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-900 via-primary to-primary-400 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Decorative shapes */}
+      <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-white/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-15%] left-[-10%] w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl" />
+      <div className="absolute top-[40%] left-[20%] w-[200px] h-[200px] bg-white/5 rounded-full blur-2xl" />
+
       <BackButton to="/login" label="تسجيل الدخول" />
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md relative z-10">
         {/* Logo and Header */}
         <div className="text-center mb-8 animate-fadeIn">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-primary rounded-2xl mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-xl rounded-2xl mb-4 shadow-glass-lg border border-white/20">
             <span className="text-3xl font-bold text-white">NP</span>
           </div>
-          <h1 className="text-3xl font-bold text-primary mb-2">دخول الموظف</h1>
-          <p className="text-gray-600">أدخل رمز المتجر ورمز PIN الخاص بك</p>
+          <h1 className="text-3xl font-bold text-white mb-2">دخول الموظف</h1>
+          <p className="text-white/60">أدخل رمز المتجر ورمز PIN الخاص بك</p>
         </div>
 
         {/* PIN Login Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 animate-slideUp">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 animate-slideUp border border-white/30">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Store Code */}
             <Input
@@ -134,7 +139,7 @@ export default function LoginPin() {
                     value={digit}
                     onChange={(e) => handlePinChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 transition-all"
+                    className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-gray-50/50"
                   />
                 ))}
               </div>
@@ -142,7 +147,7 @@ export default function LoginPin() {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-error/10 border border-error rounded-lg p-3 text-error text-sm">
+              <div className="bg-error/5 border border-error/20 rounded-xl p-3 text-error text-sm">
                 {error}
               </div>
             )}
@@ -172,8 +177,8 @@ export default function LoginPin() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-500 mt-6">
-          مدعوم بتقنية NavaPay © 2026
+        <p className="text-center text-sm text-white/40 mt-6">
+          مدعوم بتقنية NavaPay &copy; 2026
         </p>
       </div>
     </div>

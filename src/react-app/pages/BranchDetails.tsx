@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Building2, MapPin, Phone, User, Users, DollarSign, ShoppingBag, TrendingUp, Edit, ChevronLeft, Calendar, Loader2 } from 'lucide-react';
+import { Building2, MapPin, Phone, User, Users, DollarSign, ShoppingBag, TrendingUp, Edit, ChevronLeft, Calendar } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
+import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { branchesService, employeesService, transactionsService, Branch, BranchStats, Employee, Transaction } from '../services';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -47,8 +48,8 @@ export default function BranchDetails() {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="animate-spin text-primary" size={48} />
+        <div className="py-6">
+          <SkeletonTable rows={8} />
         </div>
       </MainLayout>
     );
@@ -59,7 +60,7 @@ export default function BranchDetails() {
       <MainLayout>
         <div className="text-center py-16">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">الفرع غير موجود</h2>
-          <p className="text-gray-600 mb-6">لم يتم العثور على هذا الفرع</p>
+          <p className="text-gray-500 mb-6">لم يتم العثور على هذا الفرع</p>
           <Link to="/branches">
             <Button>العودة للفروع</Button>
           </Link>
@@ -131,7 +132,7 @@ export default function BranchDetails() {
         {/* Header */}
         <div className="mb-6">
 
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center gap-4">
                 <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0 ${
@@ -141,7 +142,7 @@ export default function BranchDetails() {
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900 mb-1">{branch.name}</h1>
-                  <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-2">
+                  <div className="flex flex-wrap items-center gap-4 text-gray-500 mb-2">
                     <div className="flex items-center gap-2">
                       <MapPin size={16} />
                       <span>{branch.address}</span>
@@ -173,7 +174,7 @@ export default function BranchDetails() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+              <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
                 <div className="flex items-center gap-2 mb-2">
                   <Users size={20} className="text-primary" />
                   <p className="text-sm text-gray-700">عدد الموظفين</p>
@@ -181,17 +182,17 @@ export default function BranchDetails() {
                 <p className="text-3xl font-bold text-primary font-numbers">{branchStats?.employeesCount || branch.employeesCount}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-lg p-4 border border-success/20">
+              <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-xl p-4 border border-success/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <DollarSign size={20} className="text-success" />
+                  <DollarSign size={20} className="text-accent-700" />
                   <p className="text-sm text-gray-700">المبيعات الشهرية</p>
                 </div>
-                <p className="text-2xl font-bold text-success font-numbers">
+                <p className="text-2xl font-bold text-accent-700 font-numbers">
                   {formatCurrency(branchStats?.monthSales || 0)}
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-lg p-4 border border-accent/20">
+              <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-4 border border-accent/20">
                 <div className="flex items-center gap-2 mb-2">
                   <ShoppingBag size={20} className="text-accent" />
                   <p className="text-sm text-gray-700">عدد العمليات</p>
@@ -199,7 +200,7 @@ export default function BranchDetails() {
                 <p className="text-3xl font-bold text-accent font-numbers">{branchStats?.monthTransactions || totalTransactions}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-lg p-4 border border-secondary/20">
+              <div className="bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-xl p-4 border border-secondary/20">
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp size={20} className="text-secondary" />
                   <p className="text-sm text-gray-700">متوسط العملية</p>
@@ -213,16 +214,16 @@ export default function BranchDetails() {
         </div>
 
         {/* Sales Chart */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-bold text-gray-900">تقرير المبيعات</h2>
-              <p className="text-sm text-gray-600">أداء الفرع خلال الفترة المحددة</p>
+              <p className="text-sm text-gray-500">أداء الفرع خلال الفترة المحددة</p>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setPeriodFilter('week')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
                   periodFilter === 'week'
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -232,7 +233,7 @@ export default function BranchDetails() {
               </button>
               <button
                 onClick={() => setPeriodFilter('month')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
                   periodFilter === 'month'
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -242,7 +243,7 @@ export default function BranchDetails() {
               </button>
               <button
                 onClick={() => setPeriodFilter('year')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
                   periodFilter === 'year'
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -264,7 +265,7 @@ export default function BranchDetails() {
                   contentStyle={{
                     backgroundColor: 'white',
                     border: '1px solid #e5e7eb',
-                    borderRadius: '0.5rem'
+                    borderRadius: '0.75rem'
                   }}
                 />
                 <Bar dataKey="amount" fill="#4F46E5" radius={[8, 8, 0, 0]} />
@@ -273,21 +274,21 @@ export default function BranchDetails() {
           </div>
 
           {/* Summary Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-200">
-            <div className="text-center p-4 bg-success/5 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">إجمالي المبيعات</p>
-              <p className="text-2xl font-bold text-success font-numbers">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
+            <div className="text-center p-4 bg-success/5 rounded-xl">
+              <p className="text-sm text-gray-500 mb-1">إجمالي المبيعات</p>
+              <p className="text-2xl font-bold text-accent-700 font-numbers">
                 {formatCurrency(totalSales)}
               </p>
             </div>
-            <div className="text-center p-4 bg-error/5 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">إجمالي الاسترجاعات</p>
+            <div className="text-center p-4 bg-error/5 rounded-xl">
+              <p className="text-sm text-gray-500 mb-1">إجمالي الاسترجاعات</p>
               <p className="text-2xl font-bold text-error font-numbers">
                 {formatCurrency(totalRefunds)}
               </p>
             </div>
-            <div className="text-center p-4 bg-primary/5 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">صافي المبيعات</p>
+            <div className="text-center p-4 bg-primary/5 rounded-xl">
+              <p className="text-sm text-gray-500 mb-1">صافي المبيعات</p>
               <p className="text-2xl font-bold text-primary font-numbers">
                 {formatCurrency(totalSales - totalRefunds)}
               </p>
@@ -297,16 +298,16 @@ export default function BranchDetails() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Top Performers */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div className="p-6 border-b border-gray-200">
+          <div className="glass-card">
+            <div className="p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-gray-900">أفضل الموظفين</h2>
-              <p className="text-sm text-gray-600">الموظفون الأكثر مبيعاً هذا الشهر</p>
+              <p className="text-sm text-gray-500">الموظفون الأكثر مبيعاً هذا الشهر</p>
             </div>
             <div className="p-6">
               {employeesWithSales.length === 0 ? (
                 <div className="text-center py-8">
                   <Users size={48} className="mx-auto text-gray-300 mb-3" />
-                  <p className="text-gray-600">لا يوجد موظفين في هذا الفرع</p>
+                  <p className="text-gray-500">لا يوجد موظفين في هذا الفرع</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -316,9 +317,9 @@ export default function BranchDetails() {
                     .map((emp, index) => (
                       <div
                         key={emp.id}
-                        className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="flex items-center gap-4 p-3 bg-surface rounded-xl hover:bg-primary-50/20 transition-colors"
                       >
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold ${
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 font-bold ${
                           index === 0 ? 'bg-primary text-white' :
                           index === 1 ? 'bg-accent text-white' :
                           index === 2 ? 'bg-secondary text-white' :
@@ -328,12 +329,12 @@ export default function BranchDetails() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-gray-900 truncate">{emp.name}</p>
-                          <p className="text-sm text-gray-600 font-numbers">
+                          <p className="text-sm text-gray-500 font-numbers">
                             {emp.transactionsCount || 0} عملية
                           </p>
                         </div>
                         <div className="text-left">
-                          <p className="font-bold text-success font-numbers">
+                          <p className="font-bold text-accent-700 font-numbers">
                             {formatCurrency(emp.totalSales || 0)}
                           </p>
                         </div>
@@ -345,62 +346,62 @@ export default function BranchDetails() {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div className="p-6 border-b border-gray-200">
+          <div className="glass-card">
+            <div className="p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-gray-900">إحصائيات سريعة</h2>
-              <p className="text-sm text-gray-600">ملخص أداء الفرع</p>
+              <p className="text-sm text-gray-500">ملخص أداء الفرع</p>
             </div>
             <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl flex items-center justify-center">
                     <Calendar size={20} className="text-primary" />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">عدد أيام العمل</p>
-                    <p className="text-sm text-gray-600">هذا الشهر</p>
+                    <p className="text-sm text-gray-500">هذا الشهر</p>
                   </div>
                 </div>
                 <p className="text-2xl font-bold text-primary font-numbers">20</p>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
-                    <DollarSign size={20} className="text-success" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl flex items-center justify-center">
+                    <DollarSign size={20} className="text-accent-700" />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">متوسط المبيعات اليومية</p>
-                    <p className="text-sm text-gray-600">هذا الشهر</p>
+                    <p className="text-sm text-gray-500">هذا الشهر</p>
                   </div>
                 </div>
-                <p className="text-xl font-bold text-success font-numbers">
+                <p className="text-xl font-bold text-accent-700 font-numbers">
                   {formatCurrency((branchStats?.monthSales || 0) / 20)}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-surface rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl flex items-center justify-center">
                     <TrendingUp size={20} className="text-accent" />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">النمو مقارنة بالشهر الماضي</p>
-                    <p className="text-sm text-gray-600">معدل التحسن</p>
+                    <p className="text-sm text-gray-500">معدل التحسن</p>
                   </div>
                 </div>
                 <p className="text-2xl font-bold text-accent font-numbers">+12%</p>
               </div>
 
               {topEmployee && (
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/20">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
                       <User size={20} className="text-white" />
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">موظف الشهر</p>
-                      <p className="text-sm text-gray-600">{topEmployee.name}</p>
+                      <p className="text-sm text-gray-500">{topEmployee.name}</p>
                     </div>
                   </div>
                   <p className="text-xl font-bold text-primary font-numbers">
@@ -413,11 +414,11 @@ export default function BranchDetails() {
         </div>
 
         {/* Employees List */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="glass-card mb-6">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-gray-900">قائمة الموظفين</h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-500">
                 <span className="font-bold font-numbers">{employeesWithSales.length}</span> موظف
               </p>
             </div>
@@ -432,24 +433,24 @@ export default function BranchDetails() {
             <div className="text-center py-16">
               <Users size={64} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-2">لا يوجد موظفين</h3>
-              <p className="text-gray-600 mb-6">لم يتم تعيين موظفين لهذا الفرع بعد</p>
+              <p className="text-gray-500 mb-6">لم يتم تعيين موظفين لهذا الفرع بعد</p>
               <Link to="/employees">
                 <Button>إضافة موظف</Button>
               </Link>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-100">
               {employeesWithSales.map((employee) => (
-                <div key={employee.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                <div key={employee.id} className="p-6 flex items-center justify-between hover:bg-primary-50/20 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl flex items-center justify-center">
                       <span className="text-primary font-bold text-lg">
                         {employee.name.charAt(0)}
                       </span>
                     </div>
                     <div>
                       <p className="font-bold text-gray-900">{employee.name}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-500">
                         {employee.role === 'admin' ? 'مدير' :
                          employee.role === 'manager' ? 'مشرف' :
                          employee.role === 'cashier' ? 'كاشير' :
@@ -459,14 +460,14 @@ export default function BranchDetails() {
                   </div>
                   <div className="flex items-center gap-6">
                     <div className="text-left">
-                      <p className="text-sm text-gray-600">العمليات</p>
+                      <p className="text-sm text-gray-500">العمليات</p>
                       <p className="font-bold text-gray-900 font-numbers">
                         {employee.transactionsCount || 0}
                       </p>
                     </div>
                     <div className="text-left">
-                      <p className="text-sm text-gray-600">المبيعات</p>
-                      <p className="font-bold text-success font-numbers">
+                      <p className="text-sm text-gray-500">المبيعات</p>
+                      <p className="font-bold text-accent-700 font-numbers">
                         {formatCurrency(employee.totalSales || 0)}
                       </p>
                     </div>
@@ -483,10 +484,10 @@ export default function BranchDetails() {
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
+        <div className="glass-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="text-xl font-bold text-gray-900">العمليات الأخيرة</h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-500">
               آخر <span className="font-bold font-numbers">{Math.min(branchTransactions.length, 10)}</span> عملية
             </p>
           </div>
@@ -495,34 +496,34 @@ export default function BranchDetails() {
             <div className="text-center py-16">
               <ShoppingBag size={64} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-2">لا توجد عمليات</h3>
-              <p className="text-gray-600">لم يتم تسجيل أي عمليات في هذا الفرع بعد</p>
+              <p className="text-gray-500">لم يتم تسجيل أي عمليات في هذا الفرع بعد</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="border-b border-gray-100">
                   <tr>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">رقم العملية</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">العميل</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الموظف</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">النوع</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">المبلغ</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">التاريخ</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">رقم العملية</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">العميل</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الموظف</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">النوع</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">المبلغ</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">التاريخ</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {branchTransactions.slice(0, 10).map((transaction) => {
                     const { date, time } = formatDateTime(transaction.createdAt);
-                    
+
                     return (
-                      <tr key={transaction.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={transaction.id} className="hover:bg-primary-50/20 transition-colors">
                         <td className="px-6 py-4">
                           <span className="font-mono text-sm text-gray-900">{transaction.id}</span>
                         </td>
                         <td className="px-6 py-4">
                           <div>
                             <p className="font-medium text-gray-900">{transaction.customerName}</p>
-                            <p className="text-sm text-gray-600 font-numbers">{transaction.customerPhone}</p>
+                            <p className="text-sm text-gray-500 font-numbers">{transaction.customerPhone}</p>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -530,14 +531,14 @@ export default function BranchDetails() {
                         </td>
                         <td className="px-6 py-4">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            transaction.type === 'payment' ? 'bg-success/10 text-success' : 'bg-error/10 text-error'
+                            transaction.type === 'payment' ? 'bg-accent-50 text-accent-700' : 'bg-error/10 text-error'
                           }`}>
                             {transaction.type === 'payment' ? 'دفع' : 'استرجاع'}
                           </span>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`font-bold font-numbers ${
-                            transaction.type === 'payment' ? 'text-success' : 'text-error'
+                            transaction.type === 'payment' ? 'text-accent-700' : 'text-error'
                           }`}>
                             {formatCurrency(transaction.amount)}
                           </span>
@@ -545,7 +546,7 @@ export default function BranchDetails() {
                         <td className="px-6 py-4">
                           <div className="text-sm">
                             <p className="text-gray-900">{date}</p>
-                            <p className="text-gray-600 font-numbers">{time}</p>
+                            <p className="text-gray-500 font-numbers">{time}</p>
                           </div>
                         </td>
                       </tr>

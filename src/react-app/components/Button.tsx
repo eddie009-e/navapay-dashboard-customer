@@ -21,19 +21,19 @@ export default function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
-  
+  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
+
   const variantClasses = {
-    primary: 'bg-primary text-white hover:bg-primary-600 focus:ring-primary-500 disabled:bg-gray-300 disabled:cursor-not-allowed',
+    primary: 'bg-gradient-to-l from-primary to-primary-400 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 focus:ring-primary-500 disabled:from-gray-300 disabled:to-gray-300 disabled:shadow-none disabled:cursor-not-allowed disabled:hover:translate-y-0',
     secondary: 'bg-secondary text-white hover:bg-secondary-600 focus:ring-secondary-500 disabled:bg-gray-300 disabled:cursor-not-allowed',
-    outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary-500 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed',
+    outline: 'border border-primary text-primary hover:bg-primary-50 hover:shadow-md focus:ring-primary-500 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed disabled:hover:shadow-none',
     ghost: 'text-primary hover:bg-primary-50 focus:ring-primary-500 disabled:text-gray-400 disabled:cursor-not-allowed',
-    danger: 'bg-error text-white hover:bg-red-700 focus:ring-error disabled:bg-gray-300 disabled:cursor-not-allowed',
+    danger: 'bg-error text-white hover:bg-red-600 shadow-md hover:shadow-lg focus:ring-error disabled:bg-gray-300 disabled:cursor-not-allowed',
   };
 
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
+    md: 'px-5 py-2.5 text-base',
     lg: 'px-6 py-3 text-lg',
   };
 

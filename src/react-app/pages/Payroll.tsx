@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Users, Plus, Search, TrendingUp, DollarSign, CheckCircle, AlertCircle, Crown, ChevronLeft, Loader2 } from 'lucide-react';
+import { Users, Plus, Search, TrendingUp, DollarSign, CheckCircle, AlertCircle, Crown, ChevronLeft } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import CreateBulkTransferModal from '@/react-app/components/CreateBulkTransferModal';
+import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import { payrollService, BulkTransfer, BulkTransferStats } from '../services';
 import { Link } from 'react-router';
@@ -91,26 +92,26 @@ export default function Payroll() {
             <Crown size={40} className="text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">ميزة مخصصة للباقة Enterprise</h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-gray-500 mb-8">
             نظام الرواتب والدفعات الجماعية متاح فقط في الباقة Enterprise. قم بالترقية للاستفادة من هذه الميزة.
           </p>
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-8">
+          <div className="glass-card p-6 mb-8">
             <h3 className="font-bold text-gray-900 mb-4">ما الذي ستحصل عليه؟</h3>
             <ul className="text-right space-y-3 text-gray-700">
               <li className="flex items-start gap-3">
-                <span className="text-success text-xl">✓</span>
+                <span className="text-accent-700 text-xl">✓</span>
                 <span>إرسال رواتب الموظفين دفعة واحدة</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-success text-xl">✓</span>
+                <span className="text-accent-700 text-xl">✓</span>
                 <span>دفع الموردين والمقاولين بسهولة</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-success text-xl">✓</span>
+                <span className="text-accent-700 text-xl">✓</span>
                 <span>معالجة استرجاعات متعددة في آن واحد</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-success text-xl">✓</span>
+                <span className="text-accent-700 text-xl">✓</span>
                 <span>تتبع حالة كل دفعة وتقارير مفصلة</span>
               </li>
             </ul>
@@ -152,7 +153,7 @@ export default function Payroll() {
       pending: { text: 'قيد الانتظار', class: 'bg-warning/10 text-warning', icon: <AlertCircle size={14} /> },
       approved: { text: 'تمت الموافقة', class: 'bg-info/10 text-info', icon: <CheckCircle size={14} /> },
       processing: { text: 'قيد المعالجة', class: 'bg-primary/10 text-primary', icon: null },
-      completed: { text: 'مكتملة', class: 'bg-success/10 text-success', icon: <CheckCircle size={14} /> },
+      completed: { text: 'مكتملة', class: 'bg-accent-50 text-accent-700', icon: <CheckCircle size={14} /> },
       partial_failed: { text: 'مكتملة جزئياً', class: 'bg-error/10 text-error', icon: <AlertCircle size={14} /> }
     };
     return badges[status];
@@ -162,7 +163,7 @@ export default function Payroll() {
     <MainLayout>
       <div className="animate-fadeIn">
         {/* Header */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -170,7 +171,7 @@ export default function Payroll() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">الرواتب والدفعات الجماعية</h1>
-                <p className="text-gray-600">إدارة دفعات الموظفين والموردين</p>
+                <p className="text-gray-500">إدارة دفعات الموظفين والموردين</p>
               </div>
             </div>
             <Button leftIcon={<Plus size={20} />} onClick={() => setIsCreateModalOpen(true)}>
@@ -180,7 +181,7 @@ export default function Payroll() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+            <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
               <div className="flex items-center gap-2 mb-2">
                 <Users size={20} className="text-primary" />
                 <p className="text-sm text-gray-700">إجمالي الدفعات</p>
@@ -188,15 +189,15 @@ export default function Payroll() {
               <p className="text-3xl font-bold text-primary font-numbers">{totalTransfers}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-lg p-4 border border-success/20">
+            <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-xl p-4 border border-success/20">
               <div className="flex items-center gap-2 mb-2">
-                <CheckCircle size={20} className="text-success" />
+                <CheckCircle size={20} className="text-accent-700" />
                 <p className="text-sm text-gray-700">الدفعات المكتملة</p>
               </div>
-              <p className="text-3xl font-bold text-success font-numbers">{completedTransfers}</p>
+              <p className="text-3xl font-bold text-accent-700 font-numbers">{completedTransfers}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-lg p-4 border border-accent/20">
+            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-4 border border-accent/20">
               <div className="flex items-center gap-2 mb-2">
                 <DollarSign size={20} className="text-accent" />
                 <p className="text-sm text-gray-700">إجمالي المبالغ</p>
@@ -204,7 +205,7 @@ export default function Payroll() {
               <p className="text-2xl font-bold text-accent font-numbers">{formatCurrency(totalAmount)}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-lg p-4 border border-secondary/20">
+            <div className="bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-xl p-4 border border-secondary/20">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp size={20} className="text-secondary" />
                 <p className="text-sm text-gray-700">عدد المستلمين</p>
@@ -215,7 +216,7 @@ export default function Payroll() {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
@@ -225,7 +226,7 @@ export default function Payroll() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث برقم الدفعة أو الاسم..."
-                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-primary/10 focus:border-primary transition-colors"
               />
             </div>
 
@@ -234,7 +235,7 @@ export default function Payroll() {
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-primary/10 focus:border-primary transition-colors"
               >
                 <option value="all">كل الأنواع</option>
                 <option value="payroll">رواتب</option>
@@ -249,7 +250,7 @@ export default function Payroll() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-primary/10 focus:border-primary transition-colors"
               >
                 <option value="all">كل الحالات</option>
                 <option value="completed">مكتملة</option>
@@ -263,18 +264,16 @@ export default function Payroll() {
         </div>
 
         {/* Transfers List */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="glass-card overflow-hidden">
           {isLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="animate-spin text-primary" size={48} />
-            </div>
+            <SkeletonTable rows={8} />
           ) : filteredTransfers.length === 0 ? (
             <div className="text-center py-16">
               <Users size={64} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-2">
                 {searchQuery ? 'لا توجد نتائج' : 'لا توجد دفعات جماعية بعد'}
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-500 mb-6">
                 {searchQuery ? 'جرب البحث بكلمات مختلفة' : 'ابدأ بإنشاء دفعتك الأولى'}
               </p>
               {!searchQuery && (
@@ -286,32 +285,32 @@ export default function Payroll() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="border-b border-gray-100">
                   <tr>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">رقم الدفعة</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">اسم الدفعة</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">النوع</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">المستلمون</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">المبلغ الإجمالي</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الحالة</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">التاريخ</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700"></th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">رقم الدفعة</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">اسم الدفعة</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">النوع</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">المستلمون</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">المبلغ الإجمالي</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الحالة</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">التاريخ</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {filteredTransfers.map((transfer) => {
                     const typeBadge = getTypeBadge(transfer.type);
                     const statusBadge = getStatusBadge(transfer.status);
-                    
+
                     return (
-                      <tr key={transfer.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={transfer.id} className="hover:bg-primary-50/20 transition-colors">
                         <td className="px-6 py-4">
                           <span className="font-mono text-sm text-gray-900">{transfer.id}</span>
                         </td>
                         <td className="px-6 py-4">
                           <div>
                             <p className="font-bold text-gray-900">{transfer.name}</p>
-                            <p className="text-sm text-gray-600">بواسطة {transfer.createdBy}</p>
+                            <p className="text-sm text-gray-500">بواسطة {transfer.createdBy}</p>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -334,7 +333,7 @@ export default function Payroll() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="text-sm text-gray-600">{formatDate(transfer.createdAt)}</p>
+                          <p className="text-sm text-gray-500">{formatDate(transfer.createdAt)}</p>
                         </td>
                         <td className="px-6 py-4">
                           <Link

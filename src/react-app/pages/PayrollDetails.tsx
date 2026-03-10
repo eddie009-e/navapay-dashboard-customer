@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Users, DollarSign, Calendar, CheckCircle, AlertCircle, XCircle, Download, RefreshCw, User, Loader2 } from 'lucide-react';
+import { Users, DollarSign, Calendar, CheckCircle, AlertCircle, XCircle, Download, RefreshCw, User } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
+import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { payrollService, BulkTransferDetails, BulkTransferRecipient } from '../services';
 
 export default function PayrollDetails() {
@@ -44,8 +45,8 @@ export default function PayrollDetails() {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="animate-spin text-primary" size={48} />
+        <div className="py-6">
+          <SkeletonTable rows={8} />
         </div>
       </MainLayout>
     );
@@ -56,7 +57,7 @@ export default function PayrollDetails() {
       <MainLayout>
         <div className="text-center py-16">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">الدفعة غير موجودة</h2>
-          <p className="text-gray-600 mb-6">لم يتم العثور على هذه الدفعة الجماعية</p>
+          <p className="text-gray-500 mb-6">لم يتم العثور على هذه الدفعة الجماعية</p>
           <Link to="/payroll">
             <Button>العودة للدفعات الجماعية</Button>
           </Link>
@@ -104,7 +105,7 @@ export default function PayrollDetails() {
       pending: { text: 'قيد الانتظار', class: 'bg-warning/10 text-warning', icon: <AlertCircle size={16} /> },
       approved: { text: 'تمت الموافقة', class: 'bg-info/10 text-info', icon: <CheckCircle size={16} /> },
       processing: { text: 'قيد المعالجة', class: 'bg-primary/10 text-primary', icon: null },
-      completed: { text: 'مكتملة', class: 'bg-success/10 text-success', icon: <CheckCircle size={16} /> },
+      completed: { text: 'مكتملة', class: 'bg-accent-50 text-accent-700', icon: <CheckCircle size={16} /> },
       partial_failed: { text: 'مكتملة جزئياً', class: 'bg-error/10 text-error', icon: <AlertCircle size={16} /> }
     };
     return badges[status];
@@ -112,7 +113,7 @@ export default function PayrollDetails() {
 
   const getRecipientStatusBadge = (status: BulkTransferRecipient['status']) => {
     const badges = {
-      completed: { text: 'مكتملة', class: 'bg-success/10 text-success', icon: <CheckCircle size={14} /> },
+      completed: { text: 'مكتملة', class: 'bg-accent-50 text-accent-700', icon: <CheckCircle size={14} /> },
       pending: { text: 'قيد الانتظار', class: 'bg-warning/10 text-warning', icon: <AlertCircle size={14} /> },
       failed: { text: 'فاشلة', class: 'bg-error/10 text-error', icon: <XCircle size={14} /> }
     };
@@ -135,7 +136,7 @@ export default function PayrollDetails() {
         {/* Header */}
         <div className="mb-6">
 
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <div className="flex items-start justify-between mb-6">
               <div>
                 <div className="flex items-center gap-3 mb-2">
@@ -144,7 +145,7 @@ export default function PayrollDetails() {
                     {typeBadge.text}
                   </span>
                 </div>
-                <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-3">
+                <div className="flex flex-wrap items-center gap-4 text-gray-500 mb-3">
                   <span className="font-mono text-sm">{transfer.id}</span>
                   <div className="flex items-center gap-2">
                     <Calendar size={16} />
@@ -174,7 +175,7 @@ export default function PayrollDetails() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+              <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
                 <div className="flex items-center gap-2 mb-2">
                   <Users size={20} className="text-primary" />
                   <p className="text-sm text-gray-700">إجمالي المستلمين</p>
@@ -182,16 +183,16 @@ export default function PayrollDetails() {
                 <p className="text-3xl font-bold text-primary font-numbers">{recipients.length}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-lg p-4 border border-success/20">
+              <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-xl p-4 border border-success/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle size={20} className="text-success" />
+                  <CheckCircle size={20} className="text-accent-700" />
                   <p className="text-sm text-gray-700">المكتملة</p>
                 </div>
-                <p className="text-3xl font-bold text-success font-numbers">{completedCount}</p>
-                <p className="text-sm text-success mt-1">نسبة النجاح: {successRate}%</p>
+                <p className="text-3xl font-bold text-accent-700 font-numbers">{completedCount}</p>
+                <p className="text-sm text-accent-700 mt-1">نسبة النجاح: {successRate}%</p>
               </div>
 
-              <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-lg p-4 border border-accent/20">
+              <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-4 border border-accent/20">
                 <div className="flex items-center gap-2 mb-2">
                   <DollarSign size={20} className="text-accent" />
                   <p className="text-sm text-gray-700">المبلغ الإجمالي</p>
@@ -199,7 +200,7 @@ export default function PayrollDetails() {
                 <p className="text-2xl font-bold text-accent font-numbers">{formatCurrency(transfer.totalAmount)}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-lg p-4 border border-secondary/20">
+              <div className="bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-xl p-4 border border-secondary/20">
                 <div className="flex items-center gap-2 mb-2">
                   <DollarSign size={20} className="text-secondary" />
                   <p className="text-sm text-gray-700">متوسط المبلغ</p>
@@ -214,33 +215,33 @@ export default function PayrollDetails() {
 
         {/* Status Summary */}
         {(failedCount > 0 || pendingCount > 0) && (
-          <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6 mb-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">ملخص الحالة</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {pendingCount > 0 && (
-                <div className="flex items-center gap-3 p-4 bg-warning/5 rounded-lg border border-warning/20">
+                <div className="flex items-center gap-3 p-4 bg-warning/5 rounded-xl border border-warning/20">
                   <AlertCircle size={24} className="text-warning flex-shrink-0" />
                   <div>
                     <p className="font-bold text-gray-900 font-numbers">{pendingCount} دفعة</p>
-                    <p className="text-sm text-gray-600">قيد الانتظار</p>
+                    <p className="text-sm text-gray-500">قيد الانتظار</p>
                   </div>
                 </div>
               )}
               {failedCount > 0 && (
-                <div className="flex items-center gap-3 p-4 bg-error/5 rounded-lg border border-error/20">
+                <div className="flex items-center gap-3 p-4 bg-error/5 rounded-xl border border-error/20">
                   <XCircle size={24} className="text-error flex-shrink-0" />
                   <div>
                     <p className="font-bold text-gray-900 font-numbers">{failedCount} دفعة</p>
-                    <p className="text-sm text-gray-600">فاشلة - تحتاج إعادة محاولة</p>
+                    <p className="text-sm text-gray-500">فاشلة - تحتاج إعادة محاولة</p>
                   </div>
                 </div>
               )}
               {completedCount > 0 && (
-                <div className="flex items-center gap-3 p-4 bg-success/5 rounded-lg border border-success/20">
-                  <CheckCircle size={24} className="text-success flex-shrink-0" />
+                <div className="flex items-center gap-3 p-4 bg-success/5 rounded-xl border border-success/20">
+                  <CheckCircle size={24} className="text-accent-700 flex-shrink-0" />
                   <div>
                     <p className="font-bold text-gray-900 font-numbers">{completedCount} دفعة</p>
-                    <p className="text-sm text-gray-600">مكتملة بنجاح</p>
+                    <p className="text-sm text-gray-500">مكتملة بنجاح</p>
                   </div>
                 </div>
               )}
@@ -249,10 +250,10 @@ export default function PayrollDetails() {
         )}
 
         {/* Recipients List */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
+        <div className="glass-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="text-xl font-bold text-gray-900">قائمة المستلمين</h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-500">
               عرض <span className="font-bold font-numbers">{recipients.length}</span> مستلم
             </p>
           </div>
@@ -261,29 +262,29 @@ export default function PayrollDetails() {
             <div className="text-center py-16">
               <Users size={64} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-2">لا يوجد مستلمين</h3>
-              <p className="text-gray-600">لم يتم إضافة أي مستلمين لهذه الدفعة</p>
+              <p className="text-gray-500">لم يتم إضافة أي مستلمين لهذه الدفعة</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="border-b border-gray-100">
                   <tr>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">#</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الاسم</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">رقم الجوال</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">المبلغ</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الحالة</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">وقت المعالجة</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">#</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الاسم</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">رقم الجوال</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">المبلغ</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الحالة</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">وقت المعالجة</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {recipients.map((recipient, index) => {
                     const badge = getRecipientStatusBadge(recipient.status);
-                    
+
                     return (
-                      <tr key={recipient.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={recipient.id} className="hover:bg-primary-50/20 transition-colors">
                         <td className="px-6 py-4">
-                          <span className="text-gray-600 font-numbers">{index + 1}</span>
+                          <span className="text-gray-500 font-numbers">{index + 1}</span>
                         </td>
                         <td className="px-6 py-4">
                           <p className="font-bold text-gray-900">{recipient.name}</p>
@@ -307,7 +308,7 @@ export default function PayrollDetails() {
                         </td>
                         <td className="px-6 py-4">
                           {recipient.processedAt ? (
-                            <span className="text-sm text-gray-600 font-numbers">
+                            <span className="text-sm text-gray-500 font-numbers">
                               {formatDateTime(recipient.processedAt)}
                             </span>
                           ) : (
@@ -324,25 +325,25 @@ export default function PayrollDetails() {
         </div>
 
         {/* Summary Footer */}
-        <div className="mt-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200">
+        <div className="mt-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-100">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h3 className="font-bold text-gray-900 mb-3">معلومات الدفعة</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">رقم الدفعة:</span>
+                  <span className="text-gray-500">رقم الدفعة:</span>
                   <span className="font-mono font-medium text-gray-900">{transfer.id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">تاريخ الإنشاء:</span>
+                  <span className="text-gray-500">تاريخ الإنشاء:</span>
                   <span className="font-medium text-gray-900">{formatDate(transfer.createdAt)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">أنشئت بواسطة:</span>
+                  <span className="text-gray-500">أنشئت بواسطة:</span>
                   <span className="font-medium text-gray-900">{transfer.createdBy}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">نوع الدفعة:</span>
+                  <span className="text-gray-500">نوع الدفعة:</span>
                   <span className="font-medium text-gray-900">{typeBadge.text}</span>
                 </div>
               </div>
@@ -351,22 +352,22 @@ export default function PayrollDetails() {
               <h3 className="font-bold text-gray-900 mb-3">الملخص المالي</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">عدد المستلمين:</span>
+                  <span className="text-gray-500">عدد المستلمين:</span>
                   <span className="font-bold text-gray-900 font-numbers">{recipients.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">المبلغ الإجمالي:</span>
+                  <span className="text-gray-500">المبلغ الإجمالي:</span>
                   <span className="font-bold text-gray-900 font-numbers">{formatCurrency(transfer.totalAmount)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">متوسط المبلغ:</span>
+                  <span className="text-gray-500">متوسط المبلغ:</span>
                   <span className="font-bold text-gray-900 font-numbers">
                     {formatCurrency(recipients.length > 0 ? transfer.totalAmount / recipients.length : 0)}
                   </span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-gray-300">
+                <div className="flex justify-between pt-2 border-t border-gray-200">
                   <span className="text-gray-900 font-bold">نسبة النجاح:</span>
-                  <span className="font-bold text-success font-numbers">{successRate}%</span>
+                  <span className="font-bold text-accent-700 font-numbers">{successRate}%</span>
                 </div>
               </div>
             </div>

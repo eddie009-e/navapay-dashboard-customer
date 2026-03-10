@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Phone, Mail, Calendar, DollarSign, ShoppingBag, TrendingUp, Eye, Download, Filter, Loader2 } from 'lucide-react';
+import { Phone, Mail, Calendar, DollarSign, ShoppingBag, TrendingUp, Eye, Download, Filter } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
+import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { customersService, Customer, CustomerTransaction } from '../services';
 
 export default function CustomerDetails() {
@@ -59,8 +60,8 @@ export default function CustomerDetails() {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="flex items-center justify-center py-32">
-          <Loader2 size={48} className="animate-spin text-primary" />
+        <div className="space-y-6 animate-fadeIn">
+          <SkeletonTable rows={6} />
         </div>
       </MainLayout>
     );
@@ -71,7 +72,7 @@ export default function CustomerDetails() {
       <MainLayout>
         <div className="text-center py-16">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">العميل غير موجود</h2>
-          <p className="text-gray-600 mb-6">لم يتم العثور على هذا العميل</p>
+          <p className="text-gray-500 mb-6">لم يتم العثور على هذا العميل</p>
           <Link to="/customers">
             <Button>العودة للعملاء</Button>
           </Link>
@@ -108,7 +109,7 @@ export default function CustomerDetails() {
 
   const getStatusBadge = (status: CustomerTransaction['status']) => {
     const badges: Record<string, { text: string; class: string }> = {
-      completed: { text: 'مكتملة', class: 'bg-success/10 text-success' },
+      completed: { text: 'مكتملة', class: 'bg-accent-50 text-accent-700' },
       pending: { text: 'معلقة', class: 'bg-warning/10 text-warning' },
       failed: { text: 'فاشلة', class: 'bg-error/10 text-error' }
     };
@@ -134,7 +135,7 @@ export default function CustomerDetails() {
   const totalPayments = filteredTransactions
     .filter(t => t.type === 'payment')
     .reduce((sum, t) => sum + t.amount, 0);
-  
+
   const totalRefunds = filteredTransactions
     .filter(t => t.type === 'refund')
     .reduce((sum, t) => sum + t.amount, 0);
@@ -146,7 +147,7 @@ export default function CustomerDetails() {
         {/* Header */}
         <div className="mb-6">
 
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="glass-card p-6">
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
@@ -156,7 +157,7 @@ export default function CustomerDetails() {
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900 mb-1">{customer.name}</h1>
-                  <div className="flex flex-wrap items-center gap-4 text-gray-600">
+                  <div className="flex flex-wrap items-center gap-4 text-gray-500">
                     <div className="flex items-center gap-2">
                       <Phone size={16} />
                       <span className="font-numbers">{customer.phone}</span>
@@ -183,15 +184,15 @@ export default function CustomerDetails() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-lg p-4 border border-success/20">
+              <div className="bg-gradient-to-br from-accent-50/50 to-accent-50 rounded-xl p-4 border border-accent/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <DollarSign size={20} className="text-success" />
+                  <DollarSign size={20} className="text-accent-700" />
                   <p className="text-sm text-gray-700">إجمالي الإنفاق</p>
                 </div>
-                <p className="text-3xl font-bold text-success font-numbers">{formatCurrency(customer.totalSpent)}</p>
+                <p className="text-3xl font-bold text-accent-700 font-numbers">{formatCurrency(customer.totalSpent)}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+              <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
                 <div className="flex items-center gap-2 mb-2">
                   <ShoppingBag size={20} className="text-primary" />
                   <p className="text-sm text-gray-700">عدد العمليات</p>
@@ -199,7 +200,7 @@ export default function CustomerDetails() {
                 <p className="text-3xl font-bold text-primary font-numbers">{customer.transactionsCount}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-lg p-4 border border-accent/20">
+              <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-4 border border-accent/20">
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp size={20} className="text-accent" />
                   <p className="text-sm text-gray-700">متوسط العملية</p>
@@ -213,9 +214,9 @@ export default function CustomerDetails() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="flex items-center gap-2 mb-4">
-            <Filter size={20} className="text-gray-600" />
+            <Filter size={20} className="text-gray-500" />
             <h2 className="text-lg font-bold text-gray-900">تصفية العمليات</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -224,7 +225,7 @@ export default function CustomerDetails() {
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value as 'all' | 'payment' | 'refund')}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-primary/10 focus:border-primary transition-colors"
               >
                 <option value="all">كل الأنواع</option>
                 <option value="payment">دفع</option>
@@ -237,7 +238,7 @@ export default function CustomerDetails() {
               <select
                 value={periodFilter}
                 onChange={(e) => setPeriodFilter(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-primary/10 focus:border-primary transition-colors"
               >
                 <option value="all">كل الفترات</option>
                 <option value="today">اليوم</option>
@@ -250,12 +251,12 @@ export default function CustomerDetails() {
             <div className="md:col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">إحصائيات الفترة</label>
               <div className="grid grid-cols-2 gap-2">
-                <div className="bg-success/5 rounded-lg p-2 text-center border border-success/20">
-                  <p className="text-xs text-gray-600 mb-1">الدفعات</p>
-                  <p className="text-sm font-bold text-success font-numbers">{formatCurrency(totalPayments)}</p>
+                <div className="bg-accent-50 rounded-xl p-2 text-center border border-accent/20">
+                  <p className="text-xs text-gray-500 mb-1">الدفعات</p>
+                  <p className="text-sm font-bold text-accent-700 font-numbers">{formatCurrency(totalPayments)}</p>
                 </div>
-                <div className="bg-error/5 rounded-lg p-2 text-center border border-error/20">
-                  <p className="text-xs text-gray-600 mb-1">الاسترجاعات</p>
+                <div className="bg-error/5 rounded-xl p-2 text-center border border-error/20">
+                  <p className="text-xs text-gray-500 mb-1">الاسترجاعات</p>
                   <p className="text-sm font-bold text-error font-numbers">{formatCurrency(totalRefunds)}</p>
                 </div>
               </div>
@@ -264,45 +265,43 @@ export default function CustomerDetails() {
         </div>
 
         {/* Transactions History */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
+        <div className="glass-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="text-xl font-bold text-gray-900">سجل العمليات</h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-500">
               عرض <span className="font-bold font-numbers">{filteredTransactions.length}</span> عملية
             </p>
           </div>
 
           {isLoadingTransactions ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 size={48} className="animate-spin text-primary" />
-            </div>
+            <SkeletonTable rows={5} />
           ) : filteredTransactions.length === 0 ? (
             <div className="text-center py-16">
               <ShoppingBag size={64} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-2">لا توجد عمليات</h3>
-              <p className="text-gray-600">لم يقم هذا العميل بأي عمليات بعد</p>
+              <p className="text-gray-500">لم يقم هذا العميل بأي عمليات بعد</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="border-b border-gray-100">
                   <tr>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">رقم العملية</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">النوع</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">المبلغ</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الطريقة</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">الحالة</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">التاريخ</th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">إجراءات</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">رقم العملية</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">النوع</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">المبلغ</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الطريقة</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">الحالة</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">التاريخ</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">إجراءات</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {filteredTransactions.map((transaction) => {
                     const { date, time } = formatDateTime(transaction.createdAt);
                     const badge = getStatusBadge(transaction.status);
-                    
+
                     return (
-                      <tr key={transaction.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={transaction.id} className="hover:bg-primary-50/20 transition-colors">
                         <td className="px-6 py-4">
                           <span className="font-mono text-sm text-gray-900">{transaction.id}</span>
                         </td>
@@ -310,14 +309,14 @@ export default function CustomerDetails() {
                           <div className="flex items-center gap-2">
                             <span className="text-xl">{getTypeIcon(transaction.type)}</span>
                             <span className="text-sm text-gray-900">
-                              {transaction.type === 'payment' ? 'دفع' : 
+                              {transaction.type === 'payment' ? 'دفع' :
                                transaction.type === 'refund' ? 'استرجاع' : 'تحويل'}
                             </span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`font-bold font-numbers ${
-                            transaction.type === 'payment' ? 'text-success' : 'text-error'
+                            transaction.type === 'payment' ? 'text-accent-700' : 'text-error'
                           }`}>
                             {transaction.type === 'payment' ? '+' : '-'}{formatCurrency(transaction.amount)}
                           </span>
@@ -335,7 +334,7 @@ export default function CustomerDetails() {
                         <td className="px-6 py-4">
                           <div className="text-sm">
                             <p className="text-gray-900">{date}</p>
-                            <p className="text-gray-600 font-numbers">{time}</p>
+                            <p className="text-gray-500 font-numbers">{time}</p>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -388,7 +387,7 @@ function TransactionDetailsModal({ transaction, customer, onClose }: { transacti
 
   const getStatusBadge = (status: CustomerTransaction['status']) => {
     const badges: Record<string, { text: string; class: string }> = {
-      completed: { text: 'مكتملة', class: 'bg-success/10 text-success' },
+      completed: { text: 'مكتملة', class: 'bg-accent-50 text-accent-700' },
       pending: { text: 'معلقة', class: 'bg-warning/10 text-warning' },
       failed: { text: 'فاشلة', class: 'bg-error/10 text-error' }
     };
@@ -398,16 +397,16 @@ function TransactionDetailsModal({ transaction, customer, onClose }: { transacti
   const badge = getStatusBadge(transaction.status);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fadeIn">
-      <div className="bg-white rounded-xl max-w-2xl w-full p-8 shadow-2xl animate-slideUp">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-2xl w-full p-8 shadow-2xl animate-slideUp">
         <div className="flex items-start justify-between mb-6">
           <div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">تفاصيل العملية</h3>
-            <p className="font-mono text-gray-600">{transaction.id}</p>
+            <p className="font-mono text-gray-500">{transaction.id}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors"
           >
             <span className="text-2xl">×</span>
           </button>
@@ -416,20 +415,20 @@ function TransactionDetailsModal({ transaction, customer, onClose }: { transacti
         <div className="space-y-6">
           {/* Status and Type */}
           <div className="flex items-center gap-4">
-            <span className={`px-4 py-2 rounded-lg text-sm font-medium ${badge.class}`}>
+            <span className={`px-4 py-2 rounded-xl text-sm font-medium ${badge.class}`}>
               {badge.text}
             </span>
-            <span className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700">
-              {transaction.type === 'payment' ? 'دفع' : 
+            <span className="px-4 py-2 rounded-xl text-sm font-medium bg-gray-100 text-gray-700">
+              {transaction.type === 'payment' ? 'دفع' :
                transaction.type === 'refund' ? 'استرجاع' : 'تحويل'}
             </span>
           </div>
 
           {/* Amount */}
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 text-center border border-gray-200">
-            <p className="text-sm text-gray-600 mb-2">المبلغ</p>
+          <div className="bg-gradient-to-br from-gray-50/50 to-gray-100 rounded-xl p-6 text-center border border-gray-100">
+            <p className="text-sm text-gray-500 mb-2">المبلغ</p>
             <p className={`text-4xl font-bold font-numbers ${
-              transaction.type === 'payment' ? 'text-success' : 'text-error'
+              transaction.type === 'payment' ? 'text-accent-700' : 'text-error'
             }`}>
               {transaction.type === 'payment' ? '+' : '-'}{formatCurrency(transaction.amount)}
             </p>
@@ -437,42 +436,42 @@ function TransactionDetailsModal({ transaction, customer, onClose }: { transacti
 
           {/* Details Grid */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">اسم العميل</p>
+            <div className="p-4 bg-surface rounded-xl border border-gray-100">
+              <p className="text-sm text-gray-500 mb-1">اسم العميل</p>
               <p className="font-medium text-gray-900">{customer.name}</p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">رقم الجوال</p>
+            <div className="p-4 bg-surface rounded-xl border border-gray-100">
+              <p className="text-sm text-gray-500 mb-1">رقم الجوال</p>
               <p className="font-medium text-gray-900 font-numbers">{customer.phone}</p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">طريقة الدفع</p>
+            <div className="p-4 bg-surface rounded-xl border border-gray-100">
+              <p className="text-sm text-gray-500 mb-1">طريقة الدفع</p>
               <p className="font-medium text-gray-900">
                 {transaction.method === 'nfc' ? 'NFC - تقريب الجوال' :
                  transaction.method === 'qr' ? 'QR - مسح الرمز' :
                  'رقم الجوال'}
               </p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-1">التاريخ والوقت</p>
+            <div className="p-4 bg-surface rounded-xl border border-gray-100">
+              <p className="text-sm text-gray-500 mb-1">التاريخ والوقت</p>
               <p className="font-medium text-gray-900 text-sm">{formatDateTime(transaction.createdAt)}</p>
             </div>
             {transaction.employeeName && (
-              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-sm text-gray-600 mb-1">الموظف المنفذ</p>
+              <div className="p-4 bg-surface rounded-xl border border-gray-100">
+                <p className="text-sm text-gray-500 mb-1">الموظف المنفذ</p>
                 <p className="font-medium text-gray-900">{transaction.employeeName}</p>
               </div>
             )}
             {transaction.branchName && (
-              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-sm text-gray-600 mb-1">الفرع</p>
+              <div className="p-4 bg-surface rounded-xl border border-gray-100">
+                <p className="text-sm text-gray-500 mb-1">الفرع</p>
                 <p className="font-medium text-gray-900">{transaction.branchName}</p>
               </div>
             )}
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200">
+          <div className="flex gap-3 pt-4 border-t border-gray-100">
             <Button variant="outline" fullWidth leftIcon={<Download size={20} />}>
               طباعة إيصال
             </Button>

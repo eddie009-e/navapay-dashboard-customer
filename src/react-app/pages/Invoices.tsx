@@ -1,15 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { Plus, Search, Download, Send, Eye, Copy, FileDown, X, MoreVertical, FileText } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import EmptyState from '@/react-app/components/EmptyState';
+import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { useToast } from '@/react-app/contexts/ToastContext';
 import { invoicesService, Invoice } from '@/react-app/services';
 
 type InvoiceStatus = 'all' | 'draft' | 'pending' | 'paid' | 'overdue' | 'cancelled';
 
+const subTabs = [
+  { label: 'كل الفواتير', path: '/invoices' },
+  { label: 'الدورية', path: '/invoices/recurring' },
+  { label: 'روابط الدفع', path: '/invoices/payment-links' },
+];
+
 export default function Invoices() {
   const { showToast } = useToast();
+  const location = useLocation();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<InvoiceStatus>('all');
@@ -42,7 +50,6 @@ export default function Invoices() {
     fetchInvoices();
   }, [fetchInvoices]);
 
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
       setPage(1);
@@ -61,11 +68,11 @@ export default function Invoices() {
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { text: string; class: string }> = {
-      draft: { text: 'مسودة', class: 'bg-gray-100 text-gray-700' },
-      pending: { text: 'معلقة', class: 'bg-warning/10 text-warning' },
-      paid: { text: 'مدفوعة', class: 'bg-success/10 text-success' },
-      overdue: { text: 'متأخرة', class: 'bg-error/10 text-error' },
-      cancelled: { text: 'ملغاة', class: 'bg-gray-100 text-gray-500' }
+      draft: { text: 'مسودة', class: 'bg-gray-100 text-gray-600' },
+      pending: { text: 'معلقة', class: 'bg-amber-50 text-warning' },
+      paid: { text: 'مدفوعة', class: 'bg-accent-50 text-accent-700' },
+      overdue: { text: 'متأخرة', class: 'bg-red-50 text-error' },
+      cancelled: { text: 'ملغاة', class: 'bg-gray-50 text-gray-400' }
     };
     return badges[status] || badges.draft;
   };
@@ -116,23 +123,14 @@ export default function Invoices() {
 
   const handleExport = () => {
     showToast('info', 'جاري تحميل التقرير...');
-    // TODO: Implement export functionality
   };
 
-  if (isLoading && invoices.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 md:p-6 animate-fadeIn">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">الفواتير</h1>
+      <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6 animate-fadeIn">
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">الفواتير</h1>
           <Link to="/invoices/create">
             <Button leftIcon={<Plus size={20} />}>
               فاتورة جديدة
@@ -140,8 +138,25 @@ export default function Invoices() {
           </Link>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-4 md:mb-6 overflow-x-auto pb-2">
+        {/* Sub-navigation tabs */}
+        <div className="flex gap-1 mb-5 bg-gray-100 p-1 rounded-xl overflow-x-auto">
+          {subTabs.map(tab => (
+            <Link
+              key={tab.path}
+              to={tab.path}
+              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+                location.pathname === tab.path
+                  ? 'bg-white text-primary shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {tab.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Status Tabs */}
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -149,10 +164,10 @@ export default function Invoices() {
                 setActiveTab(tab.id);
                 setPage(1);
               }}
-              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
+              className={`px-4 py-2 rounded-xl font-medium whitespace-nowrap transition-all text-sm ${
                 activeTab === tab.id
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
               }`}
             >
               {tab.label}
@@ -169,7 +184,7 @@ export default function Invoices() {
               placeholder="بحث بالرقم أو اسم العميل..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pr-10 pl-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+              className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-gray-50/50"
             />
           </div>
           <Button variant="outline" leftIcon={<Download size={20} />} onClick={handleExport}>
@@ -180,153 +195,157 @@ export default function Invoices() {
 
       {/* Invoices List */}
       <div className="p-4 md:p-6">
-        <div className="space-y-4">
-          {invoices.length === 0 ? (
-            searchQuery ? (
-              <EmptyState
-                icon={Search}
-                title="لا توجد نتائج"
-                description="جرب البحث بكلمات مختلفة أو تحقق من الفلاتر المطبقة"
-              />
+        {isLoading && invoices.length === 0 ? (
+          <SkeletonTable rows={5} />
+        ) : (
+          <div className="space-y-3">
+            {invoices.length === 0 ? (
+              searchQuery ? (
+                <EmptyState
+                  icon={Search}
+                  title="لا توجد نتائج"
+                  description="جرب البحث بكلمات مختلفة أو تحقق من الفلاتر المطبقة"
+                />
+              ) : (
+                <EmptyState
+                  icon={FileText}
+                  title="لا توجد فواتير"
+                  description="ابدأ بإنشاء فاتورتك الأولى لتتبع المدفوعات والديون"
+                  actionLabel="إنشاء فاتورة جديدة"
+                  onAction={() => window.location.href = '/invoices/create'}
+                />
+              )
             ) : (
-              <EmptyState
-                icon={FileText}
-                title="لا توجد فواتير"
-                description="ابدأ بإنشاء فاتورتك الأولى لتتبع المدفوعات والديون"
-                actionLabel="إنشاء فاتورة جديدة"
-                onAction={() => window.location.href = '/invoices/create'}
-              />
-            )
-          ) : (
-            invoices.map(invoice => {
-              const badge = getStatusBadge(invoice.status);
-              const daysUntilDue = getDaysUntilDue(invoice.dueDate);
+              invoices.map(invoice => {
+                const badge = getStatusBadge(invoice.status);
+                const daysUntilDue = getDaysUntilDue(invoice.dueDate);
 
-              return (
-                <div
-                  key={invoice.id}
-                  className="bg-white rounded-lg border border-gray-200 p-4 md:p-6 hover:shadow-md transition-shadow animate-slideUp"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-bold text-gray-900">{invoice.invoiceNumber || invoice.id}</h3>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${badge.class}`}>
-                          {badge.text}
-                        </span>
+                return (
+                  <div
+                    key={invoice.id}
+                    className="glass-card p-4 md:p-5 hover:shadow-card-hover transition-all duration-200 animate-slideUp"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-base font-bold text-gray-900">{invoice.invoiceNumber || invoice.id}</h3>
+                          <span className={`px-2.5 py-0.5 rounded-lg text-xs font-medium ${badge.class}`}>
+                            {badge.text}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-gray-500">
+                          <span className="font-medium text-gray-700">{invoice.customerName}</span>
+                          <span className="font-numbers">{invoice.customerPhone}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span className="font-medium text-gray-900">{invoice.customerName}</span>
-                        <span className="font-numbers">{invoice.customerPhone}</span>
+
+                      <div className="text-left">
+                        <p className="text-xl font-bold text-gray-900 font-numbers mb-1">
+                          {formatCurrency(invoice.total)}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {invoice.status === 'paid' && invoice.paidAt
+                            ? `دُفعت في ${formatDate(invoice.paidAt)}`
+                            : `تستحق في ${formatDate(invoice.dueDate)}`
+                          }
+                        </p>
+                        {invoice.status === 'pending' && daysUntilDue >= 0 && (
+                          <p className="text-xs text-warning mt-1">
+                            {daysUntilDue === 0 ? 'تستحق اليوم' : `تستحق خلال ${daysUntilDue} يوم`}
+                          </p>
+                        )}
+                        {invoice.status === 'overdue' && (
+                          <p className="text-xs text-error mt-1">
+                            متأخرة {Math.abs(daysUntilDue)} يوم
+                          </p>
+                        )}
                       </div>
                     </div>
 
-                    <div className="text-left">
-                      <p className="text-2xl font-bold text-gray-900 font-numbers mb-1">
-                        {formatCurrency(invoice.total)}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {invoice.status === 'paid' && invoice.paidAt
-                          ? `دُفعت في ${formatDate(invoice.paidAt)}`
-                          : `تستحق في ${formatDate(invoice.dueDate)}`
-                        }
-                      </p>
-                      {invoice.status === 'pending' && daysUntilDue >= 0 && (
-                        <p className="text-xs text-warning mt-1">
-                          {daysUntilDue === 0 ? 'تستحق اليوم' : `تستحق خلال ${daysUntilDue} يوم`}
-                        </p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          leftIcon={<Send size={16} />}
+                          onClick={() => handleSendReminder(invoice)}
+                        >
+                          تذكير
+                        </Button>
                       )}
-                      {invoice.status === 'overdue' && (
-                        <p className="text-xs text-error mt-1">
-                          متأخرة {Math.abs(daysUntilDue)} يوم
-                        </p>
-                      )}
-                    </div>
-                  </div>
+                      <Link to={`/invoices/${invoice.id}`}>
+                        <Button size="sm" variant="ghost" leftIcon={<Eye size={16} />}>
+                          عرض
+                        </Button>
+                      </Link>
 
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {(invoice.status === 'pending' || invoice.status === 'overdue') && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        leftIcon={<Send size={16} />}
-                        onClick={() => handleSendReminder(invoice)}
-                      >
-                        تذكير
-                      </Button>
-                    )}
-                    <Link to={`/invoices/${invoice.id}`}>
-                      <Button size="sm" variant="outline" leftIcon={<Eye size={16} />}>
-                        عرض
-                      </Button>
-                    </Link>
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowActionsMenu(showActionsMenu === invoice.id ? null : invoice.id)}
+                          className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                        >
+                          <MoreVertical size={18} className="text-gray-400" />
+                        </button>
 
-                    <div className="relative">
-                      <button
-                        onClick={() => setShowActionsMenu(showActionsMenu === invoice.id ? null : invoice.id)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                      >
-                        <MoreVertical size={18} className="text-gray-600" />
-                      </button>
-
-                      {showActionsMenu === invoice.id && (
-                        <>
-                          <div
-                            className="fixed inset-0 z-10"
-                            onClick={() => setShowActionsMenu(null)}
-                          />
-                          <div className="absolute left-0 top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-20 min-w-48">
-                            {invoice.status === 'draft' && (
-                              <Link to={`/invoices/${invoice.id}/edit`}>
-                                <button className="w-full px-4 py-2 text-right hover:bg-gray-50 transition-colors text-gray-700">
-                                  تعديل
-                                </button>
-                              </Link>
-                            )}
-                            <button
-                              onClick={() => handleCopyPaymentLink(invoice)}
-                              className="w-full px-4 py-2 text-right hover:bg-gray-50 transition-colors text-gray-700 flex items-center gap-2"
-                            >
-                              <Copy size={16} />
-                              نسخ رابط الدفع
-                            </button>
-                            <button
-                              onClick={() => showToast('info', 'جاري تحميل PDF...')}
-                              className="w-full px-4 py-2 text-right hover:bg-gray-50 transition-colors text-gray-700 flex items-center gap-2"
-                            >
-                              <FileDown size={16} />
-                              تحميل PDF
-                            </button>
-                            <button
-                              onClick={() => showToast('success', `تم إرسال الفاتورة إلى ${invoice.customerName}`)}
-                              className="w-full px-4 py-2 text-right hover:bg-gray-50 transition-colors text-gray-700 flex items-center gap-2"
-                            >
-                              <Send size={16} />
-                              إرسال للعميل
-                            </button>
-                            {invoice.status !== 'cancelled' && invoice.status !== 'paid' && (
+                        {showActionsMenu === invoice.id && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-10"
+                              onClick={() => setShowActionsMenu(null)}
+                            />
+                            <div className="absolute left-0 top-full mt-1 glass-card py-2 z-20 min-w-48 animate-scaleIn">
+                              {invoice.status === 'draft' && (
+                                <Link to={`/invoices/${invoice.id}/edit`}>
+                                  <button className="w-full px-4 py-2.5 text-right hover:bg-primary-50 transition-colors text-gray-600 text-sm">
+                                    تعديل
+                                  </button>
+                                </Link>
+                              )}
                               <button
-                                onClick={() => handleCancelInvoice(invoice)}
-                                className="w-full px-4 py-2 text-right hover:bg-gray-50 transition-colors text-error flex items-center gap-2"
+                                onClick={() => handleCopyPaymentLink(invoice)}
+                                className="w-full px-4 py-2.5 text-right hover:bg-primary-50 transition-colors text-gray-600 flex items-center gap-2 text-sm"
                               >
-                                <X size={16} />
-                                إلغاء الفاتورة
+                                <Copy size={16} />
+                                نسخ رابط الدفع
                               </button>
-                            )}
-                          </div>
-                        </>
-                      )}
+                              <button
+                                onClick={() => showToast('info', 'جاري تحميل PDF...')}
+                                className="w-full px-4 py-2.5 text-right hover:bg-primary-50 transition-colors text-gray-600 flex items-center gap-2 text-sm"
+                              >
+                                <FileDown size={16} />
+                                تحميل PDF
+                              </button>
+                              <button
+                                onClick={() => showToast('success', `تم إرسال الفاتورة إلى ${invoice.customerName}`)}
+                                className="w-full px-4 py-2.5 text-right hover:bg-primary-50 transition-colors text-gray-600 flex items-center gap-2 text-sm"
+                              >
+                                <Send size={16} />
+                                إرسال للعميل
+                              </button>
+                              {invoice.status !== 'cancelled' && invoice.status !== 'paid' && (
+                                <button
+                                  onClick={() => handleCancelInvoice(invoice)}
+                                  className="w-full px-4 py-2.5 text-right hover:bg-red-50 transition-colors text-error flex items-center gap-2 text-sm"
+                                >
+                                  <X size={16} />
+                                  إلغاء الفاتورة
+                                </button>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })
-          )}
-        </div>
+                );
+              })
+            )}
+          </div>
+        )}
 
         {/* Pagination */}
         {invoices.length > 0 && totalPages > 1 && (
-          <div className="mt-8 flex items-center justify-center gap-2">
+          <div className="mt-6 flex items-center justify-center gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -335,7 +354,7 @@ export default function Invoices() {
             >
               السابق
             </Button>
-            <span className="px-4 py-2 text-sm text-gray-600">
+            <span className="px-4 py-2 text-sm text-gray-500">
               صفحة {page} من {totalPages}
             </span>
             <Button

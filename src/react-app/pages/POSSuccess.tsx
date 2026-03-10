@@ -36,13 +36,13 @@ export default function POSSuccess() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-success/10 to-white p-4 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-accent-50 to-white p-4 flex items-center justify-center">
       <BackButton to="/pos" label="نقاط البيع" />
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 text-center animate-scaleIn">
+        <div className="glass-card p-8 text-center animate-scaleIn">
           {/* Success Animation */}
           <div className="relative mb-6">
-            <div className="w-32 h-32 mx-auto bg-success rounded-full flex items-center justify-center animate-scaleIn">
+            <div className="w-32 h-32 mx-auto bg-accent-700 rounded-full flex items-center justify-center animate-scaleIn">
               <Check size={64} className="text-white" strokeWidth={3} />
             </div>
             {/* Confetti effect could be added here */}
@@ -53,24 +53,24 @@ export default function POSSuccess() {
           </h1>
 
           <div className="my-8 space-y-3">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-1">المبلغ</p>
+            <div className="bg-surface rounded-xl p-4">
+              <p className="text-sm text-gray-500 mb-1">المبلغ</p>
               <p className="text-3xl font-bold text-gray-900 font-numbers">
                 {formatCurrency(transaction.amount)}
               </p>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-3 text-right">
+            <div className="bg-surface rounded-xl p-3 text-right">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">من:</span>
+                <span className="text-sm text-gray-500">من:</span>
                 <span className="font-medium text-gray-900">{transaction.customerName}</span>
               </div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">الوقت:</span>
+                <span className="text-sm text-gray-500">الوقت:</span>
                 <span className="font-medium text-gray-900 font-numbers">{transaction.time}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">المرجع:</span>
+                <span className="text-sm text-gray-500">المرجع:</span>
                 <span className="font-medium text-gray-900 font-mono">{transaction.reference}</span>
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function POSSuccess() {
                 مشاركة
               </Button>
             </div>
-            
+
             <Button
               fullWidth
               size="lg"

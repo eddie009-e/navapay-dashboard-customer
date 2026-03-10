@@ -80,7 +80,7 @@ export const dashboardService = {
    * Get recent transactions
    */
   async getRecentTransactions(limit = 10): Promise<RecentTransaction[]> {
-    const response = await api.get<ApiResponse<RecentTransaction[]>>('/transactions', { limit, sort: 'recent' });
+    const response = await api.get<ApiResponse<RecentTransaction[]>>('/merchant/transactions', { limit, sort: 'recent' });
     if (response.success && response.data) {
       return response.data;
     }

@@ -20,14 +20,12 @@ export default function Login() {
   const [countdown, setCountdown] = useState(0);
   const [expiresIn, setExpiresIn] = useState(0);
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
-  // Countdown timer for resend
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
@@ -35,7 +33,6 @@ export default function Login() {
     }
   }, [countdown]);
 
-  // OTP expiry countdown
   useEffect(() => {
     if (expiresIn > 0) {
       const timer = setTimeout(() => setExpiresIn(expiresIn - 1), 1000);
@@ -60,7 +57,7 @@ export default function Login() {
       const response = await requestOtp(phone, 'login');
       setStep('otp');
       setExpiresIn(response.expiresIn || 300);
-      setCountdown(60); // 60 seconds before resend
+      setCountdown(60);
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message || 'فشل في إرسال رمز التحقق');
@@ -81,13 +78,11 @@ export default function Login() {
     newOtp[index] = value.slice(-1);
     setOtpCode(newOtp);
 
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       nextInput?.focus();
     }
 
-    // Auto-submit when all digits entered
     if (newOtp.every(d => d) && newOtp.join('').length === 6) {
       handleVerifyOtp(newOtp.join(''));
     }
@@ -111,11 +106,9 @@ export default function Login() {
     setError('');
 
     try {
-      // Step 1: Verify OTP
       const verifyResponse = await verifyOtp(phone, otpValue, 'login');
 
       if (verifyResponse.verified && verifyResponse.otpToken) {
-        // Step 2: Login with OTP token
         await loginWithOtp(verifyResponse.otpToken);
         navigate('/');
       } else {
@@ -161,30 +154,34 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-900 via-primary to-primary-400 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Decorative shapes */}
+      <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-white/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-15%] left-[-10%] w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl" />
+      <div className="absolute top-[40%] left-[20%] w-[200px] h-[200px] bg-white/5 rounded-full blur-2xl" />
+
       <BackButton />
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md relative z-10">
         {/* Logo and Header */}
         <div className="text-center mb-8 animate-fadeIn">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-primary rounded-2xl mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-xl rounded-2xl mb-4 shadow-glass-lg border border-white/20">
             <span className="text-3xl font-bold text-white">NP</span>
           </div>
-          <h1 className="text-3xl font-bold text-primary mb-2">NavaPay</h1>
-          <p className="text-gray-600">لوحة تحكم التاجر</p>
+          <h1 className="text-3xl font-bold text-white mb-2">NavaPay</h1>
+          <p className="text-white/60">لوحة تحكم التاجر</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 animate-slideUp">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 animate-slideUp border border-white/30">
           {step === 'phone' ? (
-            // Step 1: Phone Number
             <div className="space-y-5">
               <div className="text-center mb-6">
                 <h2 className="text-xl font-bold text-gray-900">تسجيل الدخول</h2>
-                <p className="text-sm text-gray-600 mt-1">أدخل رقم جوالك لإرسال رمز التحقق</p>
+                <p className="text-sm text-gray-500 mt-1">أدخل رقم جوالك لإرسال رمز التحقق</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-600 mb-2">
                   رقم الجوال
                 </label>
                 <div className="relative">
@@ -197,16 +194,15 @@ export default function Login() {
                       setError('');
                     }}
                     placeholder="0912345678"
-                    className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors font-numbers text-lg"
+                    className="w-full pr-10 pl-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-numbers text-lg bg-gray-50/50"
                     dir="ltr"
                     maxLength={10}
                   />
                 </div>
               </div>
 
-              {/* Error Message */}
               {error && (
-                <div className="bg-error/10 border border-error rounded-lg p-3 text-error text-sm">
+                <div className="bg-error/5 border border-error/20 rounded-xl p-3 text-error text-sm">
                   {error}
                 </div>
               )}
@@ -222,17 +218,15 @@ export default function Login() {
                 {isLoading ? 'جاري الإرسال...' : 'إرسال رمز التحقق'}
               </Button>
 
-              {/* Divider */}
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
+                  <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500">أو</span>
+                  <span className="px-4 bg-white text-gray-400">أو</span>
                 </div>
               </div>
 
-              {/* Employee PIN Login */}
               <Link to="/login/pin">
                 <Button
                   type="button"
@@ -244,16 +238,14 @@ export default function Login() {
                 </Button>
               </Link>
 
-              {/* Register Link */}
-              <p className="text-center text-sm text-gray-600 mt-6">
+              <p className="text-center text-sm text-gray-500 mt-6">
                 ليس لديك حساب؟{' '}
-                <Link to="/register" className="text-primary font-medium hover:text-primary-600 transition-colors">
+                <Link to="/register" className="text-primary font-semibold hover:text-primary-400 transition-colors">
                   سجل الآن
                 </Link>
               </p>
             </div>
           ) : (
-            // Step 2: OTP Verification
             <div className="space-y-5">
               <button
                 onClick={() => {
@@ -261,7 +253,7 @@ export default function Login() {
                   setOtpCode(['', '', '', '', '', '']);
                   setError('');
                 }}
-                className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+                className="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors"
               >
                 <ArrowRight size={20} />
                 <span>تغيير الرقم</span>
@@ -269,14 +261,13 @@ export default function Login() {
 
               <div className="text-center mb-6">
                 <h2 className="text-xl font-bold text-gray-900">رمز التحقق</h2>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-500 mt-1">
                   أدخل الرمز المرسل إلى
                 </p>
                 <p className="font-numbers font-bold text-primary mt-1">{phone}</p>
               </div>
 
-              {/* OTP Input */}
-              <div className="flex justify-center gap-2 dir-ltr">
+              <div className="flex justify-center gap-2.5 dir-ltr">
                 {otpCode.map((digit, index) => (
                   <input
                     key={index}
@@ -286,23 +277,21 @@ export default function Login() {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 transition-colors"
+                    className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-gray-50/50"
                     maxLength={1}
                     autoFocus={index === 0}
                   />
                 ))}
               </div>
 
-              {/* Timer */}
               {expiresIn > 0 && (
-                <p className="text-center text-sm text-gray-600">
+                <p className="text-center text-sm text-gray-500">
                   ينتهي الرمز خلال <span className="font-bold text-primary font-numbers">{formatTime(expiresIn)}</span>
                 </p>
               )}
 
-              {/* Error Message */}
               {error && (
-                <div className="bg-error/10 border border-error rounded-lg p-3 text-error text-sm">
+                <div className="bg-error/5 border border-error/20 rounded-xl p-3 text-error text-sm">
                   {error}
                 </div>
               )}
@@ -318,13 +307,12 @@ export default function Login() {
                 {isLoading ? 'جاري التحقق...' : 'تسجيل الدخول'}
               </Button>
 
-              {/* Resend OTP */}
               <div className="text-center">
                 <button
                   onClick={handleResendOtp}
                   disabled={countdown > 0 || isLoading}
                   className={`inline-flex items-center gap-2 text-sm ${
-                    countdown > 0 ? 'text-gray-400' : 'text-primary hover:text-primary-600'
+                    countdown > 0 ? 'text-gray-400' : 'text-primary hover:text-primary-400'
                   } transition-colors`}
                 >
                   <RefreshCw size={16} />
@@ -339,9 +327,8 @@ export default function Login() {
           )}
         </div>
 
-        {/* Footer */}
-        <p className="text-center text-sm text-gray-500 mt-6">
-          مدعوم بتقنية NavaPay © 2026
+        <p className="text-center text-sm text-white/40 mt-6">
+          مدعوم بتقنية NavaPay &copy; 2026
         </p>
       </div>
     </div>

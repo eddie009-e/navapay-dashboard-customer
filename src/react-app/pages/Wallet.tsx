@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { Download, Upload, Plus, TrendingUp, TrendingDown, CreditCard, X, Wallet as WalletIcon } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import EmptyState from '@/react-app/components/EmptyState';
-import LoadingSpinner from '@/react-app/components/LoadingSpinner';
+import LoadingSpinner, { SkeletonList } from '@/react-app/components/LoadingSpinner';
 import { useToast } from '@/react-app/contexts/ToastContext';
 import { useLoading } from '@/react-app/hooks/useLoading';
 import { walletService, Wallet as WalletType, WalletTransaction, BankAccount } from '@/react-app/services';
@@ -75,7 +75,6 @@ export default function Wallet() {
       await walletService.transferToBank({ amount, bankAccountId });
       showToast('success', `تم إنشاء طلب سحب بقيمة ${formatCurrency(amount)}`);
       setShowWithdrawModal(false);
-      // Refresh wallet
       const walletData = await walletService.getWallet();
       setWallet(walletData);
     } catch {
@@ -85,8 +84,8 @@ export default function Wallet() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-surface p-4 md:p-6">
+        <SkeletonList />
       </div>
     );
   }
@@ -94,24 +93,26 @@ export default function Wallet() {
   const balance = wallet?.balance || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 md:p-6 animate-fadeIn">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">المحفظة</h1>
-        <p className="text-gray-600">إدارة رصيدك وحساباتك البنكية</p>
+      <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6 animate-fadeIn">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">المحفظة</h1>
+        <p className="text-gray-500 text-sm">إدارة رصيدك وحساباتك البنكية</p>
       </div>
 
       <div className="p-4 md:p-6">
         {/* Balance Card */}
-        <div className="bg-gradient-to-br from-primary via-primary-600 to-primary-700 rounded-2xl p-6 md:p-8 text-white mb-4 md:mb-6 shadow-2xl animate-slideUp">
+        <div className="bg-gradient-to-l from-primary to-primary-400 rounded-3xl p-6 md:p-8 text-white mb-4 md:mb-6 shadow-glass animate-slideUp">
           <div className="flex items-start justify-between mb-8">
             <div>
-              <p className="text-white/80 text-sm mb-2">الرصيد الحالي</p>
-              <p className="text-5xl font-bold font-numbers mb-4">
+              <p className="text-white/70 text-sm mb-2">الرصيد الحالي</p>
+              <p className="text-4xl md:text-5xl font-bold font-numbers mb-4">
                 {formatCurrency(balance)}
               </p>
             </div>
-            <div className="text-6xl opacity-20">💰</div>
+            <div className="w-16 h-16 bg-white/15 rounded-2xl flex items-center justify-center">
+              <WalletIcon size={32} className="text-white" />
+            </div>
           </div>
 
           <div className="flex gap-3">
@@ -136,15 +137,15 @@ export default function Wallet() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {/* Recent Transactions */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6 animate-slideUp">
+          <div className="glass-card p-4 md:p-6 animate-slideUp">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-gray-900">آخر الحركات</h3>
-              <Link to="/wallet/history" className="text-sm text-primary hover:text-primary-600">
+              <Link to="/wallet/history" className="text-sm text-primary hover:text-primary-600 font-medium">
                 عرض الكل ←
               </Link>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {transactions.length === 0 ? (
                 <EmptyState
                   icon={WalletIcon}
@@ -155,24 +156,24 @@ export default function Wallet() {
                 transactions.map(transaction => {
                   const { date, time } = formatDateTime(transaction.createdAt);
                   return (
-                    <div key={transaction.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div key={transaction.id} className="flex items-center justify-between p-3 hover:bg-primary-50/30 rounded-xl transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          transaction.type === 'credit' ? 'bg-success/10' : 'bg-error/10'
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          transaction.type === 'credit' ? 'bg-accent-50 text-accent-700' : 'bg-red-50 text-error'
                         }`}>
                           {transaction.type === 'credit' ? (
-                            <TrendingUp size={20} className="text-success" />
+                            <TrendingUp size={20} />
                           ) : (
-                            <TrendingDown size={20} className="text-error" />
+                            <TrendingDown size={20} />
                           )}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{transaction.description}</p>
-                          <p className="text-sm text-gray-600 font-numbers">{date} • {time}</p>
+                          <p className="font-medium text-gray-900 text-sm">{transaction.description}</p>
+                          <p className="text-xs text-gray-400 font-numbers">{date} • {time}</p>
                         </div>
                       </div>
-                      <p className={`font-bold font-numbers ${
-                        transaction.type === 'credit' ? 'text-success' : 'text-error'
+                      <p className={`font-bold font-numbers text-sm ${
+                        transaction.type === 'credit' ? 'text-accent-700' : 'text-error'
                       }`}>
                         {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
                       </p>
@@ -184,12 +185,12 @@ export default function Wallet() {
           </div>
 
           {/* Bank Accounts */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6 animate-slideUp">
+          <div className="glass-card p-4 md:p-6 animate-slideUp">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-gray-900">الحسابات البنكية</h3>
               <button
                 onClick={() => setShowAddAccountModal(true)}
-                className="flex items-center gap-2 text-sm text-primary hover:text-primary-600"
+                className="flex items-center gap-2 text-sm text-primary hover:text-primary-600 font-medium"
               >
                 <Plus size={16} />
                 إضافة حساب
@@ -207,19 +208,19 @@ export default function Wallet() {
                 />
               ) : (
                 bankAccounts.map(account => (
-                  <div key={account.id} className="p-4 border-2 border-gray-200 rounded-lg hover:border-primary transition-colors">
-                    <div className="flex items-start justify-between mb-2">
+                  <div key={account.id} className="p-4 bg-primary-50/30 border border-primary-100 rounded-xl hover:border-primary-200 transition-colors">
+                    <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
                           <CreditCard size={24} className="text-primary" />
                         </div>
                         <div>
                           <p className="font-bold text-gray-900">{account.bankName}</p>
-                          <p className="text-sm text-gray-600 font-numbers">•••• {account.accountNumber?.slice(-4)}</p>
+                          <p className="text-sm text-gray-500 font-numbers">•••• {account.accountNumber?.slice(-4)}</p>
                         </div>
                       </div>
                       {account.isDefault && (
-                        <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full font-medium">
+                        <span className="bg-accent-50 text-accent-700 text-xs px-2.5 py-1 rounded-lg font-medium">
                           افتراضي
                         </span>
                       )}
@@ -232,7 +233,6 @@ export default function Wallet() {
         </div>
       </div>
 
-      {/* Withdraw Modal */}
       {showWithdrawModal && (
         <WithdrawModal
           balance={balance}
@@ -242,12 +242,10 @@ export default function Wallet() {
         />
       )}
 
-      {/* Deposit Modal */}
       {showDepositModal && (
         <DepositModal onClose={() => setShowDepositModal(false)} />
       )}
 
-      {/* Add Account Modal */}
       {showAddAccountModal && (
         <AddAccountModal
           onClose={() => setShowAddAccountModal(false)}
@@ -282,12 +280,12 @@ function WithdrawModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fadeIn">
-      <div className="bg-white rounded-lg max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
         <h3 className="text-2xl font-bold text-gray-900 mb-6">سحب للبنك</h3>
 
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6">
-          <p className="text-sm text-gray-700 mb-1">الرصيد المتاح</p>
+        <div className="bg-gradient-to-l from-primary-50 to-accent-50 rounded-xl p-4 mb-6">
+          <p className="text-sm text-gray-600 mb-1">الرصيد المتاح</p>
           <p className="text-2xl font-bold text-primary font-numbers">{formatCurrency(balance)}</p>
         </div>
 
@@ -301,7 +299,7 @@ function WithdrawModal({
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 font-numbers"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 bg-gray-50/50 font-numbers transition-all"
             />
           </div>
 
@@ -312,7 +310,7 @@ function WithdrawModal({
             <select
               value={selectedAccount}
               onChange={(e) => setSelectedAccount(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 bg-gray-50/50 transition-all"
             >
               {bankAccounts.map(account => (
                 <option key={account.id} value={account.id}>
@@ -323,8 +321,8 @@ function WithdrawModal({
           </div>
         </div>
 
-        <div className="bg-warning/10 border border-warning/20 rounded-lg p-3 mb-6">
-          <p className="text-sm text-gray-700">
+        <div className="bg-warning/10 rounded-xl p-3 mb-6">
+          <p className="text-sm text-gray-600">
             سيصل المبلغ خلال 1-3 أيام عمل
           </p>
         </div>
@@ -355,12 +353,12 @@ function WithdrawModal({
 
 function DepositModal({ onClose }: { onClose: () => void }) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fadeIn">
-      <div className="bg-white rounded-lg max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
         <h3 className="text-2xl font-bold text-gray-900 mb-6">إيداع</h3>
 
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Upload size={32} className="text-primary" />
           </div>
           <p className="text-gray-600 mb-4">
@@ -393,12 +391,12 @@ function AddAccountModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fadeIn">
-      <div className="bg-white rounded-lg max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold text-gray-900">إضافة حساب بنكي</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <X size={20} />
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+            <X size={20} className="text-gray-400" />
           </button>
         </div>
 
@@ -410,7 +408,7 @@ function AddAccountModal({
             <select
               value={bankCode}
               onChange={(e) => setBankCode(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 bg-gray-50/50 transition-all"
             >
               <option value="">اختر البنك</option>
               <option value="cbs">المصرف التجاري السوري</option>
@@ -429,7 +427,7 @@ function AddAccountModal({
               value={accountNumber}
               onChange={(e) => setAccountNumber(e.target.value)}
               placeholder="1234567890"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 font-numbers"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 bg-gray-50/50 font-numbers transition-all"
               dir="ltr"
             />
           </div>
@@ -443,7 +441,7 @@ function AddAccountModal({
               value={accountHolder}
               onChange={(e) => setAccountHolder(e.target.value)}
               placeholder="الاسم كما يظهر في البنك"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 bg-gray-50/50 transition-all"
             />
           </div>
         </div>

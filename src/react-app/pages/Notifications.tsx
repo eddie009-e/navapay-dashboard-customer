@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Bell, Check, CheckCheck, Trash2, DollarSign, FileText, RefreshCw, AlertCircle, Loader2 } from 'lucide-react';
+import { Bell, Check, CheckCheck, Trash2, DollarSign, FileText, RefreshCw, AlertCircle } from 'lucide-react';
+import { SkeletonList } from '@/react-app/components/LoadingSpinner';
 import { notificationsService, Notification } from '../services';
 
 export default function Notifications() {
@@ -63,7 +64,7 @@ export default function Notifications() {
   const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
       case 'payment':
-        return <DollarSign size={20} className="text-success" />;
+        return <DollarSign size={20} className="text-accent-700" />;
       case 'invoice':
         return <FileText size={20} className="text-warning" />;
       case 'refund':
@@ -76,7 +77,7 @@ export default function Notifications() {
   const getNotificationBg = (type: Notification['type']) => {
     switch (type) {
       case 'payment':
-        return 'bg-success/10';
+        return 'bg-accent-50';
       case 'invoice':
         return 'bg-warning/10';
       case 'refund':
@@ -99,7 +100,7 @@ export default function Notifications() {
     if (diffHours < 24) return `منذ ${diffHours} ساعة`;
     if (diffDays === 1) return 'أمس';
     if (diffDays < 7) return `منذ ${diffDays} أيام`;
-    
+
     return date.toLocaleDateString('ar-SY', {
       day: 'numeric',
       month: 'short'
@@ -119,7 +120,7 @@ export default function Notifications() {
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">الإشعارات</h1>
                 {unreadCount > 0 && (
-                  <p className="text-gray-600">لديك {unreadCount} إشعار غير مقروء</p>
+                  <p className="text-gray-500">لديك {unreadCount} إشعار غير مقروء</p>
                 )}
               </div>
             </div>
@@ -127,7 +128,7 @@ export default function Notifications() {
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="flex items-center gap-2 px-4 py-2 text-primary hover:bg-primary/5 rounded-lg transition-colors font-medium"
+                className="flex items-center gap-2 px-4 py-2 text-primary hover:bg-primary/5 rounded-xl transition-colors font-medium"
               >
                 <CheckCheck size={18} />
                 <span>تحديد الكل كمقروء</span>
@@ -136,23 +137,23 @@ export default function Notifications() {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex gap-2 bg-gray-100 p-1 rounded-lg inline-flex">
+          <div className="flex gap-2 bg-gray-100 p-1 rounded-xl inline-flex">
             <button
               onClick={() => setFilter('all')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all ${
+              className={`px-6 py-2 rounded-xl font-medium transition-all ${
                 filter === 'all'
                   ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-gray-500 hover:text-gray-900'
               }`}
             >
               الكل ({notifications.length})
             </button>
             <button
               onClick={() => setFilter('unread')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all ${
+              className={`px-6 py-2 rounded-xl font-medium transition-all ${
                 filter === 'unread'
                   ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-gray-500 hover:text-gray-900'
               }`}
             >
               غير مقروءة ({unreadCount})
@@ -162,20 +163,18 @@ export default function Notifications() {
 
         {/* Notifications List */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="animate-spin text-primary" size={48} />
-          </div>
+          <SkeletonList items={5} />
         ) : filteredNotifications.length === 0 ? (
-          <div className="bg-white rounded-xl p-12 text-center border border-gray-200">
+          <div className="glass-card p-12 text-center">
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Bell size={32} className="text-gray-400" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               {filter === 'unread' ? 'لا توجد إشعارات غير مقروءة' : 'لا توجد إشعارات'}
             </h3>
-            <p className="text-gray-600">
-              {filter === 'unread' 
-                ? 'رائع! لقد قرأت جميع إشعاراتك' 
+            <p className="text-gray-500">
+              {filter === 'unread'
+                ? 'رائع! لقد قرأت جميع إشعاراتك'
                 : 'ستظهر الإشعارات الجديدة هنا'}
             </p>
           </div>
@@ -184,9 +183,9 @@ export default function Notifications() {
             {filteredNotifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`bg-white rounded-xl p-5 border transition-all group hover:shadow-md ${
-                  notification.read 
-                    ? 'border-gray-200' 
+                className={`glass-card p-5 transition-all group hover:shadow-md ${
+                  notification.read
+                    ? ''
                     : 'border-primary/20 shadow-sm'
                 }`}
               >
@@ -215,7 +214,7 @@ export default function Notifications() {
                       {!notification.read && (
                         <button
                           onClick={() => markAsRead(notification.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/5 rounded-xl transition-colors"
                         >
                           <Check size={14} />
                           <span>تحديد كمقروء</span>
@@ -223,7 +222,7 @@ export default function Notifications() {
                       )}
                       <button
                         onClick={() => deleteNotification(notification.id)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-error hover:bg-error/5 rounded-lg transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-error hover:bg-error/5 rounded-xl transition-colors"
                       >
                         <Trash2 size={14} />
                         <span>حذف</span>

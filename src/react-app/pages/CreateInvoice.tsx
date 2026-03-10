@@ -92,10 +92,10 @@ export default function CreateInvoice() {
   const invoiceNumber = 'INV-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       <BackButton to="/invoices" label="الفواتير" />
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-6">
+      <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6">
         <div className="flex items-center gap-4">
           <h1 className="text-3xl font-bold text-gray-900">إنشاء فاتورة جديدة</h1>
         </div>
@@ -104,7 +104,7 @@ export default function CreateInvoice() {
       <div className="p-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Form */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">تفاصيل الفاتورة</h2>
 
             {/* Customer Info */}
@@ -120,7 +120,7 @@ export default function CreateInvoice() {
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     placeholder="0912345678"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 font-numbers"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10 font-numbers"
                     dir="ltr"
                   />
                 </div>
@@ -133,7 +133,7 @@ export default function CreateInvoice() {
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="أحمد محمد"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
                   />
                 </div>
               </div>
@@ -161,14 +161,14 @@ export default function CreateInvoice() {
                       value={item.description}
                       onChange={(e) => updateItem(index, 'description', e.target.value)}
                       placeholder="الوصف"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 text-sm"
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm"
                     />
                     <input
                       type="number"
                       value={item.quantity || ''}
                       onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 0)}
                       placeholder="الكمية"
-                      className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 text-sm font-numbers"
+                      className="w-20 px-3 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm font-numbers"
                       min="1"
                     />
                     <input
@@ -176,16 +176,16 @@ export default function CreateInvoice() {
                       value={item.price || ''}
                       onChange={(e) => updateItem(index, 'price', parseInt(e.target.value) || 0)}
                       placeholder="السعر"
-                      className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 text-sm font-numbers"
+                      className="w-28 px-3 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm font-numbers"
                       min="0"
                     />
-                    <div className="w-28 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-numbers text-gray-700 flex items-center">
+                    <div className="w-28 px-3 py-2 bg-surface border border-gray-100 rounded-xl text-sm font-numbers text-gray-700 flex items-center">
                       {formatCurrency(item.quantity * item.price)}
                     </div>
                     <button
                       onClick={() => removeItem(index)}
                       disabled={items.length === 1}
-                      className="p-2 text-error hover:bg-error/10 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="p-2 text-error hover:bg-error/10 rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -204,7 +204,7 @@ export default function CreateInvoice() {
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
                 />
               </div>
 
@@ -217,7 +217,7 @@ export default function CreateInvoice() {
                   value={discount || ''}
                   onChange={(e) => setDiscount(parseInt(e.target.value) || 0)}
                   placeholder="0"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 font-numbers"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10 font-numbers"
                   min="0"
                 />
               </div>
@@ -231,13 +231,13 @@ export default function CreateInvoice() {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
                   placeholder="أضف ملاحظات للفاتورة..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10"
                 />
               </div>
             </div>
 
             {/* Options */}
-            <div className="space-y-3 mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="space-y-3 mb-6 p-4 bg-surface rounded-xl">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -280,25 +280,25 @@ export default function CreateInvoice() {
           </div>
 
           {/* Right: Preview */}
-          <div className="bg-white rounded-lg border border-gray-200 p-8 sticky top-6 h-fit">
+          <div className="glass-card p-8 sticky top-6 h-fit">
             <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">معاينة الفاتورة</h2>
 
             {/* Invoice Preview */}
-            <div className="border-2 border-gray-200 rounded-lg p-6">
+            <div className="border-2 border-gray-100 rounded-xl p-6">
               {/* Header */}
-              <div className="flex items-start justify-between mb-6 pb-6 border-b border-gray-200">
+              <div className="flex items-start justify-between mb-6 pb-6 border-b border-gray-100">
                 <div>
-                  <div className="w-16 h-16 bg-primary rounded-lg flex items-center justify-center mb-2">
+                  <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-2">
                     <span className="text-2xl font-bold text-white">NP</span>
                   </div>
                   <h3 className="font-bold text-gray-900">{merchant?.name || 'اسم المتجر'}</h3>
-                  <p className="text-sm text-gray-600">{merchant?.address || 'العنوان'}</p>
-                  <p className="text-sm text-gray-600 font-numbers">{merchant?.phone || 'رقم الهاتف'}</p>
+                  <p className="text-sm text-gray-500">{merchant?.address || 'العنوان'}</p>
+                  <p className="text-sm text-gray-500 font-numbers">{merchant?.phone || 'رقم الهاتف'}</p>
                 </div>
                 <div className="text-left">
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">فاتورة</h2>
-                  <p className="text-sm text-gray-600">{invoiceNumber}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-500">{invoiceNumber}</p>
+                  <p className="text-sm text-gray-500">
                     {new Date().toLocaleDateString('ar-SY')}
                   </p>
                 </div>
@@ -308,13 +308,13 @@ export default function CreateInvoice() {
               <div className="mb-6">
                 <h4 className="text-sm font-medium text-gray-500 mb-2">إلى:</h4>
                 <p className="font-medium text-gray-900">{customerName || 'اسم العميل'}</p>
-                <p className="text-sm text-gray-600 font-numbers">{customerPhone || 'رقم الجوال'}</p>
+                <p className="text-sm text-gray-500 font-numbers">{customerPhone || 'رقم الجوال'}</p>
               </div>
 
               {/* Items Table */}
               <table className="w-full mb-6">
                 <thead>
-                  <tr className="border-b border-gray-200">
+                  <tr className="border-b border-gray-100">
                     <th className="text-right py-2 text-sm font-medium text-gray-700">الوصف</th>
                     <th className="text-center py-2 text-sm font-medium text-gray-700">الكمية</th>
                     <th className="text-left py-2 text-sm font-medium text-gray-700">السعر</th>
@@ -344,16 +344,16 @@ export default function CreateInvoice() {
               {/* Totals */}
               <div className="space-y-2 mb-6">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">المجموع:</span>
+                  <span className="text-gray-500">المجموع:</span>
                   <span className="font-numbers text-gray-900">{formatCurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">الضريبة (10%):</span>
+                  <span className="text-gray-500">الضريبة (10%):</span>
                   <span className="font-numbers text-gray-900">{formatCurrency(tax)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">الخصم:</span>
+                    <span className="text-gray-500">الخصم:</span>
                     <span className="font-numbers text-error">-{formatCurrency(discount)}</span>
                   </div>
                 )}
@@ -366,7 +366,7 @@ export default function CreateInvoice() {
               </div>
 
               {/* Due Date */}
-              <div className="p-4 bg-warning/10 rounded-lg mb-4">
+              <div className="p-4 bg-warning/10 rounded-xl mb-4">
                 <p className="text-sm">
                   <span className="font-medium">تاريخ الاستحقاق: </span>
                   <span className="font-numbers">{dueDate || 'لم يُحدد بعد'}</span>
@@ -375,13 +375,13 @@ export default function CreateInvoice() {
 
               {/* Notes */}
               {notes && (
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">{notes}</p>
+                <div className="p-4 bg-surface rounded-xl">
+                  <p className="text-sm text-gray-500">{notes}</p>
                 </div>
               )}
 
               {/* Payment Button Preview */}
-              <button className="w-full mt-6 bg-primary text-white py-3 rounded-lg font-bold hover:bg-primary-600 transition-colors">
+              <button className="w-full mt-6 bg-primary text-white py-3 rounded-xl font-bold hover:bg-primary-600 transition-colors">
                 ادفع الآن
               </button>
             </div>

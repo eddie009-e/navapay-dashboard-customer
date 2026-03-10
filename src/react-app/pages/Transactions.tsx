@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search, Download, Eye, X, RotateCcw, Receipt, Loader2 } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import EmptyState from '@/react-app/components/EmptyState';
+import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { useToast } from '@/react-app/contexts/ToastContext';
 import { transactionsService, Transaction, TransactionStats } from '../services';
 
@@ -37,7 +38,6 @@ export default function Transactions() {
     };
   };
 
-  // Calculate date range based on period
   const getDateRange = () => {
     const to = new Date();
     const from = new Date();
@@ -68,7 +68,6 @@ export default function Transactions() {
     };
   };
 
-  // Load transactions
   useEffect(() => {
     const loadTransactions = async () => {
       setIsLoading(true);
@@ -100,28 +99,26 @@ export default function Transactions() {
     loadTransactions();
   }, [typeFilter, statusFilter, methodFilter, periodFilter, searchQuery, page]);
 
-  // Summary values from stats
   const totalAmount = stats?.totalAmount || 0;
   const totalTransactions = stats?.totalTransactions || 0;
   const averageTransaction = stats?.averageTransaction || 0;
   const highestTransaction = stats?.highestTransaction || 0;
 
-  // Use transactions from API
   const filteredTransactions = transactions;
 
   const getStatusBadge = (status: Transaction['status']) => {
     const badges = {
-      completed: { text: 'مكتملة', class: 'bg-success/10 text-success' },
-      pending: { text: 'معلقة', class: 'bg-warning/10 text-warning' },
-      failed: { text: 'فاشلة', class: 'bg-error/10 text-error' }
+      completed: { text: 'مكتملة', class: 'bg-accent-50 text-accent-700' },
+      pending: { text: 'معلقة', class: 'bg-amber-50 text-warning' },
+      failed: { text: 'فاشلة', class: 'bg-red-50 text-error' }
     };
     return badges[status];
   };
 
   const getTypeIcon = (type: Transaction['type']) => {
-    if (type === 'payment') return '💰';
-    if (type === 'refund') return '↩️';
-    return '💸';
+    if (type === 'payment') return '↓';
+    if (type === 'refund') return '↩';
+    return '→';
   };
 
   const getMethodText = (method: Transaction['method']) => {
@@ -145,7 +142,6 @@ export default function Transactions() {
 
       const blob = await transactionsService.export(filters);
 
-      // Download file
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -164,11 +160,13 @@ export default function Transactions() {
     }
   };
 
+  const selectClasses = "px-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-white text-sm";
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 md:p-6 animate-fadeIn">
-        <div className="flex items-center justify-between mb-4 md:mb-6">
+      <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6 animate-fadeIn">
+        <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">العمليات</h1>
           <Button
             leftIcon={isExporting ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
@@ -188,37 +186,25 @@ export default function Transactions() {
               placeholder="بحث برقم العملية أو العميل..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pr-10 pl-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+              className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-white text-sm"
             />
           </div>
 
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value as TransactionType)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
-          >
+          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as TransactionType)} className={selectClasses}>
             <option value="all">كل الأنواع</option>
             <option value="payment">دفع</option>
             <option value="refund">استرجاع</option>
             <option value="transfer">تحويل</option>
           </select>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as TransactionStatus)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
-          >
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as TransactionStatus)} className={selectClasses}>
             <option value="all">كل الحالات</option>
             <option value="completed">مكتملة</option>
             <option value="pending">معلقة</option>
             <option value="failed">فاشلة</option>
           </select>
 
-          <select
-            value={periodFilter}
-            onChange={(e) => setPeriodFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
-          >
+          <select value={periodFilter} onChange={(e) => setPeriodFilter(e.target.value)} className={selectClasses}>
             <option value="today">اليوم</option>
             <option value="yesterday">أمس</option>
             <option value="week">آخر 7 أيام</option>
@@ -226,11 +212,7 @@ export default function Transactions() {
             <option value="custom">تاريخ مخصص</option>
           </select>
 
-          <select
-            value={methodFilter}
-            onChange={(e) => setMethodFilter(e.target.value as PaymentMethod)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
-          >
+          <select value={methodFilter} onChange={(e) => setMethodFilter(e.target.value as PaymentMethod)} className={selectClasses}>
             <option value="all">كل الطرق</option>
             <option value="nfc">NFC</option>
             <option value="qr">QR</option>
@@ -241,31 +223,29 @@ export default function Transactions() {
 
       {/* Summary Cards */}
       <div className="p-4 md:p-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6 animate-slideUp">
-          <div className="bg-white rounded-lg p-3 md:p-6 shadow-sm border border-gray-200">
-            <p className="text-xs md:text-sm text-gray-600 mb-1">إجمالي الفترة</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 animate-slideUp">
+          <div className="glass-card p-3 md:p-5">
+            <p className="text-xs md:text-sm text-gray-500 mb-1">إجمالي الفترة</p>
             <p className="text-lg md:text-2xl font-bold text-gray-900 font-numbers">{formatCurrency(totalAmount)}</p>
           </div>
-          <div className="bg-white rounded-lg p-3 md:p-6 shadow-sm border border-gray-200">
-            <p className="text-xs md:text-sm text-gray-600 mb-1">عدد العمليات</p>
+          <div className="glass-card p-3 md:p-5">
+            <p className="text-xs md:text-sm text-gray-500 mb-1">عدد العمليات</p>
             <p className="text-lg md:text-2xl font-bold text-gray-900 font-numbers">{totalTransactions}</p>
           </div>
-          <div className="bg-white rounded-lg p-3 md:p-6 shadow-sm border border-gray-200">
-            <p className="text-xs md:text-sm text-gray-600 mb-1">متوسط العملية</p>
+          <div className="glass-card p-3 md:p-5">
+            <p className="text-xs md:text-sm text-gray-500 mb-1">متوسط العملية</p>
             <p className="text-lg md:text-2xl font-bold text-gray-900 font-numbers">{formatCurrency(averageTransaction)}</p>
           </div>
-          <div className="bg-white rounded-lg p-3 md:p-6 shadow-sm border border-gray-200">
-            <p className="text-xs md:text-sm text-gray-600 mb-1">أعلى عملية</p>
+          <div className="glass-card p-3 md:p-5">
+            <p className="text-xs md:text-sm text-gray-500 mb-1">أعلى عملية</p>
             <p className="text-lg md:text-2xl font-bold text-gray-900 font-numbers">{formatCurrency(highestTransaction)}</p>
           </div>
         </div>
 
         {/* Transactions Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="glass-card overflow-hidden">
           {isLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 size={48} className="animate-spin text-primary" />
-            </div>
+            <SkeletonTable rows={8} />
           ) : filteredTransactions.length === 0 ? (
             searchQuery || typeFilter !== 'all' || statusFilter !== 'all' || methodFilter !== 'all' ? (
               <EmptyState
@@ -284,70 +264,72 @@ export default function Transactions() {
             <>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-gray-50/50 border-b border-gray-100">
                     <tr>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">رقم العملية</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">النوع</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">العميل</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">المبلغ</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">الطريقة</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">الحالة</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">التاريخ</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">إجراءات</th>
+                      <th className="px-4 md:px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">رقم العملية</th>
+                      <th className="px-4 md:px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">النوع</th>
+                      <th className="px-4 md:px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">العميل</th>
+                      <th className="px-4 md:px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">المبلغ</th>
+                      <th className="px-4 md:px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">الطريقة</th>
+                      <th className="px-4 md:px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">الحالة</th>
+                      <th className="px-4 md:px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">التاريخ</th>
+                      <th className="px-4 md:px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">إجراءات</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-50">
                     {filteredTransactions.map((transaction) => {
                       const { date, time } = formatDateTime(transaction.createdAt);
                       const badge = getStatusBadge(transaction.status);
-                      
+
                       return (
-                        <tr key={transaction.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-6 py-4">
-                            <span className="font-mono text-sm text-gray-900">{transaction.id}</span>
+                        <tr key={transaction.id} className="hover:bg-primary-50/30 transition-colors">
+                          <td className="px-4 md:px-6 py-4">
+                            <span className="font-mono text-sm text-gray-600">{transaction.id}</span>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 md:px-6 py-4">
                             <div className="flex items-center gap-2">
-                              <span className="text-xl">{getTypeIcon(transaction.type)}</span>
-                              <span className="text-sm text-gray-900">
-                                {transaction.type === 'payment' ? 'دفع' : 
+                              <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
+                                transaction.type === 'payment' ? 'bg-accent-50 text-accent' : 'bg-red-50 text-error'
+                              }`}>{getTypeIcon(transaction.type)}</span>
+                              <span className="text-sm text-gray-700">
+                                {transaction.type === 'payment' ? 'دفع' :
                                  transaction.type === 'refund' ? 'استرجاع' : 'تحويل'}
                               </span>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 md:px-6 py-4">
                             <div>
-                              <p className="font-medium text-gray-900">{transaction.customerName}</p>
-                              <p className="text-sm text-gray-600 font-numbers">{transaction.customerPhone}</p>
+                              <p className="font-medium text-gray-900 text-sm">{transaction.customerName}</p>
+                              <p className="text-xs text-gray-400 font-numbers">{transaction.customerPhone}</p>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
-                            <span className={`font-bold font-numbers ${
-                              transaction.type === 'payment' ? 'text-success' : 'text-error'
+                          <td className="px-4 md:px-6 py-4">
+                            <span className={`font-bold font-numbers text-sm ${
+                              transaction.type === 'payment' ? 'text-accent' : 'text-error'
                             }`}>
                               {transaction.type === 'payment' ? '+' : '-'}{formatCurrency(transaction.amount)}
                             </span>
                           </td>
-                          <td className="px-6 py-4">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-50 text-primary">
+                          <td className="px-4 md:px-6 py-4">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-primary-50 text-primary">
                               {getMethodText(transaction.method)}
                             </span>
                           </td>
-                          <td className="px-6 py-4">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.class}`}>
+                          <td className="px-4 md:px-6 py-4">
+                            <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium ${badge.class}`}>
                               {badge.text}
                             </span>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 md:px-6 py-4">
                             <div className="text-sm">
-                              <p className="text-gray-900">{date}</p>
-                              <p className="text-gray-600 font-numbers">{time}</p>
+                              <p className="text-gray-700">{date}</p>
+                              <p className="text-gray-400 font-numbers text-xs">{time}</p>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 md:px-6 py-4">
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="ghost"
                               leftIcon={<Eye size={16} />}
                               onClick={() => setSelectedTransaction(transaction)}
                             >
@@ -362,24 +344,24 @@ export default function Transactions() {
               </div>
 
               {/* Pagination */}
-              <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <div className="px-6 py-4 border-t border-gray-100">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-600">
-                    عرض <span className="font-medium">{filteredTransactions.length}</span> من أصل <span className="font-medium">{total}</span> عملية
+                  <p className="text-sm text-gray-500">
+                    عرض <span className="font-medium text-gray-700">{filteredTransactions.length}</span> من أصل <span className="font-medium text-gray-700">{total}</span> عملية
                   </p>
                   <div className="flex items-center gap-2">
                     <button
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 border border-gray-200 rounded-xl hover:bg-primary-50 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => setPage(p => Math.max(1, p - 1))}
                       disabled={page <= 1}
                     >
                       السابق
                     </button>
-                    <span className="px-4 py-2 text-sm font-medium">
+                    <span className="px-4 py-2 text-sm font-medium text-gray-600">
                       {page} / {totalPages || 1}
                     </span>
                     <button
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 border border-gray-200 rounded-xl hover:bg-primary-50 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                       disabled={page >= totalPages}
                     >
@@ -425,9 +407,9 @@ function TransactionDetailsModal({ transaction, onClose }: { transaction: Transa
 
   const getStatusBadge = (status: Transaction['status']) => {
     const badges = {
-      completed: { text: 'مكتملة', class: 'bg-success/10 text-success' },
-      pending: { text: 'معلقة', class: 'bg-warning/10 text-warning' },
-      failed: { text: 'فاشلة', class: 'bg-error/10 text-error' }
+      completed: { text: 'مكتملة', class: 'bg-accent-50 text-accent-700' },
+      pending: { text: 'معلقة', class: 'bg-amber-50 text-warning' },
+      failed: { text: 'فاشلة', class: 'bg-red-50 text-error' }
     };
     return badges[status];
   };
@@ -459,81 +441,81 @@ function TransactionDetailsModal({ transaction, onClose }: { transaction: Transa
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fadeIn">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6 md:p-8 animate-scaleIn max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+      <div className="glass-card max-w-2xl w-full p-6 md:p-8 animate-scaleIn max-h-[90vh] overflow-y-auto bg-white/95">
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">تفاصيل العملية</h3>
-            <p className="font-mono text-gray-600">{transaction.id}</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">تفاصيل العملية</h3>
+            <p className="font-mono text-sm text-gray-400">{transaction.id}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
           >
-            <X size={20} />
+            <X size={20} className="text-gray-400" />
           </button>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Status and Type */}
-          <div className="flex items-center gap-4">
-            <span className={`px-4 py-2 rounded-lg text-sm font-medium ${badge.class}`}>
+          <div className="flex items-center gap-3">
+            <span className={`px-3 py-1.5 rounded-xl text-sm font-medium ${badge.class}`}>
               {badge.text}
             </span>
-            <span className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700">
-              {transaction.type === 'payment' ? 'دفع' : 
+            <span className="px-3 py-1.5 rounded-xl text-sm font-medium bg-gray-100 text-gray-600">
+              {transaction.type === 'payment' ? 'دفع' :
                transaction.type === 'refund' ? 'استرجاع' : 'تحويل'}
             </span>
           </div>
 
           {/* Amount */}
-          <div className="bg-gray-50 rounded-lg p-6 text-center">
-            <p className="text-sm text-gray-600 mb-2">المبلغ</p>
+          <div className="bg-gradient-to-l from-primary-50 to-accent-50 rounded-2xl p-6 text-center">
+            <p className="text-sm text-gray-500 mb-2">المبلغ</p>
             <p className={`text-4xl font-bold font-numbers ${
-              transaction.type === 'payment' ? 'text-success' : 'text-error'
+              transaction.type === 'payment' ? 'text-accent' : 'text-error'
             }`}>
               {transaction.type === 'payment' ? '+' : '-'}{formatCurrency(transaction.amount)}
             </p>
           </div>
 
           {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">اسم العميل</p>
-              <p className="font-medium text-gray-900">{transaction.customerName}</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <p className="text-xs text-gray-400 mb-1">اسم العميل</p>
+              <p className="font-medium text-gray-900 text-sm">{transaction.customerName}</p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">رقم الجوال</p>
-              <p className="font-medium text-gray-900 font-numbers">{transaction.customerPhone}</p>
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <p className="text-xs text-gray-400 mb-1">رقم الجوال</p>
+              <p className="font-medium text-gray-900 font-numbers text-sm">{transaction.customerPhone}</p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">طريقة الدفع</p>
-              <p className="font-medium text-gray-900">
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <p className="text-xs text-gray-400 mb-1">طريقة الدفع</p>
+              <p className="font-medium text-gray-900 text-sm">
                 {transaction.method === 'nfc' ? 'NFC - تقريب الجوال' :
                  transaction.method === 'qr' ? 'QR - مسح الرمز' :
                  'رقم الجوال'}
               </p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">التاريخ والوقت</p>
-              <p className="font-medium text-gray-900 font-numbers">{formatDateTime(transaction.createdAt)}</p>
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <p className="text-xs text-gray-400 mb-1">التاريخ والوقت</p>
+              <p className="font-medium text-gray-900 font-numbers text-sm">{formatDateTime(transaction.createdAt)}</p>
             </div>
             {transaction.employeeName && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">الموظف المنفذ</p>
-                <p className="font-medium text-gray-900">{transaction.employeeName}</p>
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <p className="text-xs text-gray-400 mb-1">الموظف المنفذ</p>
+                <p className="font-medium text-gray-900 text-sm">{transaction.employeeName}</p>
               </div>
             )}
             {transaction.branchName && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">الفرع</p>
-                <p className="font-medium text-gray-900">{transaction.branchName}</p>
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <p className="text-xs text-gray-400 mb-1">الفرع</p>
+                <p className="font-medium text-gray-900 text-sm">{transaction.branchName}</p>
               </div>
             )}
           </div>
 
           {/* Actions */}
-          <div className="flex flex-col md:flex-row gap-3 pt-4 border-t border-gray-200">
+          <div className="flex flex-col md:flex-row gap-3 pt-4 border-t border-gray-100">
             <Button variant="outline" fullWidth leftIcon={<Download size={20} />} onClick={handlePrintReceipt}>
               طباعة إيصال
             </Button>

@@ -134,20 +134,25 @@ export default function ForgotPassword() {
   const maskedPhone = phone ? phone.replace(/(\d{2})(\d{4})(\d{4})/, '$1****$3') : '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-900 via-primary to-primary-400 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Decorative shapes */}
+      <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-white/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-15%] left-[-10%] w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl" />
+      <div className="absolute top-[40%] left-[20%] w-[200px] h-[200px] bg-white/5 rounded-full blur-2xl" />
+
       <BackButton to="/login" label="تسجيل الدخول" />
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md relative z-10">
         {/* Logo and Header */}
         <div className="text-center mb-8 animate-fadeIn">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-primary rounded-2xl mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-xl rounded-2xl mb-4 shadow-glass-lg border border-white/20">
             <span className="text-3xl font-bold text-white">NP</span>
           </div>
-          <h1 className="text-3xl font-bold text-primary mb-2">
+          <h1 className="text-3xl font-bold text-white mb-2">
             {step === 'phone' && 'استعادة رمز PIN'}
             {step === 'otp' && 'التحقق من رقم الجوال'}
             {step === 'reset' && 'إعادة تعيين رمز PIN'}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-white/60">
             {step === 'phone' && 'أدخل رقم جوالك لاستلام رمز التحقق'}
             {step === 'otp' && `أدخل الرمز المرسل إلى ${maskedPhone}`}
             {step === 'reset' && 'أدخل رمز PIN الجديد'}
@@ -155,7 +160,7 @@ export default function ForgotPassword() {
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 animate-slideUp">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 animate-slideUp border border-white/30">
           {/* Phone Step */}
           {step === 'phone' && (
             <form onSubmit={handleSubmitPhone(onSubmitPhone)} className="space-y-5">
@@ -173,6 +178,12 @@ export default function ForgotPassword() {
                   }
                 })}
               />
+
+              {error && (
+                <div className="bg-error/5 border border-error/20 rounded-xl p-3 text-error text-sm">
+                  {error}
+                </div>
+              )}
 
               <Button type="submit" fullWidth size="lg" isLoading={isLoading}>
                 إرسال رمز التحقق
@@ -205,7 +216,7 @@ export default function ForgotPassword() {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 transition-all"
+                    className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-gray-50/50"
                     disabled={isLoading}
                   />
                 ))}
@@ -213,7 +224,7 @@ export default function ForgotPassword() {
 
               <div className="text-center mb-4">
                 {!canResend ? (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-500">
                     ينتهي خلال <span className="font-mono font-bold text-primary">{String(timer).padStart(2, '0')}</span> ثانية
                   </p>
                 ) : (
@@ -228,7 +239,7 @@ export default function ForgotPassword() {
               </div>
 
               {error && (
-                <div className="bg-error/10 border border-error rounded-lg p-3 text-error text-sm text-center">
+                <div className="bg-error/5 border border-error/20 rounded-xl p-3 text-error text-sm text-center">
                   {error}
                 </div>
               )}
@@ -243,7 +254,7 @@ export default function ForgotPassword() {
                 تغيير رقم الجوال
               </Button>
 
-              <div className="mt-4 text-center text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+              <div className="mt-4 text-center text-sm text-gray-500 bg-primary-50/30 rounded-xl p-3">
                 <p>للاختبار، استخدم الرمز: <span className="font-mono font-bold">123456</span></p>
               </div>
             </div>
@@ -278,7 +289,7 @@ export default function ForgotPassword() {
               />
 
               {error && (
-                <div className="bg-error/10 border border-error rounded-lg p-3 text-error text-sm">
+                <div className="bg-error/5 border border-error/20 rounded-xl p-3 text-error text-sm">
                   {error}
                 </div>
               )}
@@ -289,6 +300,11 @@ export default function ForgotPassword() {
             </form>
           )}
         </div>
+
+        {/* Footer */}
+        <p className="text-center text-sm text-white/40 mt-6">
+          مدعوم بتقنية NavaPay &copy; 2026
+        </p>
       </div>
     </div>
   );

@@ -51,7 +51,7 @@ export default function Register() {
           <div
             className={`
               w-10 h-10 rounded-full flex items-center justify-center font-medium transition-all
-              ${currentStep >= step ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}
+              ${currentStep >= step ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'}
             `}
           >
             {currentStep > step ? <Check size={20} /> : step}
@@ -59,7 +59,7 @@ export default function Register() {
           {step < 3 && (
             <div
               className={`w-16 h-1 mx-2 transition-all ${
-                currentStep > step ? 'bg-primary' : 'bg-gray-200'
+                currentStep > step ? 'bg-primary' : 'bg-gray-100'
               }`}
             />
           )}
@@ -69,20 +69,25 @@ export default function Register() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-900 via-primary to-primary-400 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Decorative shapes */}
+      <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-white/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-15%] left-[-10%] w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl" />
+      <div className="absolute top-[40%] left-[20%] w-[200px] h-[200px] bg-white/5 rounded-full blur-2xl" />
+
       <BackButton />
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-2xl relative z-10">
         {/* Logo and Header */}
         <div className="text-center mb-8 animate-fadeIn">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-primary rounded-2xl mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-xl rounded-2xl mb-4 shadow-glass-lg border border-white/20">
             <span className="text-3xl font-bold text-white">NP</span>
           </div>
-          <h1 className="text-3xl font-bold text-primary mb-2">إنشاء حساب تاجر</h1>
-          <p className="text-gray-600">انضم إلى NavaPay وابدأ باستقبال المدفوعات</p>
+          <h1 className="text-3xl font-bold text-white mb-2">إنشاء حساب تاجر</h1>
+          <p className="text-white/60">انضم إلى NavaPay وابدأ باستقبال المدفوعات</p>
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 animate-slideUp">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 animate-slideUp border border-white/30">
           <ProgressIndicator />
 
           {currentStep === 1 && <Step1 onComplete={handleStep1Complete} />}
@@ -91,7 +96,7 @@ export default function Register() {
 
           {/* Login Link */}
           {currentStep === 1 && (
-            <p className="text-center text-sm text-gray-600 mt-6">
+            <p className="text-center text-sm text-gray-500 mt-6">
               لديك حساب بالفعل؟{' '}
               <Link to="/login" className="text-primary font-medium hover:text-primary-600 transition-colors">
                 تسجيل الدخول
@@ -99,6 +104,11 @@ export default function Register() {
             </p>
           )}
         </div>
+
+        {/* Footer */}
+        <p className="text-center text-sm text-white/40 mt-6">
+          مدعوم بتقنية NavaPay &copy; 2026
+        </p>
       </div>
     </div>
   );
@@ -229,7 +239,7 @@ function Step2({ onComplete, onBack }: { onComplete: (data: Step2Form) => void; 
           <span className="text-error mr-1">*</span>
         </label>
         <select
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200"
+          className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
           {...register('businessType', { required: 'نوع النشاط مطلوب' })}
         >
           <option value="">اختر نوع النشاط</option>
@@ -352,7 +362,7 @@ function Step3({ step1Data, onBack }: { step1Data: Step1Form; step2Data: Step2Fo
   return (
     <div className="space-y-5">
       <h2 className="text-xl font-bold text-gray-800 mb-2">التحقق من رقم الجوال</h2>
-      <p className="text-gray-600 text-sm mb-6">
+      <p className="text-gray-500 text-sm mb-6">
         أدخل الرمز المرسل إلى {maskedPhone}
       </p>
 
@@ -369,7 +379,7 @@ function Step3({ step1Data, onBack }: { step1Data: Step1Form; step2Data: Step2Fo
               value={digit}
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
-              className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary-200 transition-all"
+              className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-gray-50/50"
               disabled={isLoading}
             />
           ))}
@@ -378,7 +388,7 @@ function Step3({ step1Data, onBack }: { step1Data: Step1Form; step2Data: Step2Fo
         {/* Timer */}
         <div className="text-center mb-4">
           {!canResend ? (
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-500">
               ينتهي خلال <span className="font-mono font-bold text-primary">{String(timer).padStart(2, '0')}</span> ثانية
             </p>
           ) : (
@@ -395,7 +405,7 @@ function Step3({ step1Data, onBack }: { step1Data: Step1Form; step2Data: Step2Fo
 
       {/* Error Message */}
       {error && (
-        <div className="bg-error/10 border border-error rounded-lg p-3 text-error text-sm text-center animate-shake">
+        <div className="bg-error/5 border border-error/20 rounded-xl p-3 text-error text-sm text-center animate-shake">
           {error}
         </div>
       )}
@@ -424,7 +434,7 @@ function Step3({ step1Data, onBack }: { step1Data: Step1Form; step2Data: Step2Fo
       </Button>
 
       {/* Help Text */}
-      <div className="mt-4 text-center text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+      <div className="mt-4 text-center text-sm text-gray-500 bg-primary-50/30 rounded-xl p-3">
         <p>للاختبار، استخدم الرمز: <span className="font-mono font-bold">123456</span></p>
       </div>
     </div>

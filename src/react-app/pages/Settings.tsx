@@ -22,14 +22,14 @@ export default function Settings() {
     <MainLayout>
       <div className="animate-fadeIn">
         {/* Header */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-400 rounded-xl flex items-center justify-center shadow-lg">
               <SettingsIcon size={28} className="text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">الإعدادات</h1>
-              <p className="text-gray-600">إدارة حسابك ومعلومات المتجر</p>
+              <p className="text-gray-500">إدارة حسابك ومعلومات المتجر</p>
             </div>
           </div>
         </div>
@@ -37,17 +37,17 @@ export default function Settings() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-1">
+            <div className="glass-card p-4 space-y-1">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                       activeTab === tab.id
                         ? 'bg-primary text-white shadow-md'
-                        : 'text-gray-700 hover:bg-gray-50'
+                        : 'text-gray-600 hover:bg-primary-50/50'
                     }`}
                   >
                     <Icon size={20} />
@@ -94,28 +94,28 @@ function ProfileSettings() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-      <div className="p-6 border-b border-gray-200">
+    <div className="glass-card">
+      <div className="p-6 border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-900">الملف الشخصي</h2>
-        <p className="text-sm text-gray-600">قم بتحديث معلوماتك الشخصية</p>
+        <p className="text-sm text-gray-500">قم بتحديث معلوماتك الشخصية</p>
       </div>
 
       <div className="p-6 space-y-6">
         {/* Avatar */}
         <div className="flex items-center gap-6">
           <div className="relative">
-            <div className="w-24 h-24 bg-gradient-to-br from-primary to-primary-600 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-24 h-24 bg-gradient-to-br from-primary to-primary-400 rounded-2xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-4xl">
                 {formData.name.charAt(0)}
               </span>
             </div>
-            <button className="absolute bottom-0 right-0 w-8 h-8 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm">
+            <button className="absolute bottom-0 right-0 w-8 h-8 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm">
               <Camera size={16} className="text-gray-600" />
             </button>
           </div>
           <div>
             <h3 className="font-bold text-gray-900 mb-1">{formData.name}</h3>
-            <p className="text-sm text-gray-600 mb-2">{user?.role === 'owner' ? 'مالك' : user?.role === 'admin' ? 'مدير' : 'موظف'}</p>
+            <p className="text-sm text-gray-500 mb-2">{user?.role === 'owner' ? 'مالك' : user?.role === 'admin' ? 'مدير' : 'موظف'}</p>
             <Button variant="outline" size="sm" leftIcon={<Upload size={16} />}>
               تغيير الصورة
             </Button>
@@ -134,7 +134,7 @@ function ProfileSettings() {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 transition-all"
               />
             </div>
           </div>
@@ -149,7 +149,7 @@ function ProfileSettings() {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 transition-all"
               />
             </div>
           </div>
@@ -164,14 +164,14 @@ function ProfileSettings() {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors font-numbers"
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 font-numbers transition-all"
               />
             </div>
           </div>
         </div>
 
         {/* Save Button */}
-        <div className="flex justify-end pt-4 border-t border-gray-200">
+        <div className="flex justify-end pt-4 border-t border-gray-100">
           <Button
             leftIcon={isLoading ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
             onClick={handleSave}
@@ -208,21 +208,21 @@ function StoreSettings() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-      <div className="p-6 border-b border-gray-200">
+    <div className="glass-card">
+      <div className="p-6 border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-900">بيانات المتجر</h2>
-        <p className="text-sm text-gray-600">معلومات متجرك وبيانات الاتصال</p>
+        <p className="text-sm text-gray-500">معلومات متجرك وبيانات الاتصال</p>
       </div>
 
       <div className="p-6 space-y-6">
         {/* Store Logo */}
         <div className="flex items-center gap-6">
-          <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
-            <Store size={32} className="text-gray-400" />
+          <div className="w-24 h-24 bg-primary-50/50 rounded-2xl flex items-center justify-center border-2 border-dashed border-primary-200">
+            <Store size={32} className="text-primary" />
           </div>
           <div>
             <h3 className="font-bold text-gray-900 mb-1">شعار المتجر</h3>
-            <p className="text-sm text-gray-600 mb-2">سيظهر على الإيصالات وروابط الدفع</p>
+            <p className="text-sm text-gray-500 mb-2">سيظهر على الإيصالات وروابط الدفع</p>
             <Button variant="outline" size="sm" leftIcon={<Upload size={16} />}>
               رفع شعار
             </Button>
@@ -239,7 +239,7 @@ function StoreSettings() {
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 transition-all"
             />
           </div>
 
@@ -250,7 +250,7 @@ function StoreSettings() {
             <select
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 transition-all"
             >
               <option value="retail">تجزئة</option>
               <option value="restaurant">مطعم</option>
@@ -270,7 +270,7 @@ function StoreSettings() {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 transition-all"
               />
             </div>
           </div>
@@ -285,7 +285,7 @@ function StoreSettings() {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors font-numbers"
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 font-numbers transition-all"
               />
             </div>
           </div>
@@ -300,28 +300,28 @@ function StoreSettings() {
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 rows={3}
-                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors resize-none"
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 transition-all resize-none"
               />
             </div>
           </div>
         </div>
 
         {/* Store ID */}
-        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <div className="bg-gradient-to-l from-primary-50 to-accent-50 rounded-xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">معرف المتجر</p>
+              <p className="text-sm font-medium text-gray-600 mb-1">معرف المتجر</p>
               <p className="font-mono text-lg font-bold text-gray-900">{merchant?.id || '-'}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">نوع الباقة</p>
+              <p className="text-sm font-medium text-gray-600 mb-1">نوع الباقة</p>
               <p className="font-mono text-lg font-bold text-gray-900">{merchant?.plan === 'enterprise' ? 'Enterprise' : 'POS'}</p>
             </div>
           </div>
         </div>
 
         {/* Save Button */}
-        <div className="flex justify-end pt-4 border-t border-gray-200">
+        <div className="flex justify-end pt-4 border-t border-gray-100">
           <Button
             leftIcon={isLoading ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
             onClick={handleSave}
@@ -337,19 +337,19 @@ function StoreSettings() {
 
 function SecuritySettings() {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-      <div className="p-6 border-b border-gray-200">
+    <div className="glass-card">
+      <div className="p-6 border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-900">الأمان</h2>
-        <p className="text-sm text-gray-600">إعدادات الأمان وحماية الحساب</p>
+        <p className="text-sm text-gray-500">إعدادات الأمان وحماية الحساب</p>
       </div>
 
       <div className="p-6 space-y-4">
         {/* Change Password */}
-        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="p-4 bg-primary-50/20 rounded-xl">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-bold text-gray-900 mb-1">كلمة المرور</h3>
-              <p className="text-sm text-gray-600">آخر تغيير منذ 3 أشهر</p>
+              <p className="text-sm text-gray-500">آخر تغيير منذ 3 أشهر</p>
             </div>
             <Button variant="outline" size="sm" leftIcon={<Lock size={16} />}>
               تغيير
@@ -358,11 +358,11 @@ function SecuritySettings() {
         </div>
 
         {/* Two-Factor Authentication */}
-        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="p-4 bg-primary-50/20 rounded-xl">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-bold text-gray-900 mb-1">المصادقة الثنائية</h3>
-              <p className="text-sm text-gray-600">طبقة حماية إضافية لحسابك</p>
+              <p className="text-sm text-gray-500">طبقة حماية إضافية لحسابك</p>
             </div>
             <Button variant="outline" size="sm">
               تفعيل
@@ -371,35 +371,35 @@ function SecuritySettings() {
         </div>
 
         {/* Login History */}
-        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="p-4 bg-primary-50/20 rounded-xl">
           <h3 className="font-bold text-gray-900 mb-3">سجل تسجيل الدخول</h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
               <div>
                 <p className="font-medium text-gray-900">جهاز Desktop - Chrome</p>
-                <p className="text-gray-600">دمشق، سوريا</p>
+                <p className="text-gray-500">دمشق، سوريا</p>
               </div>
-              <p className="text-gray-600 font-numbers">اليوم، 09:30 ص</p>
+              <p className="text-gray-500 font-numbers">اليوم، 09:30 ص</p>
             </div>
             <div className="flex items-center justify-between text-sm">
               <div>
                 <p className="font-medium text-gray-900">جهاز Mobile - Safari</p>
-                <p className="text-gray-600">دمشق، سوريا</p>
+                <p className="text-gray-500">دمشق، سوريا</p>
               </div>
-              <p className="text-gray-600 font-numbers">أمس، 06:15 م</p>
+              <p className="text-gray-500 font-numbers">أمس، 06:15 م</p>
             </div>
           </div>
         </div>
 
         {/* Active Sessions */}
-        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="p-4 bg-primary-50/20 rounded-xl">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-gray-900">الجلسات النشطة</h3>
             <Button variant="outline" size="sm">
               إنهاء الكل
             </Button>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-500">
             لديك <span className="font-bold text-gray-900">2</span> جلسة نشطة حالياً
           </p>
         </div>
@@ -423,10 +423,10 @@ function NotificationsSettings() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-      <div className="p-6 border-b border-gray-200">
+    <div className="glass-card">
+      <div className="p-6 border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-900">الإشعارات</h2>
-        <p className="text-sm text-gray-600">تحكم في كيفية تلقي الإشعارات</p>
+        <p className="text-sm text-gray-500">تحكم في كيفية تلقي الإشعارات</p>
       </div>
 
       <div className="p-6 space-y-6">
@@ -462,7 +462,7 @@ function NotificationsSettings() {
         </div>
 
         {/* Notification Channels */}
-        <div className="pt-6 border-t border-gray-200">
+        <div className="pt-6 border-t border-gray-100">
           <h3 className="font-bold text-gray-900 mb-4">قنوات الإشعارات</h3>
           <div className="space-y-3">
             <ToggleSetting
@@ -481,7 +481,7 @@ function NotificationsSettings() {
         </div>
 
         {/* Save Button */}
-        <div className="flex justify-end pt-4 border-t border-gray-200">
+        <div className="flex justify-end pt-4 border-t border-gray-100">
           <Button leftIcon={<Save size={20} />}>
             حفظ التغييرات
           </Button>
@@ -498,26 +498,26 @@ function BillingSettings() {
   return (
     <div className="space-y-6">
       {/* Current Plan */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div className="p-6 border-b border-gray-200">
+      <div className="glass-card">
+        <div className="p-6 border-b border-gray-100">
           <h2 className="text-xl font-bold text-gray-900">الباقة الحالية</h2>
-          <p className="text-sm text-gray-600">معلومات اشتراكك وطرق الدفع</p>
+          <p className="text-sm text-gray-500">معلومات اشتراكك وطرق الدفع</p>
         </div>
 
         <div className="p-6">
-          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-6 border-2 border-primary/20">
+          <div className="bg-gradient-to-l from-primary-50 to-accent-50 rounded-2xl p-6 border border-primary-100">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-1">
                   {currentPlan === 'enterprise' ? 'Enterprise' : 'POS'}
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-500">
                   {currentPlan === 'enterprise' ? 'للشركات الكبيرة' : 'للشركات الصغيرة'}
                 </p>
               </div>
               <div className="text-left">
                 <p className="text-3xl font-bold text-primary font-numbers">$99</p>
-                <p className="text-sm text-gray-600">شهرياً</p>
+                <p className="text-sm text-gray-500">شهرياً</p>
               </div>
             </div>
 
@@ -526,7 +526,7 @@ function BillingSettings() {
                 الترقية إلى Enterprise
               </Button>
             ) : (
-              <div className="bg-white rounded-lg p-4">
+              <div className="bg-white/80 rounded-xl p-4">
                 <p className="text-sm text-gray-600 mb-2">
                   تاريخ التجديد التالي: <span className="font-bold text-gray-900">1 فبراير 2026</span>
                 </p>
@@ -540,21 +540,21 @@ function BillingSettings() {
       </div>
 
       {/* Payment Method */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div className="p-6 border-b border-gray-200">
+      <div className="glass-card">
+        <div className="p-6 border-b border-gray-100">
           <h2 className="text-xl font-bold text-gray-900">طريقة الدفع</h2>
         </div>
 
         <div className="p-6">
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+          <div className="bg-primary-50/30 rounded-xl p-4 mb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded flex items-center justify-center">
+                <div className="w-12 h-8 bg-gradient-to-br from-primary to-primary-400 rounded-lg flex items-center justify-center">
                   <CreditCard size={20} className="text-white" />
                 </div>
                 <div>
                   <p className="font-bold text-gray-900">•••• •••• •••• 4242</p>
-                  <p className="text-sm text-gray-600">تنتهي في 12/26</p>
+                  <p className="text-sm text-gray-500">تنتهي في 12/26</p>
                 </div>
               </div>
               <Button variant="outline" size="sm">
@@ -570,27 +570,27 @@ function BillingSettings() {
       </div>
 
       {/* Billing History */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div className="p-6 border-b border-gray-200">
+      <div className="glass-card">
+        <div className="p-6 border-b border-gray-100">
           <h2 className="text-xl font-bold text-gray-900">سجل الفواتير</h2>
         </div>
 
-        <div className="divide-y divide-gray-200">
+        <div className="divide-y divide-gray-100">
           {[
             { date: '2026-01-01', amount: 99, status: 'paid' },
             { date: '2025-12-01', amount: 99, status: 'paid' },
             { date: '2025-11-01', amount: 99, status: 'paid' },
           ].map((invoice, i) => (
-            <div key={i} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+            <div key={i} className="p-6 flex items-center justify-between hover:bg-primary-50/20 transition-colors">
               <div>
                 <p className="font-bold text-gray-900 font-numbers">
                   {new Date(invoice.date).toLocaleDateString('ar-SY', { year: 'numeric', month: 'long' })}
                 </p>
-                <p className="text-sm text-gray-600">فاتورة شهرية</p>
+                <p className="text-sm text-gray-500">فاتورة شهرية</p>
               </div>
               <div className="text-left">
                 <p className="font-bold text-gray-900 font-numbers">${invoice.amount}</p>
-                <p className="text-sm text-success">مدفوعة</p>
+                <p className="text-sm text-accent-700">مدفوعة</p>
               </div>
             </div>
           ))}
@@ -613,10 +613,10 @@ function ReceiptSettings() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Settings */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div className="p-6 border-b border-gray-200">
+      <div className="glass-card">
+        <div className="p-6 border-b border-gray-100">
           <h2 className="text-xl font-bold text-gray-900">تخصيص الإيصال</h2>
-          <p className="text-sm text-gray-600">خصص شكل الإيصالات المطبوعة</p>
+          <p className="text-sm text-gray-500">خصص شكل الإيصالات المطبوعة</p>
         </div>
 
         <div className="p-6 space-y-6">
@@ -659,12 +659,12 @@ function ReceiptSettings() {
               value={settings.footerText}
               onChange={(e) => setSettings({ ...settings, footerText: e.target.value })}
               rows={3}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors resize-none"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary bg-gray-50/50 transition-all resize-none"
               placeholder="أضف رسالة شكر أو ملاحظة"
             />
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-gray-200">
+          <div className="flex justify-end pt-4 border-t border-gray-100">
             <Button leftIcon={<Save size={20} />}>
               حفظ التغييرات
             </Button>
@@ -673,18 +673,18 @@ function ReceiptSettings() {
       </div>
 
       {/* Preview */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div className="p-6 border-b border-gray-200">
+      <div className="glass-card">
+        <div className="p-6 border-b border-gray-100">
           <h2 className="text-xl font-bold text-gray-900">معاينة</h2>
-          <p className="text-sm text-gray-600">شكل الإيصال النهائي</p>
+          <p className="text-sm text-gray-500">شكل الإيصال النهائي</p>
         </div>
 
         <div className="p-6">
-          <div className="bg-white border-2 border-gray-300 rounded-lg p-8 font-mono text-sm">
+          <div className="bg-white border border-gray-200 rounded-xl p-8 font-mono text-sm shadow-sm">
             {/* Logo */}
             {settings.showLogo && (
               <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-lg mx-auto flex items-center justify-center mb-2">
+                <div className="w-16 h-16 bg-primary-50 rounded-xl mx-auto flex items-center justify-center mb-2">
                   <Store size={32} className="text-primary" />
                 </div>
                 <h3 className="font-bold text-lg">اسم المتجر</h3>
@@ -692,14 +692,14 @@ function ReceiptSettings() {
             )}
 
             {/* Store Info */}
-            <div className="text-center mb-6 space-y-1 text-gray-700">
+            <div className="text-center mb-6 space-y-1 text-gray-600">
               {settings.showAddress && <p>عنوان المتجر</p>}
               {settings.showPhone && <p className="font-numbers">+963 XXX XXX XXX</p>}
               {settings.showEmail && <p>email@example.com</p>}
             </div>
 
             {/* Divider */}
-            <div className="border-t-2 border-dashed border-gray-300 my-4"></div>
+            <div className="border-t-2 border-dashed border-gray-200 my-4"></div>
 
             {/* Transaction Details */}
             <div className="space-y-2 mb-4">
@@ -718,7 +718,7 @@ function ReceiptSettings() {
             </div>
 
             {/* Divider */}
-            <div className="border-t-2 border-dashed border-gray-300 my-4"></div>
+            <div className="border-t-2 border-dashed border-gray-200 my-4"></div>
 
             {/* Amount */}
             <div className="flex justify-between text-lg font-bold mb-6">
@@ -729,15 +729,15 @@ function ReceiptSettings() {
             {/* QR Code */}
             {settings.showQR && (
               <div className="flex justify-center mb-4">
-                <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center">
-                  <span className="text-xs text-gray-500">QR Code</span>
+                <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <span className="text-xs text-gray-400">QR Code</span>
                 </div>
               </div>
             )}
 
             {/* Footer */}
             {settings.footerText && (
-              <div className="text-center text-gray-600 mt-4 pt-4 border-t border-gray-300">
+              <div className="text-center text-gray-500 mt-4 pt-4 border-t border-gray-200">
                 {settings.footerText}
               </div>
             )}
@@ -755,10 +755,10 @@ function ToggleSetting({ label, description, enabled, onToggle }: {
   onToggle: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+    <div className="flex items-center justify-between p-3 bg-primary-50/20 rounded-xl">
       <div className="flex-1">
         <p className="font-medium text-gray-900">{label}</p>
-        {description && <p className="text-sm text-gray-600">{description}</p>}
+        {description && <p className="text-sm text-gray-500">{description}</p>}
       </div>
       <button
         onClick={onToggle}

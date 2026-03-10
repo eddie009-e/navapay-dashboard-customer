@@ -70,26 +70,26 @@ export default function Branches() {
             <Crown size={40} className="text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">ميزة مخصصة للباقة Enterprise</h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-gray-500 mb-8">
             إدارة الفروع متاحة فقط في الباقة Enterprise. قم بالترقية للاستفادة من هذه الميزة.
           </p>
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-8">
+          <div className="glass-card p-6 mb-8">
             <h3 className="font-bold text-gray-900 mb-4">ما الذي ستحصل عليه؟</h3>
             <ul className="text-right space-y-3 text-gray-700">
               <li className="flex items-start gap-3">
-                <span className="text-success text-xl">✓</span>
+                <span className="text-accent-700 text-xl">✓</span>
                 <span>إضافة فروع متعددة لعملك</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-success text-xl">✓</span>
+                <span className="text-accent-700 text-xl">✓</span>
                 <span>تعيين مديرين وموظفين لكل فرع</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-success text-xl">✓</span>
+                <span className="text-accent-700 text-xl">✓</span>
                 <span>تتبع أداء ومبيعات كل فرع</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-success text-xl">✓</span>
+                <span className="text-accent-700 text-xl">✓</span>
                 <span>تقارير مفصلة لكل فرع على حدة</span>
               </li>
             </ul>
@@ -126,7 +126,7 @@ export default function Branches() {
     <MainLayout>
       <div className="animate-fadeIn">
         {/* Header */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -134,7 +134,7 @@ export default function Branches() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">الفروع</h1>
-                <p className="text-gray-600">إدارة فروع العمل</p>
+                <p className="text-gray-500">إدارة فروع العمل</p>
               </div>
             </div>
             <Button leftIcon={<Plus size={20} />} onClick={() => setIsAddModalOpen(true)}>
@@ -144,7 +144,7 @@ export default function Branches() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+            <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
               <div className="flex items-center gap-2 mb-2">
                 <Building2 size={20} className="text-primary" />
                 <p className="text-sm text-gray-700">إجمالي الفروع</p>
@@ -152,15 +152,15 @@ export default function Branches() {
               <p className="text-3xl font-bold text-primary font-numbers">{totalBranches}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-lg p-4 border border-success/20">
+            <div className="bg-gradient-to-br from-success/5 to-success/10 rounded-xl p-4 border border-success/20">
               <div className="flex items-center gap-2 mb-2">
-                <Users size={20} className="text-success" />
+                <Users size={20} className="text-accent-700" />
                 <p className="text-sm text-gray-700">إجمالي الموظفين</p>
               </div>
-              <p className="text-3xl font-bold text-success font-numbers">{totalEmployees}</p>
+              <p className="text-3xl font-bold text-accent-700 font-numbers">{totalEmployees}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-lg p-4 border border-accent/20">
+            <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-4 border border-accent/20">
               <div className="flex items-center gap-2 mb-2">
                 <DollarSign size={20} className="text-accent" />
                 <p className="text-sm text-gray-700">إجمالي المبيعات</p>
@@ -168,19 +168,19 @@ export default function Branches() {
               <p className="text-2xl font-bold text-accent font-numbers">{formatCurrency(totalSales)}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-lg p-4 border border-secondary/20">
+            <div className="bg-gradient-to-br from-secondary/5 to-secondary/10 rounded-xl p-4 border border-secondary/20">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp size={20} className="text-secondary" />
                 <p className="text-sm text-gray-700">أفضل فرع</p>
               </div>
               <p className="text-lg font-bold text-secondary truncate">{topBranch?.name || '-'}</p>
-              <p className="text-sm text-gray-600 font-numbers">-</p>
+              <p className="text-sm text-gray-500 font-numbers">-</p>
             </div>
           </div>
         </div>
 
         {/* Search */}
-        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200 shadow-sm">
+        <div className="glass-card p-6 mb-6">
           <div className="relative">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
@@ -188,7 +188,7 @@ export default function Branches() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ابحث بالاسم، العنوان، أو رقم الهاتف..."
-              className="w-full pr-10 pl-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-200 focus:border-primary transition-colors"
+              className="w-full pr-10 pl-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 focus:ring-2 focus:ring-primary/10 focus:border-primary transition-colors"
             />
           </div>
         </div>
@@ -201,12 +201,12 @@ export default function Branches() {
             </div>
           ) : filteredBranches.length === 0 ? (
             <div className="col-span-full">
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-16 text-center">
+              <div className="glass-card p-16 text-center">
                 <Building2 size={64} className="mx-auto text-gray-300 mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {searchQuery ? 'لا توجد نتائج' : 'لا يوجد فروع بعد'}
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-500 mb-6">
                   {searchQuery ? 'جرب البحث بكلمات مختلفة' : 'ابدأ بإضافة فرعك الأول'}
                 </p>
                 {!searchQuery && (
@@ -236,12 +236,12 @@ export default function Branches() {
 
 function BranchCard({ branch }: { branch: Branch }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden">
+    <div className="glass-card hover:shadow-md transition-all overflow-hidden">
       {/* Header */}
-      <div className={`p-6 ${branch.isMain ? 'bg-gradient-to-br from-primary/10 to-primary/5' : 'bg-gray-50'}`}>
+      <div className={`p-6 ${branch.isMain ? 'bg-gradient-to-br from-primary/10 to-primary/5' : 'bg-surface'}`}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
               branch.isMain ? 'bg-primary text-white' : 'bg-gray-200 text-gray-600'
             }`}>
               <Building2 size={24} />
@@ -275,21 +275,21 @@ function BranchCard({ branch }: { branch: Branch }) {
       </div>
 
       {/* Stats */}
-      <div className="p-6 border-t border-gray-200">
+      <div className="p-6 border-t border-gray-100">
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600 mb-1">عدد الموظفين</p>
+          <div className="text-center p-3 bg-surface rounded-xl">
+            <p className="text-xs text-gray-500 mb-1">عدد الموظفين</p>
             <p className="text-2xl font-bold text-primary font-numbers">{branch.employeesCount}</p>
           </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600 mb-1">المبيعات الشهرية</p>
-            <p className="text-lg font-bold text-success font-numbers">-</p>
+          <div className="text-center p-3 bg-surface rounded-xl">
+            <p className="text-xs text-gray-500 mb-1">المبيعات الشهرية</p>
+            <p className="text-lg font-bold text-accent-700 font-numbers">-</p>
           </div>
         </div>
 
         {/* Manager */}
-        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-600 mb-1">المدير المسؤول</p>
+        <div className="mb-4 p-3 bg-surface rounded-xl">
+          <p className="text-xs text-gray-500 mb-1">المدير المسؤول</p>
           <p className="font-medium text-gray-900">{branch.managerName || 'غير محدد'}</p>
         </div>
 
