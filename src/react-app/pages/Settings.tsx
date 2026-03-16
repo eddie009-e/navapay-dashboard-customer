@@ -3,6 +3,7 @@ import MainLayout from '@/react-app/components/MainLayout';
 import { Settings as SettingsIcon, User, Store, Shield, Bell, CreditCard, Receipt, Upload, Save, Camera, Lock, Mail, Phone, MapPin, Loader2 } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 
 type Tab = 'profile' | 'store' | 'security' | 'notifications' | 'billing' | 'receipt';
 
@@ -116,8 +117,8 @@ function ProfileSettings() {
           <div>
             <h3 className="font-bold text-gray-900 mb-1">{formData.name}</h3>
             <p className="text-sm text-gray-500 mb-2">{user?.role === 'owner' ? 'مالك' : user?.role === 'admin' ? 'مدير' : 'موظف'}</p>
-            <Button variant="outline" size="sm" leftIcon={<Upload size={16} />}>
-              تغيير الصورة
+            <Button variant="outline" size="sm" leftIcon={<Upload size={16} />} disabled className="opacity-50">
+              تغيير الصورة (قريباً)
             </Button>
           </div>
         </div>
@@ -223,8 +224,8 @@ function StoreSettings() {
           <div>
             <h3 className="font-bold text-gray-900 mb-1">شعار المتجر</h3>
             <p className="text-sm text-gray-500 mb-2">سيظهر على الإيصالات وروابط الدفع</p>
-            <Button variant="outline" size="sm" leftIcon={<Upload size={16} />}>
-              رفع شعار
+            <Button variant="outline" size="sm" leftIcon={<Upload size={16} />} disabled className="opacity-50">
+              رفع شعار (قريباً)
             </Button>
           </div>
         </div>
@@ -336,6 +337,22 @@ function StoreSettings() {
 }
 
 function SecuritySettings() {
+  const { showToast } = useToast();
+  const { logout } = useAuth();
+  const [isEndingSessions, setIsEndingSessions] = useState(false);
+
+  const handleEndAllSessions = async () => {
+    setIsEndingSessions(true);
+    try {
+      await logout();
+      showToast('success', 'تم إنهاء جميع الجلسات');
+    } catch {
+      showToast('error', 'فشل في إنهاء الجلسات');
+    } finally {
+      setIsEndingSessions(false);
+    }
+  };
+
   return (
     <div className="glass-card">
       <div className="p-6 border-b border-gray-100">
@@ -344,14 +361,14 @@ function SecuritySettings() {
       </div>
 
       <div className="p-6 space-y-4">
-        {/* Change Password */}
+        {/* Change PIN */}
         <div className="p-4 bg-primary-50/20 rounded-xl">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-bold text-gray-900 mb-1">كلمة المرور</h3>
-              <p className="text-sm text-gray-500">آخر تغيير منذ 3 أشهر</p>
+              <h3 className="font-bold text-gray-900 mb-1">الرمز السري (PIN)</h3>
+              <p className="text-sm text-gray-500">رمز التحقق لتأكيد العمليات المالية</p>
             </div>
-            <Button variant="outline" size="sm" leftIcon={<Lock size={16} />}>
+            <Button variant="outline" size="sm" leftIcon={<Lock size={16} />} onClick={() => showToast('info', 'استخدم التطبيق لتغيير الرمز السري')}>
               تغيير
             </Button>
           </div>
@@ -362,32 +379,9 @@ function SecuritySettings() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-bold text-gray-900 mb-1">المصادقة الثنائية</h3>
-              <p className="text-sm text-gray-500">طبقة حماية إضافية لحسابك</p>
+              <p className="text-sm text-gray-500">حسابك محمي عبر رمز OTP يُرسل برسالة SMS</p>
             </div>
-            <Button variant="outline" size="sm">
-              تفعيل
-            </Button>
-          </div>
-        </div>
-
-        {/* Login History */}
-        <div className="p-4 bg-primary-50/20 rounded-xl">
-          <h3 className="font-bold text-gray-900 mb-3">سجل تسجيل الدخول</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <div>
-                <p className="font-medium text-gray-900">جهاز Desktop - Chrome</p>
-                <p className="text-gray-500">دمشق، سوريا</p>
-              </div>
-              <p className="text-gray-500 font-numbers">اليوم، 09:30 ص</p>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <div>
-                <p className="font-medium text-gray-900">جهاز Mobile - Safari</p>
-                <p className="text-gray-500">دمشق، سوريا</p>
-              </div>
-              <p className="text-gray-500 font-numbers">أمس، 06:15 م</p>
-            </div>
+            <span className="px-3 py-1 bg-accent-50 text-accent-700 rounded-lg text-sm font-medium">مُفعّل عبر SMS</span>
           </div>
         </div>
 
@@ -395,12 +389,17 @@ function SecuritySettings() {
         <div className="p-4 bg-primary-50/20 rounded-xl">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-gray-900">الجلسات النشطة</h3>
-            <Button variant="outline" size="sm">
-              إنهاء الكل
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleEndAllSessions}
+              disabled={isEndingSessions}
+            >
+              {isEndingSessions ? 'جاري الإنهاء...' : 'إنهاء الكل'}
             </Button>
           </div>
           <p className="text-sm text-gray-500">
-            لديك <span className="font-bold text-gray-900">2</span> جلسة نشطة حالياً
+            سيتم تسجيل خروجك من جميع الأجهزة
           </p>
         </div>
       </div>
@@ -420,6 +419,22 @@ function NotificationsSettings() {
 
   const toggle = (key: keyof typeof settings) => {
     setSettings({ ...settings, [key]: !settings[key] });
+  };
+
+  const { showToast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveNotifications = async () => {
+    setIsSaving(true);
+    try {
+      const { api } = await import('../services/api');
+      await api.patch('/notifications/settings', settings);
+      showToast('success', 'تم حفظ إعدادات الإشعارات');
+    } catch {
+      showToast('error', 'فشل في حفظ الإعدادات');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -482,8 +497,12 @@ function NotificationsSettings() {
 
         {/* Save Button */}
         <div className="flex justify-end pt-4 border-t border-gray-100">
-          <Button leftIcon={<Save size={20} />}>
-            حفظ التغييرات
+          <Button
+            leftIcon={isSaving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+            onClick={handleSaveNotifications}
+            disabled={isSaving}
+          >
+            {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
           </Button>
         </div>
       </div>
@@ -522,15 +541,15 @@ function BillingSettings() {
             </div>
 
             {currentPlan === 'pos' ? (
-              <Button fullWidth>
-                الترقية إلى Enterprise
+              <Button fullWidth disabled className="opacity-50">
+                الترقية إلى Enterprise (قريباً)
               </Button>
             ) : (
               <div className="bg-white/80 rounded-xl p-4">
                 <p className="text-sm text-gray-600 mb-2">
                   تاريخ التجديد التالي: <span className="font-bold text-gray-900">1 فبراير 2026</span>
                 </p>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" disabled className="opacity-50">
                   إلغاء الاشتراك
                 </Button>
               </div>
@@ -557,14 +576,14 @@ function BillingSettings() {
                   <p className="text-sm text-gray-500">تنتهي في 12/26</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" disabled className="opacity-50">
                 تعديل
               </Button>
             </div>
           </div>
 
-          <Button variant="outline" fullWidth>
-            إضافة طريقة دفع جديدة
+          <Button variant="outline" fullWidth disabled className="opacity-50">
+            إضافة طريقة دفع جديدة (قريباً)
           </Button>
         </div>
       </div>
@@ -601,6 +620,8 @@ function BillingSettings() {
 }
 
 function ReceiptSettings() {
+  const { showToast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
   const [settings, setSettings] = useState({
     showLogo: true,
     showAddress: true,
@@ -665,8 +686,23 @@ function ReceiptSettings() {
           </div>
 
           <div className="flex justify-end pt-4 border-t border-gray-100">
-            <Button leftIcon={<Save size={20} />}>
-              حفظ التغييرات
+            <Button
+              leftIcon={isSaving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+              disabled={isSaving}
+              onClick={async () => {
+                setIsSaving(true);
+                try {
+                  const { api } = await import('../services/api');
+                  await api.patch('/merchant/receipt-settings', settings);
+                  showToast('success', 'تم حفظ إعدادات الإيصال');
+                } catch {
+                  showToast('error', 'فشل في حفظ الإعدادات');
+                } finally {
+                  setIsSaving(false);
+                }
+              }}
+            >
+              {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
             </Button>
           </div>
         </div>

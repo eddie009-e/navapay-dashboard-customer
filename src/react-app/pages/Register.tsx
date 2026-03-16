@@ -161,8 +161,14 @@ function Step1({ onComplete }: { onComplete: (data: Step1Form) => void }) {
         type="email"
         placeholder="example@email.com"
         leftIcon={<Mail size={20} />}
-        hint="اختياري"
-        {...register('email')}
+        error={errors.email?.message}
+        {...register('email', {
+          required: 'البريد الإلكتروني مطلوب',
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'البريد الإلكتروني غير صالح'
+          }
+        })}
       />
 
       <div>
@@ -272,7 +278,7 @@ function Step2({ onComplete, onBack }: { onComplete: (data: Step2Form) => void; 
   );
 }
 
-function Step3({ step1Data, onBack }: { step1Data: Step1Form; step2Data: Step2Form; onBack: () => void }) {
+function Step3({ step1Data, step2Data, onBack }: { step1Data: Step1Form; step2Data: Step2Form; onBack: () => void }) {
   const navigate = useNavigate();
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
@@ -334,7 +340,17 @@ function Step3({ step1Data, onBack }: { step1Data: Step1Form; step2Data: Step2Fo
       const code = otp.join('');
       const verifyResult = await authService.verifyOtp(step1Data.phone, code, 'register');
       if (verifyResult.otpToken) {
-        await authService.register(verifyResult.otpToken, step1Data.fullName);
+        // 1. Register user with email + password
+        await authService.register(verifyResult.otpToken, step1Data.fullName, step1Data.email, step1Data.password);
+
+        // 2. Register as merchant with store data
+        await authService.registerMerchant({
+          businessName: step2Data.storeName,
+          businessType: step2Data.businessType,
+          contactPhone: step1Data.phone,
+          contactEmail: step1Data.email,
+          address: step2Data.address || undefined,
+        });
       }
       navigate('/');
     } catch (error) {

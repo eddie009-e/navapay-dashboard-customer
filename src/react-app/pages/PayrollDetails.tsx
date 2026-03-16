@@ -163,8 +163,8 @@ export default function PayrollDetails() {
                 </span>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" leftIcon={<Download size={20} />}>
-                  تصدير PDF
+                <Button variant="outline" leftIcon={<Download size={20} />} onClick={() => window.print()}>
+                  طباعة
                 </Button>
                 {failedCount > 0 && (
                   <Button leftIcon={<RefreshCw size={20} />} onClick={handleRetryFailed}>

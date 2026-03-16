@@ -6,6 +6,7 @@ import { paymentLinksService, PaymentLink, CreatePaymentLinkDto } from '../servi
 import { useToast } from '@/react-app/contexts/ToastContext';
 
 export default function PaymentLinks() {
+  const { showToast } = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState<PaymentLink | null>(null);
   const [paymentLinks, setPaymentLinks] = useState<PaymentLink[]>([]);
@@ -48,7 +49,7 @@ export default function PaymentLinks() {
 
   const handleCopyLink = (url: string) => {
     navigator.clipboard.writeText(url);
-    // Show toast
+    showToast('success', 'تم نسخ الرابط');
   };
 
   return (
@@ -125,8 +126,20 @@ export default function PaymentLinks() {
                     >
                       <QrCode size={20} className="text-primary" />
                     </button>
-                    <button className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors">
-                      <MoreVertical size={20} className="text-gray-500" />
+                    <button
+                      onClick={async () => {
+                        try {
+                          await paymentLinksService.delete(link.id);
+                          showToast('success', 'تم حذف الرابط');
+                          fetchPaymentLinks();
+                        } catch {
+                          showToast('error', 'فشل في حذف الرابط');
+                        }
+                      }}
+                      className="p-2 hover:bg-red-50 rounded-xl transition-colors"
+                      title="حذف الرابط"
+                    >
+                      <X size={20} className="text-error" />
                     </button>
                   </div>
                 </div>
@@ -348,10 +361,25 @@ function QRModal({ link, onClose }: { link: PaymentLink; onClose: () => void }) 
         <p className="text-gray-500 mb-6">امسح الرمز للدفع</p>
 
         <div className="flex gap-3">
-          <Button variant="outline" fullWidth>
+          <Button variant="outline" fullWidth onClick={() => {
+            const canvas = document.querySelector('.glass-card canvas') as HTMLCanvasElement;
+            if (canvas) {
+              const url = canvas.toDataURL('image/png');
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `qr-${link.name}.png`;
+              a.click();
+            } else {
+              // Fallback: download the QR container as image
+              const el = document.querySelector('.bg-gray-900.rounded-xl') as HTMLElement;
+              if (el) {
+                window.print();
+              }
+            }
+          }}>
             تحميل QR
           </Button>
-          <Button variant="outline" fullWidth>
+          <Button variant="outline" fullWidth onClick={() => window.print()}>
             طباعة
           </Button>
         </div>

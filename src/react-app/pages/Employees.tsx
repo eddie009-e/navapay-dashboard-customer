@@ -113,8 +113,8 @@ export default function Employees() {
               </li>
             </ul>
           </div>
-          <Button size="lg">
-            الترقية للباقة Enterprise
+          <Button size="lg" disabled className="opacity-50">
+            الترقية للباقة Enterprise (قريباً)
           </Button>
         </div>
       </MainLayout>

@@ -161,13 +161,14 @@ export default function POS() {
             {/* Quick Actions */}
             <div className="grid grid-cols-4 gap-2.5 mt-5">
               {[
-                { icon: RotateCcw, label: 'استرجاع', color: 'bg-orange-50 text-orange-600' },
-                { icon: FileText, label: 'فاتورة', color: 'bg-accent-50 text-accent-700' },
-                { icon: QrCode, label: 'QR ثابت', color: 'bg-purple-50 text-purple-600' },
-                { icon: History, label: 'آخر عملية', color: 'bg-primary-50 text-primary' },
+                { icon: RotateCcw, label: 'استرجاع', color: 'bg-orange-50 text-orange-600', path: '/transactions' },
+                { icon: FileText, label: 'فاتورة', color: 'bg-accent-50 text-accent-700', path: '/invoices/create' },
+                { icon: QrCode, label: 'QR ثابت', color: 'bg-purple-50 text-purple-600', path: '/pos/qr' },
+                { icon: History, label: 'آخر عملية', color: 'bg-primary-50 text-primary', path: '/transactions' },
               ].map((action) => (
                 <button
                   key={action.label}
+                  onClick={() => navigate(action.path)}
                   className="flex flex-col items-center gap-2 p-3 rounded-xl hover:shadow-card transition-all duration-200 hover:-translate-y-0.5 bg-white/60 border border-gray-100/50"
                 >
                   <div className={`w-10 h-10 ${action.color} rounded-xl flex items-center justify-center`}>
@@ -506,7 +507,10 @@ function PhonePayment({ amount, onBack, onSuccess }: { amount: string; onBack: (
             </div>
 
             <div className="flex gap-3">
-              <Button variant="outline" fullWidth>إعادة إرسال</Button>
+              <Button variant="outline" fullWidth onClick={() => {
+                // Re-trigger payment notification to customer
+                handleSubmit();
+              }}>إعادة إرسال</Button>
               <Button variant="outline" fullWidth onClick={onBack}>رجوع</Button>
             </div>
           </div>

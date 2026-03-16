@@ -1,18 +1,24 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Smartphone, ArrowRight, Loader2, RefreshCw } from 'lucide-react';
+import { Smartphone, Mail, Lock, ArrowRight, Loader2, RefreshCw } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
 import { useAuth } from '@/react-app/contexts/AuthContext';
 import { ApiError } from '@/react-app/services/api';
 
-type Step = 'phone' | 'otp';
+type LoginMethod = 'password' | 'otp';
+type OtpStep = 'phone' | 'code';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { requestOtp, verifyOtp, loginWithOtp, isAuthenticated } = useAuth();
+  const { requestOtp, verifyOtp, loginWithOtp, loginWithPassword, isAuthenticated } = useAuth();
 
-  const [step, setStep] = useState<Step>('phone');
+  const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
+  const [otpStep, setOtpStep] = useState<OtpStep>('phone');
+  // Password login fields
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  // OTP login fields
   const [phone, setPhone] = useState('');
   const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +46,35 @@ export default function Login() {
     }
   }, [expiresIn]);
 
+  const handlePasswordLogin = async () => {
+    if (!email.trim()) {
+      setError('البريد الإلكتروني مطلوب');
+      return;
+    }
+    if (!password) {
+      setError('كلمة المرور مطلوبة');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      await loginWithPassword(email, password);
+      navigate('/');
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message || 'فشل في تسجيل الدخول');
+      } else if (err instanceof Error) {
+        setError(err.message || 'حدث خطأ في الاتصال بالخادم');
+      } else {
+        setError('حدث خطأ في الاتصال بالخادم');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const validatePhone = (value: string) => {
     return /^09\d{8}$/.test(value);
   };
@@ -55,7 +90,7 @@ export default function Login() {
 
     try {
       const response = await requestOtp(phone, 'login');
-      setStep('otp');
+      setOtpStep('code');
       setExpiresIn(response.expiresIn || 300);
       setCountdown(60);
     } catch (err) {
@@ -173,7 +208,110 @@ export default function Login() {
 
         {/* Login Form */}
         <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 animate-slideUp border border-white/30">
-          {step === 'phone' ? (
+          {/* Method Tabs */}
+          {otpStep === 'phone' && (
+            <div className="flex mb-6 bg-gray-100 rounded-xl p-1">
+              <button
+                onClick={() => { setLoginMethod('password'); setError(''); }}
+                className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${
+                  loginMethod === 'password' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                البريد وكلمة المرور
+              </button>
+              <button
+                onClick={() => { setLoginMethod('otp'); setError(''); }}
+                className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${
+                  loginMethod === 'otp' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                رمز التحقق (OTP)
+              </button>
+            </div>
+          )}
+
+          {/* Password Login */}
+          {loginMethod === 'password' && otpStep === 'phone' && (
+            <div className="space-y-5">
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-bold text-gray-900">تسجيل الدخول</h2>
+                <p className="text-sm text-gray-500 mt-1">أدخل بريدك الإلكتروني وكلمة المرور</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">البريد الإلكتروني</label>
+                <div className="relative">
+                  <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                    placeholder="merchant@example.com"
+                    className="w-full pr-10 pl-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-lg bg-gray-50/50"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">كلمة المرور</label>
+                <div className="relative">
+                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setError(''); }}
+                    placeholder="••••••••"
+                    className="w-full pr-10 pl-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-lg bg-gray-50/50"
+                    dir="ltr"
+                    onKeyDown={(e) => { if (e.key === 'Enter') handlePasswordLogin(); }}
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div className="bg-error/5 border border-error/20 rounded-xl p-3 text-error text-sm">
+                  {error}
+                </div>
+              )}
+
+              <Button
+                type="button"
+                fullWidth
+                size="lg"
+                onClick={handlePasswordLogin}
+                disabled={isLoading || !email || !password}
+                leftIcon={isLoading ? <Loader2 className="animate-spin" size={20} /> : undefined}
+              >
+                {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
+              </Button>
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-gray-400">أو</span>
+                </div>
+              </div>
+
+              <Link to="/login/pin">
+                <Button type="button" variant="outline" fullWidth size="lg">
+                  الدخول برمز PIN (للموظفين)
+                </Button>
+              </Link>
+
+              <p className="text-center text-sm text-gray-500 mt-6">
+                ليس لديك حساب؟{' '}
+                <Link to="/register" className="text-primary font-semibold hover:text-primary-400 transition-colors">
+                  سجل الآن
+                </Link>
+              </p>
+            </div>
+          )}
+
+          {/* OTP Login - Phone Step */}
+          {loginMethod === 'otp' && otpStep === 'phone' && (
             <div className="space-y-5">
               <div className="text-center mb-6">
                 <h2 className="text-xl font-bold text-gray-900">تسجيل الدخول</h2>
@@ -181,18 +319,13 @@ export default function Login() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">
-                  رقم الجوال
-                </label>
+                <label className="block text-sm font-medium text-gray-600 mb-2">رقم الجوال</label>
                 <div className="relative">
                   <Smartphone className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                   <input
                     type="tel"
                     value={phone}
-                    onChange={(e) => {
-                      setPhone(e.target.value);
-                      setError('');
-                    }}
+                    onChange={(e) => { setPhone(e.target.value); setError(''); }}
                     placeholder="0912345678"
                     className="w-full pr-10 pl-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-numbers text-lg bg-gray-50/50"
                     dir="ltr"
@@ -228,12 +361,7 @@ export default function Login() {
               </div>
 
               <Link to="/login/pin">
-                <Button
-                  type="button"
-                  variant="outline"
-                  fullWidth
-                  size="lg"
-                >
+                <Button type="button" variant="outline" fullWidth size="lg">
                   الدخول برمز PIN (للموظفين)
                 </Button>
               </Link>
@@ -245,11 +373,14 @@ export default function Login() {
                 </Link>
               </p>
             </div>
-          ) : (
+          )}
+
+          {/* OTP Login - Code Step */}
+          {loginMethod === 'otp' && otpStep === 'code' && (
             <div className="space-y-5">
               <button
                 onClick={() => {
-                  setStep('phone');
+                  setOtpStep('phone');
                   setOtpCode(['', '', '', '', '', '']);
                   setError('');
                 }}
@@ -261,9 +392,7 @@ export default function Login() {
 
               <div className="text-center mb-6">
                 <h2 className="text-xl font-bold text-gray-900">رمز التحقق</h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  أدخل الرمز المرسل إلى
-                </p>
+                <p className="text-sm text-gray-500 mt-1">أدخل الرمز المرسل إلى</p>
                 <p className="font-numbers font-bold text-primary mt-1">{phone}</p>
               </div>
 

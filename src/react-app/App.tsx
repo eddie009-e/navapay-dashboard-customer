@@ -36,6 +36,9 @@ import Settings from "@/react-app/pages/Settings";
 import Developers from "@/react-app/pages/Developers";
 import EmployeeReport from "@/react-app/pages/EmployeeReport";
 import BranchReport from "@/react-app/pages/BranchReport";
+import Reminders from "@/react-app/pages/Reminders";
+import TransactionCategories from "@/react-app/pages/TransactionCategories";
+import ActivityLog from "@/react-app/pages/ActivityLog";
 
 export default function App() {
   return (
@@ -78,6 +81,9 @@ export default function App() {
         <Route path="/branches/:id" element={<BranchDetails />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/developers" element={<Developers />} />
+        <Route path="/reminders" element={<Reminders />} />
+        <Route path="/categories" element={<TransactionCategories />} />
+        <Route path="/activity" element={<ActivityLog />} />
           </Routes>
         </Router>
       </ToastProvider>

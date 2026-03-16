@@ -22,6 +22,8 @@ export { paymentLinksService } from './paymentLinks.service';
 export { recurringInvoicesService } from './recurringInvoices.service';
 export { notificationsService } from './notifications.service';
 export { payrollService } from './payroll.service';
+export { remindersService } from './reminders.service';
+export { categoriesService } from './categories.service';
 
 // Re-export types
 export type { PinLoginRequest, LoginResponse, MerchantProfile, OtpResponse, OtpVerifyResponse, AuthResponse } from './auth.service';
@@ -39,3 +41,5 @@ export type { PaymentLink, CreatePaymentLinkDto, UpdatePaymentLinkDto } from './
 export type { RecurringInvoice, CreateRecurringInvoiceDto, UpdateRecurringInvoiceDto } from './recurringInvoices.service';
 export type { Notification, NotificationStats } from './notifications.service';
 export type { BulkTransfer, BulkTransferRecipient, BulkTransferDetails, CreateBulkTransferDto, BulkTransferStats } from './payroll.service';
+export type { Reminder, CreateReminderDto } from './reminders.service';
+export type { Category, CreateCategoryDto, UpdateCategoryDto } from './categories.service';

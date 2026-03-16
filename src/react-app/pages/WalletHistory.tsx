@@ -54,7 +54,26 @@ export default function WalletHistory() {
   });
 
   const handleExport = () => {
-    console.log('Export wallet transactions');
+    if (filteredTransactions.length === 0) return;
+
+    const headers = ['المعرف', 'الوصف', 'النوع', 'المبلغ', 'الرصيد بعد', 'التاريخ'];
+    const rows = filteredTransactions.map(t => [
+      t.id,
+      t.description,
+      t.type === 'credit' ? 'وارد' : 'صادر',
+      t.amount.toString(),
+      (t.balanceAfter ?? 0).toString(),
+      new Date(t.createdAt).toLocaleString('ar-SY')
+    ]);
+
+    const csvContent = '\uFEFF' + [headers, ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `wallet-history-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (

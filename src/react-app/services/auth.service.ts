@@ -26,10 +26,17 @@ export interface VerifyOtpDto {
 export interface RegisterDto {
   otpToken: string;
   fullName?: string;
+  email?: string;
+  password?: string;
 }
 
 export interface LoginDto {
   otpToken: string;
+}
+
+export interface PasswordLoginDto {
+  email: string;
+  password: string;
 }
 
 export interface PinLoginRequest {
@@ -150,10 +157,12 @@ export const authService = {
    * تسجيل مستخدم جديد (بعد التحقق من OTP)
    * POST /api/v1/auth/register
    */
-  async register(otpToken: string, fullName?: string): Promise<AuthResponse> {
+  async register(otpToken: string, fullName?: string, email?: string, password?: string): Promise<AuthResponse> {
     const response = await api.post<ApiResponse<AuthResponse>>('/auth/register', {
       otpToken,
       fullName,
+      email,
+      password,
     });
 
     if (response.success && response.data) {
@@ -173,6 +182,26 @@ export const authService = {
   async login(otpToken: string): Promise<AuthResponse> {
     const response = await api.post<ApiResponse<AuthResponse>>('/auth/login', {
       otpToken,
+    });
+
+    if (response.success && response.data) {
+      const { tokens, user } = response.data;
+      tokenManager.setTokens(tokens.accessToken, tokens.refreshToken);
+      tokenManager.setUserData(user);
+      return response.data;
+    }
+
+    throw new Error(response.message || 'فشل في تسجيل الدخول');
+  },
+
+  /**
+   * تسجيل الدخول بالبريد وكلمة المرور (للوحة التاجر)
+   * POST /api/v1/auth/login/password
+   */
+  async loginWithPassword(email: string, password: string): Promise<AuthResponse> {
+    const response = await api.post<ApiResponse<AuthResponse>>('/auth/login/password', {
+      email,
+      password,
     });
 
     if (response.success && response.data) {

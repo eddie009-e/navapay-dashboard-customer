@@ -177,7 +177,26 @@ export default function CustomerDetails() {
                   </div>
                 </div>
               </div>
-              <Button variant="outline" leftIcon={<Download size={20} />}>
+              <Button variant="outline" leftIcon={<Download size={20} />} onClick={() => {
+                if (!customer) return;
+                const headers = ['الاسم', 'الهاتف', 'البريد', 'إجمالي الإنفاق', 'عدد العمليات', 'آخر تعامل'];
+                const row = [
+                  customer.name,
+                  customer.phone,
+                  customer.email || '-',
+                  customer.totalSpent?.toString() || '0',
+                  customer.transactionsCount?.toString() || '0',
+                  customer.lastTransactionAt ? new Date(customer.lastTransactionAt).toLocaleDateString('ar-SY') : '-'
+                ];
+                const csvContent = '\uFEFF' + [headers, row].map(r => r.join(',')).join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `customer-${customer.name}-${new Date().toISOString().slice(0, 10)}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}>
                 تصدير البيانات
               </Button>
             </div>

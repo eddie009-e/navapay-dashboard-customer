@@ -37,7 +37,9 @@ interface AuthContextType {
   requestOtp: (phone: string, purpose?: 'login' | 'register' | 'reset_pin') => Promise<OtpResponse>;
   verifyOtp: (phone: string, code: string, purpose?: 'login' | 'register' | 'reset_pin') => Promise<OtpVerifyResponse>;
   loginWithOtp: (otpToken: string) => Promise<AuthResponse>;
-  registerWithOtp: (otpToken: string, fullName?: string) => Promise<AuthResponse>;
+  registerWithOtp: (otpToken: string, fullName?: string, email?: string, password?: string) => Promise<AuthResponse>;
+  // Password Login (for merchants)
+  loginWithPassword: (email: string, password: string) => Promise<AuthResponse>;
   // PIN Login (for employees)
   loginWithPin: (credentials: PinLoginRequest) => Promise<void>;
   logout: () => Promise<void>;
@@ -145,15 +147,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const registerWithOtp = useCallback(async (otpToken: string, fullName?: string): Promise<AuthResponse> => {
+  const loginWithPassword = useCallback(async (email: string, password: string): Promise<AuthResponse> => {
     setIsLoading(true);
     try {
-      const response = await authService.register(otpToken, fullName);
+      const response = await authService.loginWithPassword(email, password);
+
+      const userData: User = {
+        id: response.user.id,
+        name: response.user.fullName || response.user.name || '',
+        phone: response.user.phone,
+        email,
+        role: 'owner',
+      };
+
+      setUser(userData);
+      tokenManager.setUserData(userData);
+
+      // Load merchant profile
+      try {
+        const profile = await authService.getProfile();
+        const merchantData: Merchant = {
+          id: profile.id,
+          name: profile.businessNameAr || profile.businessName,
+          type: profile.businessType,
+          plan: 'enterprise',
+          logo: profile.logoUrl,
+          address: profile.address,
+          phone: profile.contactPhone,
+        };
+        setMerchant(merchantData);
+        tokenManager.setMerchantData(merchantData);
+
+        const updatedUser: User = { ...userData, merchantName: merchantData.name };
+        setUser(updatedUser);
+        tokenManager.setUserData(updatedUser);
+      } catch {
+        // New user without merchant profile
+      }
+
+      return response;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const registerWithOtp = useCallback(async (otpToken: string, fullName?: string, email?: string, password?: string): Promise<AuthResponse> => {
+    setIsLoading(true);
+    try {
+      const response = await authService.register(otpToken, fullName, email, password);
 
       const userData: User = {
         id: response.user.id,
         name: response.user.fullName || response.user.name || fullName || '',
         phone: response.user.phone,
+        email,
         role: 'owner',
       };
 
@@ -207,12 +254,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const hasPermission = useCallback(
-    (_permission: string): boolean => {
+    (permission: string): boolean => {
       if (!user) return false;
-      // Owner and admin have all permissions
       if (user.role === 'owner' || user.role === 'admin') return true;
-      // For employees, check specific permissions (would need to be stored in user object)
-      return true; // Simplified for now
+      // Check employee permissions from user object
+      const permissions = (user as any).permissions || [];
+      return permissions.includes(permission);
     },
     [user],
   );
@@ -226,6 +273,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     verifyOtp,
     loginWithOtp,
     registerWithOtp,
+    loginWithPassword,
     loginWithPin,
     logout,
     updateProfile,

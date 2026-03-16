@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router';
 import {
   Home, CreditCard, FileText, BarChart3, Wallet, Users,
-  Settings, X
+  Settings, X, Bell, Tag, Activity
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -19,6 +19,9 @@ const navigation: NavItem[] = [
   { label: 'الفواتير', icon: FileText, path: '/invoices' },
   { label: 'التقارير', icon: BarChart3, path: '/reports' },
   { label: 'العملاء', icon: Users, path: '/customers' },
+  { label: 'التذكيرات', icon: Bell, path: '/reminders' },
+  { label: 'التصنيفات', icon: Tag, path: '/categories' },
+  { label: 'سجل النشاط', icon: Activity, path: '/activity' },
   { label: 'الإعدادات', icon: Settings, path: '/settings' },
 ];
 

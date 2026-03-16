@@ -153,7 +153,15 @@ export default function EmployeeDetails() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" leftIcon={<Edit size={20} />}>
+                <Button variant="outline" leftIcon={<Edit size={20} />} onClick={() => {
+                  // Navigate to employee edit — use update service
+                  const newName = prompt('اسم الموظف الجديد:', employee.name);
+                  if (newName && newName !== employee.name) {
+                    employeesService.update(employee.id, { name: newName }).then(updated => {
+                      setEmployee(updated);
+                    }).catch(err => console.error('Failed to update employee:', err));
+                  }
+                }}>
                   تعديل البيانات
                 </Button>
                 <Button
@@ -294,7 +302,20 @@ export default function EmployeeDetails() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-mono text-lg text-gray-900">****</span>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={async () => {
+                  const newPin = prompt('أدخل PIN الجديد (4 أرقام):');
+                  if (newPin && /^\d{4}$/.test(newPin)) {
+                    try {
+                      await employeesService.resetPin(employee.id, newPin);
+                      alert('تم تغيير رقم PIN بنجاح');
+                    } catch (err) {
+                      console.error('Failed to reset PIN:', err);
+                      alert('فشل في تغيير رقم PIN');
+                    }
+                  } else if (newPin) {
+                    alert('يجب أن يكون PIN مكوناً من 4 أرقام');
+                  }
+                }}>
                   تغيير
                 </Button>
               </div>
@@ -305,7 +326,7 @@ export default function EmployeeDetails() {
                 <p className="font-medium text-gray-900">كلمة المرور</p>
                 <p className="text-sm text-gray-500">لتسجيل الدخول إلى لوحة التحكم</p>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" disabled title="قريباً">
                 إعادة تعيين
               </Button>
             </div>
@@ -315,7 +336,7 @@ export default function EmployeeDetails() {
                 <p className="font-medium text-gray-900">المصادقة الثنائية</p>
                 <p className="text-sm text-gray-500">طبقة حماية إضافية للحساب</p>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" disabled title="قريباً">
                 تفعيل
               </Button>
             </div>

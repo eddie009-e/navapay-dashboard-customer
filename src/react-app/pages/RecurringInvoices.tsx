@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import { Plus, Play, Pause, Eye, X, MoreVertical, Loader2 } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import { SkeletonList } from '@/react-app/components/LoadingSpinner';
@@ -10,6 +11,7 @@ type TabType = 'active' | 'paused' | 'ended';
 
 export default function RecurringInvoices() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('active');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [recurringInvoices, setRecurringInvoices] = useState<RecurringInvoice[]>([]);
@@ -222,7 +224,7 @@ export default function RecurringInvoices() {
                           استئناف
                         </Button>
                       )}
-                      <Button size="sm" variant="outline" leftIcon={<Eye size={16} />}>
+                      <Button size="sm" variant="outline" leftIcon={<Eye size={16} />} onClick={() => navigate(`/invoices/recurring/${invoice.id}`)}>
                         عرض
                       </Button>
                       <button className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors">
@@ -482,8 +484,8 @@ function UpgradeModal() {
           <Button variant="outline" onClick={() => window.history.back()}>
             العودة
           </Button>
-          <Button size="lg" className="px-8">
-            ترقية للـ Enterprise
+          <Button size="lg" className="px-8 opacity-50" disabled>
+            ترقية للـ Enterprise (قريباً)
           </Button>
         </div>
       </div>

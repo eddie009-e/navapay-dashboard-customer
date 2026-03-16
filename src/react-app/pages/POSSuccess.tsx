@@ -82,6 +82,7 @@ export default function POSSuccess() {
                 variant="outline"
                 fullWidth
                 leftIcon={<Printer size={20} />}
+                onClick={() => window.print()}
               >
                 طباعة
               </Button>
@@ -89,6 +90,22 @@ export default function POSSuccess() {
                 variant="outline"
                 fullWidth
                 leftIcon={<Share2 size={20} />}
+                onClick={async () => {
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        title: 'إيصال دفع NavaPay',
+                        text: `تم دفع ${formatCurrency(transaction.amount)} - المرجع: ${transaction.reference}`,
+                      });
+                    } catch {
+                      // User cancelled share
+                    }
+                  } else {
+                    navigator.clipboard.writeText(
+                      `إيصال دفع NavaPay\nالمبلغ: ${formatCurrency(transaction.amount)}\nالمرجع: ${transaction.reference}\nالتاريخ: ${transaction.time}`
+                    );
+                  }
+                }}
               >
                 مشاركة
               </Button>

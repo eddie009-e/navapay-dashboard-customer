@@ -122,7 +122,28 @@ export default function Invoices() {
   };
 
   const handleExport = () => {
-    showToast('info', 'جاري تحميل التقرير...');
+    if (invoices.length === 0) {
+      showToast('warning', 'لا توجد فواتير للتصدير');
+      return;
+    }
+    const headers = ['رقم الفاتورة', 'العميل', 'الهاتف', 'المبلغ', 'الحالة', 'تاريخ الاستحقاق'];
+    const rows = invoices.map(inv => [
+      inv.invoiceNumber || inv.id,
+      inv.customerName,
+      inv.customerPhone,
+      inv.total,
+      inv.status,
+      inv.dueDate,
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `invoices-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('success', 'تم تحميل التقرير');
   };
 
   return (
@@ -309,14 +330,23 @@ export default function Invoices() {
                                 نسخ رابط الدفع
                               </button>
                               <button
-                                onClick={() => showToast('info', 'جاري تحميل PDF...')}
+                                onClick={() => window.print()}
                                 className="w-full px-4 py-2.5 text-right hover:bg-primary-50 transition-colors text-gray-600 flex items-center gap-2 text-sm"
                               >
                                 <FileDown size={16} />
-                                تحميل PDF
+                                طباعة
                               </button>
                               <button
-                                onClick={() => showToast('success', `تم إرسال الفاتورة إلى ${invoice.customerName}`)}
+                                onClick={async () => {
+                                  try {
+                                    await invoicesService.send(invoice.id);
+                                    showToast('success', `تم إرسال الفاتورة إلى ${invoice.customerName}`);
+                                    setShowActionsMenu(null);
+                                    fetchInvoices();
+                                  } catch {
+                                    showToast('error', 'فشل في إرسال الفاتورة');
+                                  }
+                                }}
                                 className="w-full px-4 py-2.5 text-right hover:bg-primary-50 transition-colors text-gray-600 flex items-center gap-2 text-sm"
                               >
                                 <Send size={16} />

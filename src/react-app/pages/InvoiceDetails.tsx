@@ -6,11 +6,13 @@ import BackButton from '@/react-app/components/BackButton';
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { invoicesService, Invoice } from '../services';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 
 export default function InvoiceDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { merchant } = useAuth();
+  const { showToast } = useToast();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -116,6 +118,7 @@ export default function InvoiceDetails() {
   const handleCopyLink = () => {
     const link = `https://pay.navapay.com/invoice/${invoice.id}`;
     navigator.clipboard.writeText(link);
+    showToast('success', 'تم نسخ رابط الدفع');
   };
 
   const handleCancel = async () => {
@@ -154,7 +157,7 @@ export default function InvoiceDetails() {
 
           <div className="flex items-center gap-2">
             {invoice.status === 'draft' && (
-              <Button variant="outline">تعديل</Button>
+              <Button variant="outline" onClick={() => navigate(`/invoices/${invoice.id}/edit`)}>تعديل</Button>
             )}
             <button className="p-2 hover:bg-primary-50/20 rounded-xl transition-colors">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -367,16 +370,9 @@ export default function InvoiceDetails() {
                   fullWidth
                   variant="outline"
                   leftIcon={<FileDown size={20} />}
+                  onClick={() => window.print()}
                 >
-                  تحميل PDF
-                </Button>
-
-                <Button
-                  fullWidth
-                  variant="outline"
-                  leftIcon={<Printer size={20} />}
-                >
-                  طباعة
+                  طباعة الفاتورة
                 </Button>
 
                 {invoice.status !== 'cancelled' && invoice.status !== 'paid' && (

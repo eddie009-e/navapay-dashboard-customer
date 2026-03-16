@@ -166,7 +166,14 @@ export default function BranchDetails() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" leftIcon={<Edit size={20} />}>
+                <Button variant="outline" leftIcon={<Edit size={20} />} onClick={() => {
+                  const newName = prompt('اسم الفرع الجديد:', branch.name);
+                  if (newName && newName !== branch.name) {
+                    branchesService.update(branch.id, { name: newName }).then(updated => {
+                      setBranch(updated);
+                    }).catch(err => console.error('Failed to update branch:', err));
+                  }
+                }}>
                   تعديل البيانات
                 </Button>
               </div>

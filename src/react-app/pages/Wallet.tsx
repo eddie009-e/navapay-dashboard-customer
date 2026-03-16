@@ -70,6 +70,18 @@ export default function Wallet() {
     }
   };
 
+  const handleDeposit = async (amount: number, bankAccountId: string) => {
+    try {
+      await walletService.deposit({ amount, bankAccountId });
+      showToast('success', `تم إنشاء طلب إيداع بقيمة ${formatCurrency(amount)}`);
+      setShowDepositModal(false);
+      const walletData = await walletService.getWallet();
+      setWallet(walletData);
+    } catch {
+      showToast('error', 'فشل في إنشاء طلب الإيداع');
+    }
+  };
+
   const handleWithdraw = async (amount: number, bankAccountId: string) => {
     try {
       await walletService.transferToBank({ amount, bankAccountId });
@@ -243,7 +255,11 @@ export default function Wallet() {
       )}
 
       {showDepositModal && (
-        <DepositModal onClose={() => setShowDepositModal(false)} />
+        <DepositModal
+          bankAccounts={bankAccounts}
+          onClose={() => setShowDepositModal(false)}
+          onSubmit={handleDeposit}
+        />
       )}
 
       {showAddAccountModal && (
@@ -351,24 +367,95 @@ function WithdrawModal({
   );
 }
 
-function DepositModal({ onClose }: { onClose: () => void }) {
+function DepositModal({
+  bankAccounts,
+  onClose,
+  onSubmit,
+}: {
+  bankAccounts: BankAccount[];
+  onClose: () => void;
+  onSubmit: (amount: number, bankAccountId: string) => Promise<void>;
+}) {
+  const { isLoading, withLoading } = useLoading();
+  const [amount, setAmount] = useState('');
+  const [selectedAccount, setSelectedAccount] = useState(bankAccounts[0]?.id || '');
+
+  const formatCurrencyLocal = (val: number) => {
+    return new Intl.NumberFormat('ar-SY').format(val) + ' ل.س';
+  };
+
+  const handleSubmit = async () => {
+    await withLoading(onSubmit(Number(amount), selectedAccount));
+  };
+
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
       <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
         <h3 className="text-2xl font-bold text-gray-900 mb-6">إيداع</h3>
 
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Upload size={32} className="text-primary" />
+        <div className="space-y-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              المبلغ <span className="text-error">*</span>
+            </label>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 bg-gray-50/50 font-numbers transition-all"
+            />
           </div>
-          <p className="text-gray-600 mb-4">
-            لإيداع الأموال، تواصل مع فريق الدعم أو استخدم أحد طرق الدفع المتاحة
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              الحساب البنكي <span className="text-error">*</span>
+            </label>
+            {bankAccounts.length > 0 ? (
+              <select
+                value={selectedAccount}
+                onChange={(e) => setSelectedAccount(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 bg-gray-50/50 transition-all"
+              >
+                {bankAccounts.map(account => (
+                  <option key={account.id} value={account.id}>
+                    {account.bankName} •••• {account.accountNumber?.slice(-4)}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <p className="text-sm text-gray-500 p-3 bg-gray-50 rounded-xl">
+                لا توجد حسابات بنكية. أضف حساباً بنكياً أولاً.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-primary-50/50 rounded-xl p-3 mb-6">
+          <p className="text-sm text-gray-600">
+            سيتم إيداع المبلغ في محفظتك بعد التحقق من العملية
           </p>
         </div>
 
-        <Button fullWidth onClick={onClose}>
-          حسناً
-        </Button>
+        <div className="flex gap-3">
+          <Button variant="outline" fullWidth onClick={onClose} disabled={isLoading}>
+            إلغاء
+          </Button>
+          <Button
+            fullWidth
+            onClick={handleSubmit}
+            disabled={!amount || Number(amount) <= 0 || !selectedAccount || isLoading}
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <LoadingSpinner size="sm" color="text-white" />
+                <span>جاري المعالجة...</span>
+              </div>
+            ) : (
+              'طلب الإيداع'
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -4,8 +4,10 @@ import { Code2, Key, Activity, Book, Plus, Copy, Eye, EyeOff, Trash2, CheckCircl
 import Button from '@/react-app/components/Button';
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { developersService, ApiKey, Webhook as WebhookType, ApiLog, CreateApiKeyDto, CreateWebhookDto } from '../services';
+import { useToast } from '../contexts/ToastContext';
 
 export default function Developers() {
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<'keys' | 'webhooks' | 'logs' | 'docs'>('keys');
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [webhooks, setWebhooks] = useState<WebhookType[]>([]);
@@ -109,6 +111,7 @@ export default function Developers() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+    showToast('success', 'تم النسخ');
   };
 
   const formatDateTime = (dateStr: string) => {

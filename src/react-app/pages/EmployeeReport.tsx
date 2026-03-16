@@ -164,9 +164,10 @@ export default function EmployeeReport() {
               </Button>
               <Button
                 leftIcon={<Crown size={20} />}
-                onClick={() => alert('سيتم توجيهك لصفحة الترقية')}
+                disabled
+                className="opacity-50"
               >
-                الترقية إلى Enterprise
+                الترقية إلى Enterprise (قريباً)
               </Button>
             </div>
           </div>
