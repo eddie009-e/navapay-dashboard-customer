@@ -86,6 +86,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(prev => prev ? { ...prev, merchantName: merchantData.name, plan: merchantData.plan } : prev);
         } catch (error) {
           console.error('Profile fetch failed, using stored data:', error);
+          // Default to enterprise when no merchant profile exists
+          if (!storedMerchant) {
+            const defaultMerchant: Merchant = { id: '', name: '', type: 'default', plan: 'enterprise' };
+            setMerchant(defaultMerchant);
+            tokenManager.setMerchantData(defaultMerchant);
+          }
+          setUser(prev => prev ? { ...prev, plan: 'enterprise' } : prev);
         }
       }
       setIsLoading(false);
@@ -139,6 +146,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         tokenManager.setUserData(updatedUser);
       } catch (error) {
         console.error('New user without merchant profile:', error);
+        const defaultMerchant: Merchant = { id: '', name: '', type: 'default', plan: 'enterprise' };
+        setMerchant(defaultMerchant);
+        tokenManager.setMerchantData(defaultMerchant);
+        const updatedUser: User = { ...userData, plan: 'enterprise' };
+        setUser(updatedUser);
+        tokenManager.setUserData(updatedUser);
       }
 
       return response;
@@ -178,11 +191,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setMerchant(merchantData);
         tokenManager.setMerchantData(merchantData);
 
-        const updatedUser: User = { ...userData, merchantName: merchantData.name };
+        const updatedUser: User = { ...userData, merchantName: merchantData.name, plan: merchantData.plan };
         setUser(updatedUser);
         tokenManager.setUserData(updatedUser);
       } catch (error) {
         console.error('New user without merchant profile:', error);
+        const defaultMerchant: Merchant = { id: '', name: '', type: 'default', plan: 'enterprise' };
+        setMerchant(defaultMerchant);
+        tokenManager.setMerchantData(defaultMerchant);
+        const updatedUser: User = { ...userData, plan: 'enterprise' };
+        setUser(updatedUser);
+        tokenManager.setUserData(updatedUser);
       }
 
       return response;
