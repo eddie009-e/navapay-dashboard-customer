@@ -82,8 +82,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setMerchant(merchantData);
           tokenManager.setMerchantData(merchantData);
 
-          // Update user with merchant name
-          setUser(prev => prev ? { ...prev, merchantName: merchantData.name } : prev);
+          // Update user with merchant name and plan
+          setUser(prev => prev ? { ...prev, merchantName: merchantData.name, plan: merchantData.plan } : prev);
         } catch (error) {
           console.error('Profile fetch failed, using stored data:', error);
         }
@@ -133,8 +133,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setMerchant(merchantData);
         tokenManager.setMerchantData(merchantData);
 
-        // Update user with merchant name
-        const updatedUser: User = { ...userData, merchantName: merchantData.name };
+        // Update user with merchant name and plan
+        const updatedUser: User = { ...userData, merchantName: merchantData.name, plan: merchantData.plan };
         setUser(updatedUser);
         tokenManager.setUserData(updatedUser);
       } catch (error) {
@@ -264,13 +264,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [user],
   );
 
-  // DEV: Force enterprise plan on user and merchant for testing
-  const devUser = user ? { ...user, plan: 'enterprise' as const } : null;
-  const devMerchant = merchant ? { ...merchant, plan: 'enterprise' as const } : null;
-
   const value: AuthContextType = {
-    user: devUser,
-    merchant: devMerchant,
+    user,
+    merchant,
     isAuthenticated: !!user && tokenManager.isAuthenticated(),
     isLoading,
     requestOtp,
@@ -282,7 +278,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     updateProfile,
     hasPermission,
-    isEnterprise: true, // DEV: all features unlocked for testing
+    isEnterprise: merchant?.plan === 'enterprise' || user?.plan === 'enterprise',
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
