@@ -339,7 +339,7 @@ export default function Invoices() {
                               <button
                                 onClick={async () => {
                                   try {
-                                    await invoicesService.send(invoice.id);
+                                    await invoicesService.sendReminder(invoice.id);
                                     showToast('success', `تم إرسال الفاتورة إلى ${invoice.customerName}`);
                                     setShowActionsMenu(null);
                                     fetchInvoices();

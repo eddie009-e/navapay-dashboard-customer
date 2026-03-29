@@ -7,7 +7,7 @@ import { useLoading } from '@/react-app/hooks/useLoading';
 interface AddCustomerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (customer: { name: string; phone: string; email: string }) => void;
+  onSubmit: (customer: { name: string; phone: string; email: string }) => void | Promise<void>;
 }
 
 export default function AddCustomerModal({ isOpen, onClose, onSubmit }: AddCustomerModalProps) {
@@ -47,18 +47,15 @@ export default function AddCustomerModal({ isOpen, onClose, onSubmit }: AddCusto
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       await withLoading(
-        new Promise((resolve) => {
-          setTimeout(() => {
-            onSubmit(formData);
-            setFormData({ name: '', phone: '', email: '' });
-            setErrors({ name: '', phone: '' });
-            onClose();
-            resolve(undefined);
-          }, 500);
-        })
+        (async () => {
+          await onSubmit(formData);
+          setFormData({ name: '', phone: '', email: '' });
+          setErrors({ name: '', phone: '' });
+          onClose();
+        })()
       );
     }
   };

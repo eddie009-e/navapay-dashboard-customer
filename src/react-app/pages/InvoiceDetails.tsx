@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Send, Copy, FileDown, Printer, X, Check } from 'lucide-react';
+import { Send, Copy, FileDown, X, Check } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
@@ -124,11 +124,13 @@ export default function InvoiceDetails() {
   const handleCancel = async () => {
     setIsCancelling(true);
     try {
-      await invoicesService.update(invoice.id, { status: 'cancelled' });
+      await invoicesService.cancel(invoice.id);
       setShowCancelModal(false);
+      showToast('warning', `تم إلغاء الفاتورة ${invoice.id}`);
       navigate('/invoices');
     } catch (error) {
       console.error('Failed to cancel invoice:', error);
+      showToast('error', 'فشل في إلغاء الفاتورة');
     } finally {
       setIsCancelling(false);
     }
@@ -137,8 +139,10 @@ export default function InvoiceDetails() {
   const handleSendReminder = async () => {
     try {
       await invoicesService.sendReminder(invoice.id);
+      showToast('success', `تم إرسال تذكير إلى ${invoice.customerName}`);
     } catch (error) {
       console.error('Failed to send reminder:', error);
+      showToast('error', 'فشل في إرسال التذكير');
     }
   };
 

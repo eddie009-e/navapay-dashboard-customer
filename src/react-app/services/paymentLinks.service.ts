@@ -142,6 +142,8 @@ export const paymentLinksService = {
       description: data.description || data.name,
       amount: data.amount === 'open' ? null : data.amount,
       allowCustomAmount: data.amount === 'open',
+      expiryType: data.expiryType || 'unlimited',
+      expiresAt: data.expiresAt || undefined,
     });
 
     if (response.success && response.data) {

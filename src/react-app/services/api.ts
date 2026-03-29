@@ -3,8 +3,9 @@
  * NavaPay Merchant Dashboard
  */
 
-// Base URL - يمكن تغييره حسب البيئة
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+// Base URL - يُقرأ من متغير البيئة VITE_API_URL
+// ⚠️ يجب ضبط VITE_API_URL في ملف .env (مثلاً: http://78.47.51.234:8090/api/v1)
+export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 // Token Storage Keys
 const ACCESS_TOKEN_KEY = 'nava_access_token';
@@ -14,11 +15,21 @@ const MERCHANT_DATA_KEY = 'nava_merchant_data';
 const DEVICE_ID_KEY = 'nava_device_id';
 
 // Device Info - مطلوب للنواة
+const generateUUID = (): string => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
 const getDeviceId = (): string => {
   let deviceId = localStorage.getItem(DEVICE_ID_KEY);
   if (!deviceId) {
-    // إنشاء معرف فريد للجهاز
-    deviceId = 'web_' + crypto.randomUUID();
+    deviceId = 'web_' + generateUUID();
     localStorage.setItem(DEVICE_ID_KEY, deviceId);
   }
   return deviceId;

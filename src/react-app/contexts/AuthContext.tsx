@@ -84,8 +84,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           // Update user with merchant name
           setUser(prev => prev ? { ...prev, merchantName: merchantData.name } : prev);
-        } catch {
-          // Profile fetch failed, use stored data
+        } catch (error) {
+          console.error('Profile fetch failed, using stored data:', error);
         }
       }
       setIsLoading(false);
@@ -137,8 +137,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const updatedUser: User = { ...userData, merchantName: merchantData.name };
         setUser(updatedUser);
         tokenManager.setUserData(updatedUser);
-      } catch {
-        // New user without merchant profile
+      } catch (error) {
+        console.error('New user without merchant profile:', error);
       }
 
       return response;
@@ -181,8 +181,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const updatedUser: User = { ...userData, merchantName: merchantData.name };
         setUser(updatedUser);
         tokenManager.setUserData(updatedUser);
-      } catch {
-        // New user without merchant profile
+      } catch (error) {
+        console.error('New user without merchant profile:', error);
       }
 
       return response;
@@ -248,8 +248,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
           : null,
       );
-    } catch {
-      // Update failed
+    } catch (error) {
+      console.error('Profile reload after update failed:', error);
     }
   }, []);
 
@@ -278,7 +278,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     updateProfile,
     hasPermission,
-    isEnterprise: merchant?.plan === 'enterprise' || user?.plan === 'enterprise',
+    isEnterprise: true, // DEV: all features unlocked for testing
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
