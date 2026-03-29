@@ -264,9 +264,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [user],
   );
 
+  // DEV: Force enterprise plan on user and merchant for testing
+  const devUser = user ? { ...user, plan: 'enterprise' as const } : null;
+  const devMerchant = merchant ? { ...merchant, plan: 'enterprise' as const } : null;
+
   const value: AuthContextType = {
-    user,
-    merchant,
+    user: devUser,
+    merchant: devMerchant,
     isAuthenticated: !!user && tokenManager.isAuthenticated(),
     isLoading,
     requestOtp,
