@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Copy, QrCode, MoreVertical, Link as LinkIcon, X, Loader2 } from 'lucide-react';
+import { Plus, Copy, QrCode, Link as LinkIcon, X, Loader2 } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import { SkeletonList } from '@/react-app/components/LoadingSpinner';
 import { paymentLinksService, PaymentLink, CreatePaymentLinkDto } from '../services';

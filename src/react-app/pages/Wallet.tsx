@@ -380,10 +380,6 @@ function DepositModal({
   const [amount, setAmount] = useState('');
   const [selectedAccount, setSelectedAccount] = useState(bankAccounts[0]?.id || '');
 
-  const formatCurrencyLocal = (val: number) => {
-    return new Intl.NumberFormat('ar-SY').format(val) + ' ل.س';
-  };
-
   const handleSubmit = async () => {
     await withLoading(onSubmit(Number(amount), selectedAccount));
   };

@@ -59,7 +59,7 @@ export default function CreateInvoice() {
     setItems(newItems);
   };
 
-  const handleSubmit = async (_asDraft: boolean = false) => {
+  const handleSubmit = async (asDraft: boolean = false) => {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -78,9 +78,12 @@ export default function CreateInvoice() {
         dueDate,
         notes: notes || undefined,
         sendReminder,
+        status: asDraft ? 'draft' as const : undefined,
+        sendNow: !asDraft && sendNow,
       };
 
       await invoicesService.create(invoiceData);
+      showToast('success', asDraft ? 'تم حفظ الفاتورة كمسودة' : 'تم إنشاء الفاتورة بنجاح');
       navigate('/invoices');
     } catch {
       showToast('error', 'فشل في إنشاء الفاتورة');

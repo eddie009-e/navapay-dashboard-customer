@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MainLayout from '@/react-app/components/MainLayout';
 import { Settings as SettingsIcon, User, Store, Shield, Bell, CreditCard, Receipt, Upload, Save, Camera, Lock, Mail, Phone, MapPin, Loader2 } from 'lucide-react';
 import Button from '@/react-app/components/Button';
@@ -86,7 +86,11 @@ function ProfileSettings() {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await updateProfile({ businessName: formData.name });
+      await updateProfile({
+        businessNameAr: formData.name,
+        contactEmail: formData.email || undefined,
+        contactPhone: formData.phone || undefined,
+      });
     } catch (error) {
       console.error('Failed to update profile:', error);
     } finally {
@@ -200,7 +204,13 @@ function StoreSettings() {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await updateProfile({ businessName: formData.name });
+      await updateProfile({
+        businessNameAr: formData.name,
+        businessType: formData.type,
+        contactEmail: formData.email || undefined,
+        contactPhone: formData.phone || undefined,
+        address: formData.address || undefined,
+      });
     } catch (error) {
       console.error('Failed to update store:', error);
     } finally {
@@ -338,16 +348,18 @@ function StoreSettings() {
 
 function SecuritySettings() {
   const { showToast } = useToast();
-  const { logout } = useAuth();
   const [isEndingSessions, setIsEndingSessions] = useState(false);
 
   const handleEndAllSessions = async () => {
     setIsEndingSessions(true);
     try {
-      await logout();
-      showToast('success', 'تم إنهاء جميع الجلسات');
+      const { authService } = await import('../services/auth.service');
+      const result = await authService.logoutAll();
+      showToast('success', `تم إنهاء ${result.terminatedSessions} جلسة`);
+      // Redirect to login since all sessions are terminated
+      window.location.href = '/login';
     } catch {
-      showToast('error', 'فشل في إنهاء الجلسات');
+      showToast('error', 'فشل في إنه��ء الجلسات');
     } finally {
       setIsEndingSessions(false);
     }
@@ -423,6 +435,22 @@ function NotificationsSettings() {
 
   const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
+
+  // Try to fetch saved settings from API
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const { api } = await import('../services/api');
+        const response = await api.get<any>('/notifications/settings');
+        if (response.success && response.data) {
+          setSettings(prev => ({ ...prev, ...response.data }));
+        }
+      } catch {
+        // Use defaults if endpoint not available
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleSaveNotifications = async () => {
     setIsSaving(true);
@@ -630,6 +658,22 @@ function ReceiptSettings() {
     footerText: 'شكراً لتعاملكم معنا',
     showQR: true
   });
+
+  // Try to fetch saved settings from API
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const { api } = await import('../services/api');
+        const response = await api.get<any>('/merchant/receipt-settings');
+        if (response.success && response.data) {
+          setSettings(prev => ({ ...prev, ...response.data }));
+        }
+      } catch {
+        // Use defaults if endpoint not available
+      }
+    };
+    fetchSettings();
+  }, []);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
