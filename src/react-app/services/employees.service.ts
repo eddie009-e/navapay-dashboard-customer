@@ -25,8 +25,8 @@ export interface CreateEmployeeDto {
   phone: string;
   email?: string;
   role: 'admin' | 'manager' | 'cashier' | 'accountant';
-  pin: string;
-  permissions: string[];
+  pinCode: string;
+  permissions?: string[];
   branchId?: string;
 }
 
@@ -35,10 +35,9 @@ export interface UpdateEmployeeDto {
   phone?: string;
   email?: string;
   role?: 'admin' | 'manager' | 'cashier' | 'accountant';
-  pin?: string;
-  permissions?: string[];
+  pinCode?: string;
   branchId?: string;
-  isActive?: boolean;
+  status?: 'active' | 'inactive' | 'suspended';
 }
 
 export const EMPLOYEE_PERMISSIONS = {
@@ -146,7 +145,13 @@ export const employeesService = {
    * Toggle employee active status
    */
   async toggleActive(id: string, isActive: boolean): Promise<Employee> {
-    return this.update(id, { isActive });
+    const response = await api.put<ApiResponse<Employee>>(`/merchant/employees/${id}`, {
+      status: isActive ? 'active' : 'inactive',
+    });
+    if (response.success && response.data) {
+      return response.data;
+    }
+    throw new Error('Failed to toggle employee status');
   },
 
   /**
@@ -154,7 +159,7 @@ export const employeesService = {
    * PUT /api/v1/merchant/employees/:id
    */
   async resetPin(id: string, newPin: string): Promise<void> {
-    const response = await api.put<ApiResponse>(`/merchant/employees/${id}`, { pin: newPin });
+    const response = await api.put<ApiResponse>(`/merchant/employees/${id}`, { pinCode: newPin });
     if (!response.success) {
       throw new Error('Failed to reset PIN');
     }

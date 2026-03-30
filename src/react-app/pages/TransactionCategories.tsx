@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Tag, Plus, Pencil, Trash2, Loader2, X, Check } from 'lucide-react';
 import MainLayout from '@/react-app/components/MainLayout';
+import { useToast } from '@/react-app/contexts/ToastContext';
 import { categoriesService } from '@/react-app/services/categories.service';
 import type { Category, CreateCategoryDto } from '@/react-app/services/categories.service';
 
 const PRESET_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#64748b'];
 
 export default function TransactionCategories() {
+  const { showToast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [systemCategories, setSystemCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +49,7 @@ export default function TransactionCategories() {
       setForm({ name: '', nameAr: '', color: PRESET_COLORS[0] });
       fetchCategories();
     } catch {
-      alert('فشل في حفظ التصنيف');
+      showToast('error', 'فشل في حفظ التصنيف');
     } finally {
       setSaving(false);
     }
@@ -59,7 +61,7 @@ export default function TransactionCategories() {
       await categoriesService.delete(id);
       setCategories(prev => prev.filter(c => c.id !== id));
     } catch {
-      alert('فشل في حذف التصنيف');
+      showToast('error', 'فشل في حذف التصنيف');
     }
   };
 

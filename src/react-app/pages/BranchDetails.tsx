@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Building2, MapPin, Phone, User, Users, DollarSign, ShoppingBag, TrendingUp, Edit, ChevronLeft, Calendar } from 'lucide-react';
+import { Building2, MapPin, Phone, User, Users, DollarSign, ShoppingBag, TrendingUp, Edit, ChevronLeft, Calendar, X } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
+import { useToast } from '@/react-app/contexts/ToastContext';
 import { branchesService, employeesService, transactionsService, Branch, BranchStats, Employee, Transaction } from '../services';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function BranchDetails() {
   const { id } = useParams<{ id: string }>();
+  const { showToast } = useToast();
   const [branch, setBranch] = useState<Branch | null>(null);
   const [branchStats, setBranchStats] = useState<BranchStats | null>(null);
+  const [isEditNameOpen, setIsEditNameOpen] = useState(false);
+  const [editName, setEditName] = useState('');
   const [branchEmployees, setBranchEmployees] = useState<Employee[]>([]);
   const [branchTransactions, setBranchTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -114,16 +118,21 @@ export default function BranchDetails() {
     employeesWithSales[0] || null
   );
 
-  // Sales chart data (mock weekly data)
-  const salesChartData = [
-    { day: 'السبت', amount: 1200000 },
-    { day: 'الأحد', amount: 980000 },
-    { day: 'الاثنين', amount: 1350000 },
-    { day: 'الثلاثاء', amount: 1100000 },
-    { day: 'الأربعاء', amount: 1450000 },
-    { day: 'الخميس', amount: 1280000 },
-    { day: 'الجمعة', amount: 1140000 },
-  ];
+  // Sales chart data — computed from actual branch transactions
+  const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+  const salesChartData = (() => {
+    const last7Days: { day: string; amount: number }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dayStr = d.toISOString().split('T')[0];
+      const dayTotal = branchTransactions
+        .filter(t => t.createdAt?.startsWith(dayStr))
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+      last7Days.push({ day: dayNames[d.getDay()], amount: dayTotal });
+    }
+    return last7Days;
+  })();
 
   return (
     <MainLayout>
@@ -167,12 +176,8 @@ export default function BranchDetails() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" leftIcon={<Edit size={20} />} onClick={() => {
-                  const newName = prompt('اسم الفرع الجديد:', branch.name);
-                  if (newName && newName !== branch.name) {
-                    branchesService.update(branch.id, { name: newName }).then(updated => {
-                      setBranch(updated);
-                    }).catch(err => console.error('Failed to update branch:', err));
-                  }
+                  setEditName(branch.name);
+                  setIsEditNameOpen(true);
                 }}>
                   تعديل البيانات
                 </Button>
@@ -565,6 +570,46 @@ export default function BranchDetails() {
           )}
         </div>
       </div>
+
+      {/* Edit Name Modal */}
+      {isEditNameOpen && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 shadow-2xl animate-slideUp">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">تعديل اسم الفرع</h3>
+              <button onClick={() => setIsEditNameOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            <input
+              type="text"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary mb-4"
+              placeholder="اسم الفرع"
+            />
+            <div className="flex gap-3">
+              <Button fullWidth onClick={async () => {
+                if (editName && editName !== branch.name) {
+                  try {
+                    const updated = await branchesService.update(branch.id, { name: editName });
+                    setBranch(updated);
+                    showToast('success', 'تم تحديث اسم الفرع بنجاح');
+                  } catch {
+                    showToast('error', 'فشل في تحديث اسم الفرع');
+                  }
+                }
+                setIsEditNameOpen(false);
+              }} disabled={!editName.trim()}>
+                حفظ
+              </Button>
+              <Button variant="outline" fullWidth onClick={() => setIsEditNameOpen(false)}>
+                إلغاء
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }

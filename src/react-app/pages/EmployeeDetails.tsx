@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
 import MainLayout from '@/react-app/components/MainLayout';
-import { Phone, Mail, Calendar, DollarSign, ShoppingBag, Shield, Lock, Edit, AlertCircle, CheckCircle, Eye, Loader2 } from 'lucide-react';
+import { Phone, Mail, Calendar, DollarSign, ShoppingBag, Shield, Lock, Edit, AlertCircle, CheckCircle, Eye, Loader2, X } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
+import { useToast } from '@/react-app/contexts/ToastContext';
 import { employeesService, transactionsService, Employee, Transaction } from '../services';
 
 export default function EmployeeDetails() {
   const { id } = useParams<{ id: string }>();
+  const { showToast } = useToast();
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [employeeTransactions, setEmployeeTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditPermissionsOpen, setIsEditPermissionsOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [isEditNameOpen, setIsEditNameOpen] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [isChangePinOpen, setIsChangePinOpen] = useState(false);
+  const [newPin, setNewPin] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -154,13 +160,8 @@ export default function EmployeeDetails() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" leftIcon={<Edit size={20} />} onClick={() => {
-                  // Navigate to employee edit — use update service
-                  const newName = prompt('اسم الموظف الجديد:', employee.name);
-                  if (newName && newName !== employee.name) {
-                    employeesService.update(employee.id, { name: newName }).then(updated => {
-                      setEmployee(updated);
-                    }).catch(err => console.error('Failed to update employee:', err));
-                  }
+                  setEditName(employee.name);
+                  setIsEditNameOpen(true);
                 }}>
                   تعديل البيانات
                 </Button>
@@ -302,19 +303,9 @@ export default function EmployeeDetails() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-mono text-lg text-gray-900">****</span>
-                <Button variant="outline" size="sm" onClick={async () => {
-                  const newPin = prompt('أدخل PIN الجديد (4 أرقام):');
-                  if (newPin && /^\d{4}$/.test(newPin)) {
-                    try {
-                      await employeesService.resetPin(employee.id, newPin);
-                      alert('تم تغيير رقم PIN بنجاح');
-                    } catch (err) {
-                      console.error('Failed to reset PIN:', err);
-                      alert('فشل في تغيير رقم PIN');
-                    }
-                  } else if (newPin) {
-                    alert('يجب أن يكون PIN مكوناً من 4 أرقام');
-                  }
+                <Button variant="outline" size="sm" onClick={() => {
+                  setNewPin('');
+                  setIsChangePinOpen(true);
                 }}>
                   تغيير
                 </Button>
@@ -429,6 +420,90 @@ export default function EmployeeDetails() {
           )}
         </div>
       </div>
+
+      {/* Edit Name Modal */}
+      {isEditNameOpen && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 shadow-2xl animate-slideUp">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">تعديل اسم الموظف</h3>
+              <button onClick={() => setIsEditNameOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            <input
+              type="text"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary mb-4"
+              placeholder="اسم الموظف"
+            />
+            <div className="flex gap-3">
+              <Button fullWidth onClick={async () => {
+                if (editName && editName !== employee.name) {
+                  try {
+                    const updated = await employeesService.update(employee.id, { name: editName });
+                    setEmployee(updated);
+                    showToast('success', 'تم تحديث اسم الموظف بنجاح');
+                  } catch {
+                    showToast('error', 'فشل في تحديث اسم الموظف');
+                  }
+                }
+                setIsEditNameOpen(false);
+              }} disabled={!editName.trim()}>
+                حفظ
+              </Button>
+              <Button variant="outline" fullWidth onClick={() => setIsEditNameOpen(false)}>
+                إلغاء
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change PIN Modal */}
+      {isChangePinOpen && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 shadow-2xl animate-slideUp">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">تغيير رقم PIN</h3>
+              <button onClick={() => setIsChangePinOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mb-3">أدخل رقم PIN الجديد (4 أرقام)</p>
+            <input
+              type="password"
+              value={newPin}
+              onChange={(e) => setNewPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary mb-4 text-center text-2xl tracking-[0.5em] font-mono"
+              placeholder="----"
+              maxLength={4}
+              dir="ltr"
+            />
+            <div className="flex gap-3">
+              <Button fullWidth onClick={async () => {
+                if (!/^\d{4}$/.test(newPin)) {
+                  showToast('error', 'يجب أن يكون PIN مكوناً من 4 أرقام');
+                  return;
+                }
+                try {
+                  await employeesService.resetPin(employee.id, newPin);
+                  showToast('success', 'تم تغيير رقم PIN بنجاح');
+                  setIsChangePinOpen(false);
+                } catch {
+                  showToast('error', 'فشل في تغيير رقم PIN');
+                }
+              }} disabled={newPin.length !== 4}>
+                تغيير PIN
+              </Button>
+              <Button variant="outline" fullWidth onClick={() => setIsChangePinOpen(false)}>
+                إلغاء
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit Permissions Modal */}
       {isEditPermissionsOpen && (

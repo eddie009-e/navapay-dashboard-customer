@@ -12,7 +12,7 @@ interface PaymentMethodData {
 }
 
 export default function Reports() {
-  const { user } = useAuth();
+  const { isEnterprise } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [salesData, setSalesData] = useState<SalesDataPoint[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>([]);
@@ -26,8 +26,6 @@ export default function Reports() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ar-SY').format(amount) + ' ل.س';
   };
-
-  const isEnterprise = user?.plan === 'enterprise';
 
   useEffect(() => {
     const fetchReportsData = async () => {

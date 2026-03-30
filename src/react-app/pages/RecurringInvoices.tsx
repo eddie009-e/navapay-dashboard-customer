@@ -10,15 +10,12 @@ import { useToast } from '@/react-app/contexts/ToastContext';
 type TabType = 'active' | 'paused' | 'ended';
 
 export default function RecurringInvoices() {
-  const { user } = useAuth();
+  const { isEnterprise } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('active');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [recurringInvoices, setRecurringInvoices] = useState<RecurringInvoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Check if user has Enterprise plan
-  const isEnterprise = user?.plan === 'enterprise';
 
   const fetchRecurringInvoices = async () => {
     if (!isEnterprise) {
