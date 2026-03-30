@@ -10,7 +10,7 @@ import { useToast } from '@/react-app/contexts/ToastContext';
 import { Link } from 'react-router';
 
 export default function Payroll() {
-  const { user } = useAuth();
+  const { isEnterprise } = useAuth();
   const { showToast } = useToast();
   const [bulkTransfers, setBulkTransfers] = useState<BulkTransfer[]>([]);
   const [stats, setStats] = useState<BulkTransferStats | null>(null);
@@ -19,9 +19,6 @@ export default function Payroll() {
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'payroll' | 'suppliers' | 'refunds' | 'other'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'draft' | 'pending' | 'processing' | 'completed' | 'partial_failed'>('all');
-
-  // Check if store has Enterprise plan
-  const isEnterprise = user?.plan === 'enterprise';
 
   const fetchBulkTransfers = async () => {
     if (!isEnterprise) {

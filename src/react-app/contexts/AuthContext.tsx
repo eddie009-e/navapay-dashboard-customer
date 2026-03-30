@@ -297,7 +297,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     updateProfile,
     hasPermission,
-    isEnterprise: merchant?.plan === 'enterprise' || user?.plan === 'enterprise',
+    // TEST MODE: All features unlocked. In production, gate by: merchant?.plan === 'enterprise' || user?.plan === 'enterprise'
+    isEnterprise: true,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

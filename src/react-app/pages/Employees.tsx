@@ -68,7 +68,7 @@ export default function Employees() {
         phone: employeeData.phone,
         email: employeeData.email || undefined,
         role: employeeData.role,
-        pin: employeeData.pin,
+        pinCode: employeeData.pin,
         permissions: [],
         branchId: employeeData.branch || undefined
       };

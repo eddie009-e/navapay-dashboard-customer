@@ -27,7 +27,7 @@ const getSubTabs = (isEnterprise: boolean) => {
 
 export default function Customers() {
   const { showToast } = useToast();
-  const { merchant } = useAuth();
+  const { isEnterprise } = useAuth();
   const location = useLocation();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +37,6 @@ export default function Customers() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const isEnterprise = merchant?.plan === 'enterprise';
   const subTabs = getSubTabs(isEnterprise);
 
   const fetchCustomers = useCallback(async () => {

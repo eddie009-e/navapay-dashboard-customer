@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Bell, Plus, Trash2, Loader2, Phone, DollarSign, X } from 'lucide-react';
 import MainLayout from '@/react-app/components/MainLayout';
+import { useToast } from '@/react-app/contexts/ToastContext';
 import { remindersService } from '@/react-app/services/reminders.service';
 import type { Reminder, CreateReminderDto } from '@/react-app/services/reminders.service';
 
 export default function Reminders() {
+  const { showToast } = useToast();
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export default function Reminders() {
       setForm({ customerPhone: '', amount: 0, message: '' });
       fetchReminders();
     } catch {
-      alert('فشل في إنشاء التذكير');
+      showToast('error', 'فشل في إنشاء التذكير');
     } finally {
       setCreating(false);
     }
@@ -59,7 +61,7 @@ export default function Reminders() {
       await remindersService.cancel(id);
       setReminders(prev => prev.filter(r => r.id !== id));
     } catch {
-      alert('فشل في إلغاء التذكير');
+      showToast('error', 'فشل في إلغاء التذكير');
     }
   };
 
