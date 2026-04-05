@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Calendar, TrendingUp, DollarSign, Receipt, RefreshCw, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Button from '@/react-app/components/Button';
@@ -74,7 +74,7 @@ export default function DailyReport() {
   const COLORS = ['#1E3A5F', '#2E7D32', '#F5A623'];
 
   return (
-    <MainLayout>
+    <>
       <div className="animate-fadeIn">
         {/* Header */}
         <div className="glass-card p-6 mb-6">
@@ -316,6 +316,6 @@ export default function DailyReport() {
           </>
         )}
       </div>
-    </MainLayout>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Tag, Plus, Pencil, Trash2, Loader2, X, Check } from 'lucide-react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { useToast } from '@/react-app/contexts/ToastContext';
 import { categoriesService } from '@/react-app/services/categories.service';
 import type { Category, CreateCategoryDto } from '@/react-app/services/categories.service';
@@ -72,7 +72,7 @@ export default function TransactionCategories() {
   };
 
   return (
-    <MainLayout>
+    <>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -224,6 +224,6 @@ export default function TransactionCategories() {
           </div>
         )}
       </div>
-    </MainLayout>
+    </>
   );
 }

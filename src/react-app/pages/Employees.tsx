@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Users, Search, Plus, Mail, Phone, TrendingUp, DollarSign, ChevronLeft, Crown } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import AddEmployeeModal from '@/react-app/components/AddEmployeeModal';
@@ -83,7 +83,7 @@ export default function Employees() {
 
   if (!isEnterprise) {
     return (
-      <MainLayout>
+      <>
         <div className="max-w-2xl mx-auto text-center py-16">
           <div className="w-20 h-20 bg-gradient-to-br from-accent to-accent-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <Crown size={40} className="text-white" />
@@ -117,7 +117,7 @@ export default function Employees() {
             الترقية للباقة Enterprise (قريباً)
           </Button>
         </div>
-      </MainLayout>
+      </>
     );
   }
 
@@ -164,7 +164,7 @@ export default function Employees() {
   };
 
   return (
-    <MainLayout>
+    <>
       <div className="animate-fadeIn">
         {/* Header */}
         <div className="glass-card p-6 mb-6">
@@ -381,6 +381,6 @@ export default function Employees() {
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddEmployee}
       />
-    </MainLayout>
+    </>
   );
 }

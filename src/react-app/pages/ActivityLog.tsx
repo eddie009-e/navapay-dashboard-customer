@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Activity, Loader2, RefreshCw, Monitor, Smartphone, Globe } from 'lucide-react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { api } from '@/react-app/services/api';
 
 interface ActivityItem {
@@ -88,7 +88,7 @@ export default function ActivityLog() {
   };
 
   return (
-    <MainLayout>
+    <>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -168,6 +168,6 @@ export default function ActivityLog() {
           </div>
         )}
       </div>
-    </MainLayout>
+    </>
   );
 }

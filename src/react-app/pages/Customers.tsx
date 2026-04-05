@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Users, Search, Plus, Mail, Phone, TrendingUp, DollarSign, ShoppingBag, ChevronLeft } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import AddCustomerModal from '@/react-app/components/AddCustomerModal';
@@ -112,7 +112,7 @@ export default function Customers() {
 
   if (isLoading && customers.length === 0) {
     return (
-      <MainLayout>
+      <>
         <div className="animate-fadeIn">
           <div className="glass-card p-6 mb-6">
             <div className="flex items-center gap-4">
@@ -127,12 +127,12 @@ export default function Customers() {
           </div>
           <SkeletonTable rows={8} />
         </div>
-      </MainLayout>
+      </>
     );
   }
 
   return (
-    <MainLayout>
+    <>
       <div className="animate-fadeIn">
         {/* Header */}
         <div className="glass-card p-6 mb-6">
@@ -359,6 +359,6 @@ export default function Customers() {
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddCustomer}
       />
-    </MainLayout>
+    </>
   );
 }

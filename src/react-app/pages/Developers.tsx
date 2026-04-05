@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Code2, Key, Activity, Book, Plus, Copy, Eye, EyeOff, Trash2, CheckCircle, AlertCircle, Clock, Webhook, Send } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
@@ -139,7 +139,7 @@ export default function Developers() {
   }; */
 
   return (
-    <MainLayout>
+    <>
       <div className="animate-fadeIn">
         {/* Header */}
         <div className="glass-card p-6 mb-6">
@@ -715,7 +715,7 @@ export default function Developers() {
           onCreate={handleCreateWebhook}
         />
       )}
-    </MainLayout>
+    </>
   );
 }
 

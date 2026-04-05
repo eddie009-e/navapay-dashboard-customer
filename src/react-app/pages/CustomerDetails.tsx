@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Phone, Mail, Calendar, DollarSign, ShoppingBag, TrendingUp, Eye, Download, Filter } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
@@ -59,17 +59,17 @@ export default function CustomerDetails() {
 
   if (isLoading) {
     return (
-      <MainLayout>
+      <>
         <div className="space-y-6 animate-fadeIn">
           <SkeletonTable rows={6} />
         </div>
-      </MainLayout>
+      </>
     );
   }
 
   if (!customer) {
     return (
-      <MainLayout>
+      <>
         <div className="text-center py-16">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">العميل غير موجود</h2>
           <p className="text-gray-500 mb-6">لم يتم العثور على هذا العميل</p>
@@ -77,7 +77,7 @@ export default function CustomerDetails() {
             <Button>العودة للعملاء</Button>
           </Link>
         </div>
-      </MainLayout>
+      </>
     );
   }
 
@@ -141,7 +141,7 @@ export default function CustomerDetails() {
     .reduce((sum, t) => sum + t.amount, 0);
 
   return (
-    <MainLayout>
+    <>
       <BackButton to="/customers" label="العملاء" />
       <div className="animate-fadeIn">
         {/* Header */}
@@ -384,7 +384,7 @@ export default function CustomerDetails() {
           onClose={() => setSelectedTransaction(null)}
         />
       )}
-    </MainLayout>
+    </>
   );
 }
 

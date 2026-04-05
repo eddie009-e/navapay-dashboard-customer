@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Building2, DollarSign, Award, Lock, Crown, Users } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import { SkeletonDashboard } from '@/react-app/components/LoadingSpinner';
@@ -87,7 +87,7 @@ export default function BranchReport() {
 
   if (showUpgradeModal) {
     return (
-      <MainLayout>
+      <>
         <div className="animate-fadeIn">
           <div className="glass-card p-12 text-center max-w-3xl mx-auto mt-12">
             <div className="w-20 h-20 bg-gradient-to-br from-warning to-warning-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -181,20 +181,20 @@ export default function BranchReport() {
             </div>
           </div>
         </div>
-      </MainLayout>
+      </>
     );
   }
 
   if (isLoading) {
     return (
-      <MainLayout>
+      <>
         <SkeletonDashboard />
-      </MainLayout>
+      </>
     );
   }
 
   return (
-    <MainLayout>
+    <>
       <div className="animate-fadeIn">
         {/* Header */}
         <div className="glass-card p-6 mb-6">
@@ -399,6 +399,6 @@ export default function BranchReport() {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

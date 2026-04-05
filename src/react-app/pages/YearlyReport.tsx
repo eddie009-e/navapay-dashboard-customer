@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Calendar, TrendingUp, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import Button from '@/react-app/components/Button';
@@ -86,7 +86,7 @@ export default function YearlyReport() {
   ];
 
   return (
-    <MainLayout>
+    <>
       <div className="animate-fadeIn">
         {/* Header */}
         <div className="glass-card p-6 mb-6">
@@ -325,6 +325,6 @@ export default function YearlyReport() {
           </>
         )}
       </div>
-    </MainLayout>
+    </>
   );
 }

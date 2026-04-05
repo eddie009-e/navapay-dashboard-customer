@@ -11,7 +11,16 @@ export default defineConfig({
     allowedHosts: true,
   },
   build: {
-    chunkSizeWarningLimit: 5000,
+    // Split vendors into separate cached chunks
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react":     ["react", "react-dom", "react-router"],
+          "vendor-charts":    ["recharts"],
+          "vendor-animation": ["framer-motion"],
+        },
+      },
+    },
   },
   resolve: {
     alias: {

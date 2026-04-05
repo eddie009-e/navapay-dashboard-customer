@@ -100,7 +100,7 @@ export default function SalesReport() {
   const bestDay = salesData.length > 0 ? salesData.reduce((best, day) => day.sales > best.sales ? day : best, salesData[0]) : null;
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       {/* Header */}
       <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">

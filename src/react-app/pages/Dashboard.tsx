@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Wallet, TrendingUp, Receipt, FileWarning, CreditCard, FileText, Send, UserPlus } from 'lucide-react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import StatCard from '@/react-app/components/StatCard';
 import Button from '@/react-app/components/Button';
 import { SkeletonDashboard } from '@/react-app/components/LoadingSpinner';
@@ -155,14 +155,14 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <MainLayout>
+      <>
         <SkeletonDashboard />
-      </MainLayout>
+      </>
     );
   }
 
   return (
-    <MainLayout>
+    <>
       {/* Welcome Section */}
       <div className="mb-6 md:mb-8 bg-gradient-to-l from-primary to-primary-400 rounded-2xl p-6 text-white animate-fadeIn shadow-glass">
         <h1 className="text-2xl md:text-3xl font-bold mb-1">
@@ -410,6 +410,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

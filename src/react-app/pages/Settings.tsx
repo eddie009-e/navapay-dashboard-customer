@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Settings as SettingsIcon, User, Store, Shield, Bell, CreditCard, Receipt, Upload, Save, Camera, Lock, Mail, Phone, MapPin, Loader2 } from 'lucide-react';
+import { useSearchParams } from 'react-router';
 import Button from '@/react-app/components/Button';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
@@ -8,7 +9,12 @@ import { useToast } from '../contexts/ToastContext';
 type Tab = 'profile' | 'store' | 'security' | 'notifications' | 'billing' | 'receipt';
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState<Tab>('profile');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get('tab') as Tab) || 'profile';
+
+  const setActiveTab = (tab: Tab) => {
+    setSearchParams({ tab });
+  };
 
   const tabs = [
     { id: 'profile' as Tab, label: 'الملف الشخصي', icon: User },
@@ -20,7 +26,7 @@ export default function Settings() {
   ];
 
   return (
-    <MainLayout>
+    <>
       <div className="animate-fadeIn">
         {/* Header */}
         <div className="glass-card p-6 mb-6">
@@ -70,7 +76,7 @@ export default function Settings() {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }
 

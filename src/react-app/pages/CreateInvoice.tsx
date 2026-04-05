@@ -24,6 +24,7 @@ export default function CreateInvoice() {
     { description: '', quantity: 1, price: 0 }
   ]);
   const [dueDate, setDueDate] = useState('');
+  const [taxRate, setTaxRate] = useState(10);
   const [discount, setDiscount] = useState(0);
   const [notes, setNotes] = useState('');
   const [sendReminder, setSendReminder] = useState(true);
@@ -36,7 +37,7 @@ export default function CreateInvoice() {
 
   const calculateTotal = () => {
     const subtotal = items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-    const tax = subtotal * 0.1; // 10% tax example
+    const tax = subtotal * (taxRate / 100);
     const total = subtotal + tax - discount;
     return { subtotal, tax, total };
   };
@@ -73,7 +74,7 @@ export default function CreateInvoice() {
           quantity: item.quantity,
           unitPrice: item.price,
         })),
-        tax: tax,
+        tax: taxRate,
         discount: discount || undefined,
         dueDate,
         notes: notes || undefined,
@@ -93,10 +94,9 @@ export default function CreateInvoice() {
   };
 
   const { subtotal, tax, total } = calculateTotal();
-  const invoiceNumber = 'INV-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       <BackButton to="/invoices" label="الفواتير" />
       {/* Header */}
       <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6">
@@ -214,6 +214,21 @@ export default function CreateInvoice() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  نسبة الضريبة (%)
+                </label>
+                <input
+                  type="number"
+                  value={taxRate}
+                  onChange={(e) => setTaxRate(Math.max(0, Math.min(100, parseInt(e.target.value) || 0)))}
+                  placeholder="10"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50/50 focus:border-primary focus:ring-2 focus:ring-primary/10 font-numbers"
+                  min="0"
+                  max="100"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   الخصم (اختياري)
                 </label>
                 <input
@@ -301,7 +316,7 @@ export default function CreateInvoice() {
                 </div>
                 <div className="text-left">
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">فاتورة</h2>
-                  <p className="text-sm text-gray-500">{invoiceNumber}</p>
+                  <p className="text-sm text-gray-400 italic">سيتم التعيين تلقائياً</p>
                   <p className="text-sm text-gray-500">
                     {new Date().toLocaleDateString('ar-SY')}
                   </p>
@@ -352,7 +367,7 @@ export default function CreateInvoice() {
                   <span className="font-numbers text-gray-900">{formatCurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">الضريبة (10%):</span>
+                  <span className="text-gray-500">الضريبة ({taxRate}%):</span>
                   <span className="font-numbers text-gray-900">{formatCurrency(tax)}</span>
                 </div>
                 {discount > 0 && (

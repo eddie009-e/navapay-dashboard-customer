@@ -33,7 +33,22 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
   }, []);
 
   const recentNotifications = notifications;
-  const showBackButton = location.pathname !== '/';
+
+  const topLevelPaths = new Set([
+    '/', '/pos', '/wallet', '/invoices', '/transactions', '/reports',
+    '/customers', '/reminders', '/categories', '/activity', '/settings',
+    '/notifications', '/employees', '/branches', '/payroll', '/developers',
+  ]);
+  const showBackButton = !topLevelPaths.has(location.pathname);
+
+  const handleBack = () => {
+    const parts = location.pathname.split('/').filter(Boolean);
+    if (parts.length <= 1) {
+      navigate('/');
+    } else {
+      navigate('/' + parts.slice(0, -1).join('/'));
+    }
+  };
 
   return (
     <header className="bg-white/80 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-30 shadow-sm">
@@ -42,11 +57,11 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
         <div className="flex items-center gap-2">
           {showBackButton && (
             <button
-              onClick={() => navigate('/')}
+              onClick={handleBack}
               className="flex items-center gap-2 text-gray-500 hover:text-primary px-3 py-2 hover:bg-primary-50 rounded-xl transition-all duration-200"
             >
               <ArrowRight size={20} />
-              <span className="hidden sm:inline text-sm font-medium">الرئيسية</span>
+              <span className="hidden sm:inline text-sm font-medium">رجوع</span>
             </button>
           )}
           <button

@@ -99,6 +99,13 @@ export default function Transactions() {
     loadTransactions();
   }, [typeFilter, statusFilter, methodFilter, periodFilter, searchQuery, page]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   const totalAmount = stats?.totalAmount || 0;
   const totalTransactions = stats?.totalTransactions || 0;
   const averageTransaction = stats?.averageTransaction || 0;
@@ -163,7 +170,7 @@ export default function Transactions() {
   const selectClasses = "px-4 py-2.5 border border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-white text-sm";
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       {/* Header */}
       <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6 animate-fadeIn">
         <div className="flex items-center justify-between mb-4">
@@ -209,7 +216,6 @@ export default function Transactions() {
             <option value="yesterday">أمس</option>
             <option value="week">آخر 7 أيام</option>
             <option value="month">هذا الشهر</option>
-            <option value="custom">تاريخ مخصص</option>
           </select>
 
           <select value={methodFilter} onChange={(e) => setMethodFilter(e.target.value as PaymentMethod)} className={selectClasses}>

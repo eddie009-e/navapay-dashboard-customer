@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Phone, Mail, Calendar, DollarSign, ShoppingBag, Shield, Lock, Edit, AlertCircle, CheckCircle, Eye, Loader2, X } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
@@ -46,17 +46,17 @@ export default function EmployeeDetails() {
 
   if (isLoading) {
     return (
-      <MainLayout>
+      <>
         <div className="py-6">
           <SkeletonTable rows={8} />
         </div>
-      </MainLayout>
+      </>
     );
   }
 
   if (!employee) {
     return (
-      <MainLayout>
+      <>
         <div className="text-center py-16">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">الموظف غير موجود</h2>
           <p className="text-gray-500 mb-6">لم يتم العثور على هذا الموظف</p>
@@ -64,7 +64,7 @@ export default function EmployeeDetails() {
             <Button>العودة للموظفين</Button>
           </Link>
         </div>
-      </MainLayout>
+      </>
     );
   }
 
@@ -113,7 +113,7 @@ export default function EmployeeDetails() {
     : 0;
 
   return (
-    <MainLayout>
+    <>
       <BackButton to="/employees" label="الموظفين" />
       <div className="animate-fadeIn">
         {/* Header */}
@@ -521,7 +521,7 @@ export default function EmployeeDetails() {
           onClose={() => setSelectedTransaction(null)}
         />
       )}
-    </MainLayout>
+    </>
   );
 }
 

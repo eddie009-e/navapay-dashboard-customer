@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Calendar, TrendingUp, TrendingDown, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import Button from '@/react-app/components/Button';
@@ -87,7 +87,7 @@ export default function MonthlyReport() {
   const comparisonData: Array<{ metric: string; current: number; previous: number }> = [];
 
   return (
-    <MainLayout>
+    <>
       <div className="animate-fadeIn">
         {/* Header */}
         <div className="glass-card p-6 mb-6">
@@ -317,6 +317,6 @@ export default function MonthlyReport() {
           </>
         )}
       </div>
-    </MainLayout>
+    </>
   );
 }

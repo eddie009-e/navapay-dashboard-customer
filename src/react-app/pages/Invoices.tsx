@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useLocation } from 'react-router';
-import { Plus, Search, Download, Send, Eye, Copy, FileDown, X, MoreVertical, FileText } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router';
+import { Plus, Search, Download, Send, Eye, Copy, FileDown, X, MoreVertical, FileText, AlertTriangle } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import EmptyState from '@/react-app/components/EmptyState';
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
@@ -18,11 +18,13 @@ const subTabs = [
 export default function Invoices() {
   const { showToast } = useToast();
   const location = useLocation();
+  const navigate = useNavigate();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<InvoiceStatus>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showActionsMenu, setShowActionsMenu] = useState<string | null>(null);
+  const [invoiceToCancel, setInvoiceToCancel] = useState<Invoice | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [_statusCounts, _setStatusCounts] = useState<Record<string, number>>({});
@@ -110,11 +112,17 @@ export default function Invoices() {
     }
   };
 
-  const handleCancelInvoice = async (invoice: Invoice) => {
+  const handleCancelInvoice = (invoice: Invoice) => {
+    setInvoiceToCancel(invoice);
+    setShowActionsMenu(null);
+  };
+
+  const handleConfirmCancel = async () => {
+    if (!invoiceToCancel) return;
     try {
-      await invoicesService.cancel(invoice.id);
-      showToast('warning', `تم إلغاء الفاتورة ${invoice.invoiceNumber || invoice.id}`);
-      setShowActionsMenu(null);
+      await invoicesService.cancel(invoiceToCancel.id);
+      showToast('warning', `تم إلغاء الفاتورة ${invoiceToCancel.invoiceNumber || invoiceToCancel.id}`);
+      setInvoiceToCancel(null);
       fetchInvoices();
     } catch {
       showToast('error', 'فشل في إلغاء الفاتورة');
@@ -147,7 +155,7 @@ export default function Invoices() {
   };
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       {/* Header */}
       <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6 animate-fadeIn">
         <div className="flex items-center justify-between mb-5">
@@ -233,7 +241,7 @@ export default function Invoices() {
                   title="لا توجد فواتير"
                   description="ابدأ بإنشاء فاتورتك الأولى لتتبع المدفوعات والديون"
                   actionLabel="إنشاء فاتورة جديدة"
-                  onAction={() => window.location.href = '/invoices/create'}
+                  onAction={() => navigate('/invoices/create')}
                 />
               )
             ) : (
@@ -398,6 +406,39 @@ export default function Invoices() {
           </div>
         )}
       </div>
+
+      {/* Cancel Confirmation Modal */}
+      {invoiceToCancel && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fadeIn" onClick={() => setInvoiceToCancel(null)}>
+          <div className="glass-card max-w-sm w-full p-6 animate-scaleIn" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                <AlertTriangle size={20} className="text-error" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">تأكيد إلغاء الفاتورة</h3>
+            </div>
+            <p className="text-gray-600 text-sm mb-6">
+              هل أنت متأكد من إلغاء الفاتورة{' '}
+              <span className="font-bold text-gray-900">{invoiceToCancel.invoiceNumber || invoiceToCancel.id}</span>
+              {' '}للعميل{' '}
+              <span className="font-bold text-gray-900">{invoiceToCancel.customerName}</span>؟
+              <br />
+              <span className="text-error text-xs mt-1 block">لا يمكن التراجع عن هذا الإجراء.</span>
+            </p>
+            <div className="flex gap-3">
+              <Button variant="outline" fullWidth onClick={() => setInvoiceToCancel(null)}>
+                تراجع
+              </Button>
+              <button
+                onClick={handleConfirmCancel}
+                className="flex-1 bg-error text-white py-2.5 rounded-xl font-medium hover:bg-red-700 transition-colors"
+              >
+                إلغاء الفاتورة
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

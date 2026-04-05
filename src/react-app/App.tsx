@@ -1,90 +1,114 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { lazy, Suspense } from "react";
+import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router";
+import MainLayout from "@/react-app/components/MainLayout";
 import { ToastProvider } from "@/react-app/contexts/ToastContext";
 import { AuthProvider } from "@/react-app/contexts/AuthContext";
-import Dashboard from "@/react-app/pages/Dashboard";
-import Login from "@/react-app/pages/Login";
-import LoginPin from "@/react-app/pages/LoginPin";
-import Register from "@/react-app/pages/Register";
-import ForgotPassword from "@/react-app/pages/ForgotPassword";
-import POS from "@/react-app/pages/POS";
-import POSSuccess from "@/react-app/pages/POSSuccess";
-import POSHistory from "@/react-app/pages/POSHistory";
-import CustomerDisplay from "@/react-app/pages/CustomerDisplay";
-import Invoices from "@/react-app/pages/Invoices";
-import CreateInvoice from "@/react-app/pages/CreateInvoice";
-import InvoiceDetails from "@/react-app/pages/InvoiceDetails";
-import RecurringInvoices from "@/react-app/pages/RecurringInvoices";
-import PaymentLinks from "@/react-app/pages/PaymentLinks";
-import Wallet from "@/react-app/pages/Wallet";
-import WalletHistory from "@/react-app/pages/WalletHistory";
-import Notifications from "@/react-app/pages/Notifications";
-import Transactions from "@/react-app/pages/Transactions";
-import Reports from "@/react-app/pages/Reports";
-import SalesReport from "@/react-app/pages/SalesReport";
-import DailyReport from "@/react-app/pages/DailyReport";
-import MonthlyReport from "@/react-app/pages/MonthlyReport";
-import YearlyReport from "@/react-app/pages/YearlyReport";
-import Customers from "@/react-app/pages/Customers";
-import CustomerDetails from "@/react-app/pages/CustomerDetails";
-import Employees from "@/react-app/pages/Employees";
-import EmployeeDetails from "@/react-app/pages/EmployeeDetails";
-import Payroll from "@/react-app/pages/Payroll";
-import PayrollDetails from "@/react-app/pages/PayrollDetails";
-import Branches from "@/react-app/pages/Branches";
-import BranchDetails from "@/react-app/pages/BranchDetails";
-import Settings from "@/react-app/pages/Settings";
-import Developers from "@/react-app/pages/Developers";
-import EmployeeReport from "@/react-app/pages/EmployeeReport";
-import BranchReport from "@/react-app/pages/BranchReport";
-import Reminders from "@/react-app/pages/Reminders";
-import TransactionCategories from "@/react-app/pages/TransactionCategories";
-import ActivityLog from "@/react-app/pages/ActivityLog";
+import PageLoader from "@/react-app/components/PageLoader";
+
+// Eager — auth pages & layout always needed immediately
+import Login           from "@/react-app/pages/Login";
+import LoginPin        from "@/react-app/pages/LoginPin";
+import Register        from "@/react-app/pages/Register";
+import ForgotPassword  from "@/react-app/pages/ForgotPassword";
+import Dashboard       from "@/react-app/pages/Dashboard";
+
+// Lazy — loaded only when the user navigates to the page
+const POS                  = lazy(() => import("@/react-app/pages/POS"));
+const POSSuccess           = lazy(() => import("@/react-app/pages/POSSuccess"));
+const POSHistory           = lazy(() => import("@/react-app/pages/POSHistory"));
+const CustomerDisplay      = lazy(() => import("@/react-app/pages/CustomerDisplay"));
+const Invoices             = lazy(() => import("@/react-app/pages/Invoices"));
+const CreateInvoice        = lazy(() => import("@/react-app/pages/CreateInvoice"));
+const InvoiceDetails       = lazy(() => import("@/react-app/pages/InvoiceDetails"));
+const RecurringInvoices    = lazy(() => import("@/react-app/pages/RecurringInvoices"));
+const PaymentLinks         = lazy(() => import("@/react-app/pages/PaymentLinks"));
+const Wallet               = lazy(() => import("@/react-app/pages/Wallet"));
+const WalletHistory        = lazy(() => import("@/react-app/pages/WalletHistory"));
+const Notifications        = lazy(() => import("@/react-app/pages/Notifications"));
+const Transactions         = lazy(() => import("@/react-app/pages/Transactions"));
+const Reports              = lazy(() => import("@/react-app/pages/Reports"));
+const SalesReport          = lazy(() => import("@/react-app/pages/SalesReport"));
+const DailyReport          = lazy(() => import("@/react-app/pages/DailyReport"));
+const MonthlyReport        = lazy(() => import("@/react-app/pages/MonthlyReport"));
+const YearlyReport         = lazy(() => import("@/react-app/pages/YearlyReport"));
+const Customers            = lazy(() => import("@/react-app/pages/Customers"));
+const CustomerDetails      = lazy(() => import("@/react-app/pages/CustomerDetails"));
+const Employees            = lazy(() => import("@/react-app/pages/Employees"));
+const EmployeeDetails      = lazy(() => import("@/react-app/pages/EmployeeDetails"));
+const Payroll              = lazy(() => import("@/react-app/pages/Payroll"));
+const PayrollDetails       = lazy(() => import("@/react-app/pages/PayrollDetails"));
+const Branches             = lazy(() => import("@/react-app/pages/Branches"));
+const BranchDetails        = lazy(() => import("@/react-app/pages/BranchDetails"));
+const Settings             = lazy(() => import("@/react-app/pages/Settings"));
+const Developers           = lazy(() => import("@/react-app/pages/Developers"));
+const EmployeeReport       = lazy(() => import("@/react-app/pages/EmployeeReport"));
+const BranchReport         = lazy(() => import("@/react-app/pages/BranchReport"));
+const Reminders            = lazy(() => import("@/react-app/pages/Reminders"));
+const TransactionCategories = lazy(() => import("@/react-app/pages/TransactionCategories"));
+const ActivityLog          = lazy(() => import("@/react-app/pages/ActivityLog"));
+
+function DashboardLayout() {
+  return (
+    <MainLayout>
+      <Outlet />
+    </MainLayout>
+  );
+}
 
 export default function App() {
   return (
     <AuthProvider>
       <ToastProvider>
         <Router>
-          <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/login/pin" element={<LoginPin />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/pos" element={<POS />} />
-        <Route path="/pos/success" element={<POSSuccess />} />
-        <Route path="/pos/history" element={<POSHistory />} />
-        <Route path="/pos/customer-display" element={<CustomerDisplay />} />
-        <Route path="/invoices" element={<Invoices />} />
-        <Route path="/invoices/create" element={<CreateInvoice />} />
-        <Route path="/invoices/:id" element={<InvoiceDetails />} />
-        <Route path="/invoices/recurring" element={<RecurringInvoices />} />
-        <Route path="/invoices/payment-links" element={<PaymentLinks />} />
-        <Route path="/wallet" element={<Wallet />} />
-        <Route path="/wallet/history" element={<WalletHistory />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/reports/sales" element={<SalesReport />} />
-        <Route path="/reports/daily" element={<DailyReport />} />
-        <Route path="/reports/monthly" element={<MonthlyReport />} />
-        <Route path="/reports/yearly" element={<YearlyReport />} />
-        <Route path="/reports/employees" element={<EmployeeReport />} />
-        <Route path="/reports/branches" element={<BranchReport />} />
-        <Route path="/customers" element={<Customers />} />
-        <Route path="/customers/:id" element={<CustomerDetails />} />
-        <Route path="/employees" element={<Employees />} />
-        <Route path="/employees/:id" element={<EmployeeDetails />} />
-        <Route path="/payroll" element={<Payroll />} />
-        <Route path="/payroll/:id" element={<PayrollDetails />} />
-        <Route path="/branches" element={<Branches />} />
-        <Route path="/branches/:id" element={<BranchDetails />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/developers" element={<Developers />} />
-        <Route path="/reminders" element={<Reminders />} />
-        <Route path="/categories" element={<TransactionCategories />} />
-        <Route path="/activity" element={<ActivityLog />} />
-          </Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Auth pages - no sidebar */}
+              <Route path="/login"           element={<Login />} />
+              <Route path="/login/pin"       element={<LoginPin />} />
+              <Route path="/register"        element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+
+              {/* Customer-facing display - no sidebar */}
+              <Route path="/pos/customer-display" element={<CustomerDisplay />} />
+
+              {/* Dashboard pages - always show sidebar */}
+              <Route element={<DashboardLayout />}>
+                <Route path="/"                      element={<Dashboard />} />
+                <Route path="/pos"                   element={<POS />} />
+                <Route path="/pos/success"           element={<POSSuccess />} />
+                <Route path="/pos/history"           element={<POSHistory />} />
+                <Route path="/invoices"              element={<Invoices />} />
+                <Route path="/invoices/create"       element={<CreateInvoice />} />
+                <Route path="/invoices/:id"          element={<InvoiceDetails />} />
+                <Route path="/invoices/recurring"    element={<RecurringInvoices />} />
+                <Route path="/invoices/payment-links" element={<PaymentLinks />} />
+                <Route path="/wallet"                element={<Wallet />} />
+                <Route path="/wallet/history"        element={<WalletHistory />} />
+                <Route path="/notifications"         element={<Notifications />} />
+                <Route path="/transactions"          element={<Transactions />} />
+                <Route path="/reports"               element={<Reports />} />
+                <Route path="/reports/sales"         element={<SalesReport />} />
+                <Route path="/reports/daily"         element={<DailyReport />} />
+                <Route path="/reports/monthly"       element={<MonthlyReport />} />
+                <Route path="/reports/yearly"        element={<YearlyReport />} />
+                <Route path="/reports/employees"     element={<EmployeeReport />} />
+                <Route path="/reports/branches"      element={<BranchReport />} />
+                <Route path="/customers"             element={<Customers />} />
+                <Route path="/customers/:id"         element={<CustomerDetails />} />
+                <Route path="/employees"             element={<Employees />} />
+                <Route path="/employees/:id"         element={<EmployeeDetails />} />
+                <Route path="/payroll"               element={<Payroll />} />
+                <Route path="/payroll/:id"           element={<PayrollDetails />} />
+                <Route path="/branches"              element={<Branches />} />
+                <Route path="/branches/:id"          element={<BranchDetails />} />
+                <Route path="/settings"              element={<Settings />} />
+                <Route path="/developers"            element={<Developers />} />
+                <Route path="/reminders"             element={<Reminders />} />
+                <Route path="/categories"            element={<TransactionCategories />} />
+                <Route path="/activity"              element={<ActivityLog />} />
+              </Route>
+            </Routes>
+          </Suspense>
         </Router>
       </ToastProvider>
     </AuthProvider>
