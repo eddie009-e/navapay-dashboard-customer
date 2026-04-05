@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { Download, Upload, Plus, TrendingUp, TrendingDown, CreditCard, X, Wallet as WalletIcon } from 'lucide-react';
+import { ArrowUpFromLine, ArrowDownToLine, Plus, TrendingUp, TrendingDown, CreditCard, X, Wallet as WalletIcon } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import EmptyState from '@/react-app/components/EmptyState';
 import LoadingSpinner, { SkeletonList } from '@/react-app/components/LoadingSpinner';
@@ -96,7 +96,7 @@ export default function Wallet() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-surface p-4 md:p-6">
+      <div className="bg-surface p-4 md:p-6">
         <SkeletonList />
       </div>
     );
@@ -105,7 +105,7 @@ export default function Wallet() {
   const balance = wallet?.balance || 0;
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       {/* Header */}
       <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6 animate-fadeIn">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">المحفظة</h1>
@@ -131,7 +131,7 @@ export default function Wallet() {
             <Button
               variant="outline"
               className="flex-1 bg-white/10 border-white/20 hover:bg-white/20 text-white"
-              leftIcon={<Download size={20} />}
+              leftIcon={<ArrowUpFromLine size={20} />}
               onClick={() => setShowWithdrawModal(true)}
             >
               سحب
@@ -139,7 +139,7 @@ export default function Wallet() {
             <Button
               variant="outline"
               className="flex-1 bg-white/10 border-white/20 hover:bg-white/20 text-white"
-              leftIcon={<Upload size={20} />}
+              leftIcon={<ArrowDownToLine size={20} />}
               onClick={() => setShowDepositModal(true)}
             >
               إيداع
@@ -296,8 +296,8 @@ function WithdrawModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn" onClick={onClose}>
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-2xl font-bold text-gray-900 mb-6">سحب للبنك</h3>
 
         <div className="bg-gradient-to-l from-primary-50 to-accent-50 rounded-xl p-4 mb-6">
@@ -385,8 +385,8 @@ function DepositModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn" onClick={onClose}>
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-2xl font-bold text-gray-900 mb-6">إيداع</h3>
 
         <div className="space-y-4 mb-6">
@@ -474,8 +474,8 @@ function AddAccountModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn" onClick={onClose}>
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold text-gray-900">إضافة حساب بنكي</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">

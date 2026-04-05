@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Bell, Plus, Trash2, Loader2, Phone, DollarSign, X } from 'lucide-react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { useToast } from '@/react-app/contexts/ToastContext';
 import { remindersService } from '@/react-app/services/reminders.service';
 import type { Reminder, CreateReminderDto } from '@/react-app/services/reminders.service';
@@ -80,7 +80,7 @@ export default function Reminders() {
   };
 
   return (
-    <MainLayout>
+    <>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -237,6 +237,6 @@ export default function Reminders() {
           </div>
         )}
       </div>
-    </MainLayout>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Bell, Check, CheckCheck, Trash2, DollarSign, FileText, RefreshCw, AlertCircle } from 'lucide-react';
 import { SkeletonList } from '@/react-app/components/LoadingSpinner';
 import { notificationsService, Notification } from '../services';
@@ -108,7 +108,7 @@ export default function Notifications() {
   };
 
   return (
-    <MainLayout>
+    <>
       <div className="max-w-4xl mx-auto animate-fadeIn">
         {/* Header */}
         <div className="mb-6">
@@ -240,6 +240,6 @@ export default function Notifications() {
           </div>
         )}
       </div>
-    </MainLayout>
+    </>
   );
 }

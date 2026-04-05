@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Building2, Plus, Search, Users, DollarSign, TrendingUp, MapPin, Phone, Crown, Star, ChevronLeft, Loader2 } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import AddBranchModal from '@/react-app/components/AddBranchModal';
@@ -64,7 +64,7 @@ export default function Branches() {
 
   if (!isEnterprise) {
     return (
-      <MainLayout>
+      <>
         <div className="max-w-2xl mx-auto text-center py-16">
           <div className="w-20 h-20 bg-gradient-to-br from-accent to-accent-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <Crown size={40} className="text-white" />
@@ -98,7 +98,7 @@ export default function Branches() {
             الترقية للباقة Enterprise (قريباً)
           </Button>
         </div>
-      </MainLayout>
+      </>
     );
   }
 
@@ -123,7 +123,7 @@ export default function Branches() {
   const topBranch = branches[0] || null;
 
   return (
-    <MainLayout>
+    <>
       <div className="animate-fadeIn">
         {/* Header */}
         <div className="glass-card p-6 mb-6">
@@ -230,7 +230,7 @@ export default function Branches() {
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddBranch}
       />
-    </MainLayout>
+    </>
   );
 }
 

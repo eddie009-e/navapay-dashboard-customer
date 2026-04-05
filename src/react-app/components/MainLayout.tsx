@@ -1,6 +1,6 @@
 import { useState, ReactNode } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Home, CreditCard, Wallet, BarChart3, MoreHorizontal } from 'lucide-react';
+import { Home, CreditCard, Wallet, FileText, MoreHorizontal } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
@@ -13,7 +13,7 @@ const bottomTabs = [
   { label: 'الرئيسية', icon: Home, path: '/' },
   { label: 'POS', icon: CreditCard, path: '/pos' },
   { label: 'المحفظة', icon: Wallet, path: '/wallet' },
-  { label: 'العمليات', icon: BarChart3, path: '/transactions' },
+  { label: 'الفواتير', icon: FileText, path: '/invoices' },
 ];
 
 export default function MainLayout({ children, title }: MainLayoutProps) {

@@ -82,7 +82,7 @@ export default function RecurringInvoices() {
   ];
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       {/* Header */}
       <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6">
         <div className="flex items-center justify-between mb-6">
@@ -428,7 +428,7 @@ function CreateRecurringInvoiceModal({ onClose, onSuccess }: { onClose: () => vo
 
 function UpgradeModal() {
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center p-4">
+    <div className="bg-surface flex items-center justify-center p-4">
       <div className="glass-card max-w-2xl w-full p-8 text-center">
         <div className="w-20 h-20 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-6">
           <span className="text-4xl">🔒</span>

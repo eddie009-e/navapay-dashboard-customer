@@ -69,7 +69,7 @@ export default function POS() {
   }
 
   return (
-    <div className="min-h-screen bg-surface p-4">
+    <div className="bg-surface p-4">
       <BackButton to="/" label="الرئيسية" />
       {/* Header */}
       <div className="max-w-2xl mx-auto mb-6">
@@ -259,7 +259,7 @@ function UnifiedPayment({
   }, [session, onSuccess, onBack]);
 
   return (
-    <div className="min-h-screen bg-surface p-4 flex items-center justify-center">
+    <div className="bg-surface p-4 flex items-center justify-center">
       <div className="w-full max-w-lg animate-scaleIn">
         <div className="glass-card overflow-hidden shadow-glass">
           {/* Amount Header */}
@@ -317,8 +317,12 @@ function UnifiedPayment({
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-lg scale-110" />
                 <div className="relative bg-white p-4 rounded-xl shadow-card border border-gray-100">
-                  <div className="w-40 h-40 bg-gray-900 rounded-lg flex items-center justify-center">
-                    <QrCode size={120} className="text-white" />
+                  <div className="w-40 h-40 bg-gray-900 rounded-lg flex flex-col items-center justify-center p-3 overflow-hidden">
+                    {session?.qrCode ? (
+                      <p className="text-white text-[9px] font-mono break-all text-center leading-relaxed">{session.qrCode}</p>
+                    ) : (
+                      <QrCode size={80} className="text-white/60" />
+                    )}
                   </div>
                   <p className="text-center text-[10px] text-gray-400 mt-2 font-medium">NavaPay</p>
                 </div>
@@ -372,7 +376,7 @@ function QRScanPayment({ amount, onBack }: { amount: string; onBack: () => void;
   };
 
   return (
-    <div className="min-h-screen bg-surface p-4 flex items-center justify-center">
+    <div className="bg-surface p-4 flex items-center justify-center">
       <div className="w-full max-w-md animate-scaleIn">
         <div className="glass-card p-8 shadow-glass">
           <p className="text-xl font-bold text-gray-900 mb-6 text-center">{formatAmount(amount)} ل.س</p>
@@ -420,7 +424,7 @@ function PhonePayment({ amount, onBack, onSuccess }: { amount: string; onBack: (
   const [isWaiting, setIsWaiting] = useState(false);
   const [recentCustomers, setRecentCustomers] = useState<RecentCustomer[]>([]);
   const [session, setSession] = useState<POSPaymentSession | null>(null);
-  const [_customerName, setCustomerName] = useState('');
+  const [customerName, setCustomerName] = useState('');
 
   const formatAmount = (value: string) => {
     const num = parseInt(value) || 0;
@@ -483,7 +487,7 @@ function PhonePayment({ amount, onBack, onSuccess }: { amount: string; onBack: (
 
   if (isWaiting) {
     return (
-      <div className="min-h-screen bg-surface p-4 flex items-center justify-center">
+      <div className="bg-surface p-4 flex items-center justify-center">
         <div className="w-full max-w-md animate-scaleIn">
           <div className="glass-card p-8 text-center shadow-glass">
             <p className="text-2xl font-bold text-gray-900 mb-6 font-numbers">{formatAmount(amount)} ل.س</p>
@@ -498,7 +502,7 @@ function PhonePayment({ amount, onBack, onSuccess }: { amount: string; onBack: (
             </div>
 
             <h2 className="text-xl font-bold text-gray-900 mb-2">بانتظار الدفع من</h2>
-            <p className="text-lg text-gray-700 mb-1">أحمد محمد</p>
+            <p className="text-lg text-gray-700 mb-1">{customerName || phone}</p>
             <p className="text-gray-500 font-numbers mb-4">{phone}</p>
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-50 text-accent-700 rounded-full text-sm font-medium mb-6">
@@ -520,7 +524,7 @@ function PhonePayment({ amount, onBack, onSuccess }: { amount: string; onBack: (
   }
 
   return (
-    <div className="min-h-screen bg-surface p-4 flex items-center justify-center">
+    <div className="bg-surface p-4 flex items-center justify-center">
       <div className="w-full max-w-md animate-slideUp">
         <div className="glass-card p-8 shadow-glass">
           <p className="text-2xl font-bold text-gray-900 mb-6 text-center font-numbers">{formatAmount(amount)} ل.س</p>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
-import MainLayout from '@/react-app/components/MainLayout';
+
 import { Building2, MapPin, Phone, User, Users, DollarSign, ShoppingBag, TrendingUp, Edit, ChevronLeft, Calendar, X } from 'lucide-react';
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
@@ -51,17 +51,17 @@ export default function BranchDetails() {
 
   if (isLoading) {
     return (
-      <MainLayout>
+      <>
         <div className="py-6">
           <SkeletonTable rows={8} />
         </div>
-      </MainLayout>
+      </>
     );
   }
 
   if (!branch) {
     return (
-      <MainLayout>
+      <>
         <div className="text-center py-16">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">الفرع غير موجود</h2>
           <p className="text-gray-500 mb-6">لم يتم العثور على هذا الفرع</p>
@@ -69,7 +69,7 @@ export default function BranchDetails() {
             <Button>العودة للفروع</Button>
           </Link>
         </div>
-      </MainLayout>
+      </>
     );
   }
 
@@ -135,7 +135,7 @@ export default function BranchDetails() {
   })();
 
   return (
-    <MainLayout>
+    <>
       <BackButton to="/branches" label="الفروع" />
       <div className="animate-fadeIn">
         {/* Header */}
@@ -610,6 +610,6 @@ export default function BranchDetails() {
           </div>
         </div>
       )}
-    </MainLayout>
+    </>
   );
 }

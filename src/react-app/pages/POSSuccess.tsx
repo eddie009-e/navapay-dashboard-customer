@@ -36,7 +36,7 @@ export default function POSSuccess() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-accent-50 to-white p-4 flex items-center justify-center">
+    <div className="bg-gradient-to-br from-accent-50 to-white p-4 flex items-center justify-center">
       <BackButton to="/pos" label="نقاط البيع" />
       <div className="w-full max-w-md">
         <div className="glass-card p-8 text-center animate-scaleIn">

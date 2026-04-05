@@ -141,7 +141,7 @@ export default function Reports() {
   const enterpriseReports = reportLinks.filter(r => r.locked);
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       {/* Header */}
       <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-5 md:p-6">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">التقارير</h1>

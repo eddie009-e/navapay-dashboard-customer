@@ -103,7 +103,7 @@ export default function POSHistory() {
   };
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       <BackButton to="/pos" label="نقطة البيع" />
       {/* Header */}
       <div className="glass-card rounded-none border-x-0 border-t-0 p-4">

@@ -40,7 +40,7 @@ export default function InvoiceDetails() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-surface flex items-center justify-center">
+      <div className="bg-surface flex items-center justify-center">
         <SkeletonTable rows={5} />
       </div>
     );
@@ -48,7 +48,7 @@ export default function InvoiceDetails() {
 
   if (!invoice) {
     return (
-      <div className="min-h-screen bg-surface flex items-center justify-center">
+      <div className="bg-surface flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">الفاتورة غير موجودة</h2>
           <Button onClick={() => navigate('/invoices')}>العودة للفواتير</Button>
@@ -147,7 +147,7 @@ export default function InvoiceDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       <BackButton to="/invoices" label="الفواتير" />
       {/* Header */}
       <div className="glass-card mx-4 md:mx-6 mt-4 md:mt-6 p-4 md:p-6">
@@ -398,8 +398,8 @@ export default function InvoiceDetails() {
 
       {/* Cancel Modal */}
       {showCancelModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50" onClick={() => !isCancelling && setShowCancelModal(false)}>
+          <div className="glass-card bg-white/95 backdrop-blur-xl max-w-md w-full p-6 animate-scaleIn" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-xl font-bold text-gray-900 mb-4">إلغاء الفاتورة</h3>
             <p className="text-gray-500 mb-6">
               هل أنت متأكد من إلغاء الفاتورة <span className="font-mono font-medium">{invoice.id}</span>؟

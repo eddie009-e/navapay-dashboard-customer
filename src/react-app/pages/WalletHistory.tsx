@@ -77,7 +77,7 @@ export default function WalletHistory() {
   };
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="bg-surface">
       {/* Header */}
       <div className="glass-card rounded-none border-x-0 border-t-0 p-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">سجل المحفظة</h1>
@@ -261,8 +261,8 @@ function TransactionDetailsModal({ transaction, onClose }: { transaction: Wallet
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-2xl w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50" onClick={onClose}>
+      <div className="glass-card bg-white/95 backdrop-blur-xl max-w-2xl w-full p-6 animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-start justify-between mb-6 pb-6 border-b border-gray-100">
           <div>
