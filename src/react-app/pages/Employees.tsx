@@ -6,10 +6,12 @@ import AddEmployeeModal from '@/react-app/components/AddEmployeeModal';
 import { SkeletonTable } from '@/react-app/components/LoadingSpinner';
 import { employeesService, Employee, CreateEmployeeDto } from '../services';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '@/react-app/contexts/ToastContext';
 import { Link } from 'react-router';
 
 export default function Employees() {
   const { isEnterprise } = useAuth();
+  const { showToast } = useToast();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,6 +48,7 @@ export default function Employees() {
         setEmployees(response.data ?? []);
       } catch (error) {
         console.error('Failed to load employees:', error);
+        showToast('error', 'فشل في تحميل الموظفين');
       } finally {
         setIsLoading(false);
       }
@@ -76,8 +79,10 @@ export default function Employees() {
       const newEmployee = await employeesService.create(createData);
       setEmployees([newEmployee, ...employees]);
       setIsAddModalOpen(false);
+      showToast('success', 'تم إضافة الموظف بنجاح');
     } catch (error) {
       console.error('Failed to create employee:', error);
+      showToast('error', 'فشل في إضافة الموظف');
     }
   };
 

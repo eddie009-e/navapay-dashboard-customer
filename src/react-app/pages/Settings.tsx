@@ -82,6 +82,7 @@ export default function Settings() {
 
 function ProfileSettings() {
   const { user, updateProfile } = useAuth();
+  const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -97,8 +98,10 @@ function ProfileSettings() {
         contactEmail: formData.email || undefined,
         contactPhone: formData.phone || undefined,
       });
+      showToast('success', 'تم تحديث الملف الشخصي بنجاح');
     } catch (error) {
       console.error('Failed to update profile:', error);
+      showToast('error', 'فشل في تحديث الملف الشخصي');
     } finally {
       setIsLoading(false);
     }
@@ -198,6 +201,7 @@ function ProfileSettings() {
 
 function StoreSettings() {
   const { merchant, updateProfile } = useAuth();
+  const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: merchant?.name || '',
@@ -217,8 +221,10 @@ function StoreSettings() {
         contactPhone: formData.phone || undefined,
         address: formData.address || undefined,
       });
+      showToast('success', 'تم تحديث بيانات المتجر بنجاح');
     } catch (error) {
       console.error('Failed to update store:', error);
+      showToast('error', 'فشل في تحديث بيانات المتجر');
     } finally {
       setIsLoading(false);
     }

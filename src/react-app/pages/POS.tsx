@@ -8,6 +8,7 @@ import {
 import Button from '@/react-app/components/Button';
 import BackButton from '@/react-app/components/BackButton';
 import { posService, POSPaymentSession, RecentCustomer } from '../services';
+import { useToast } from '@/react-app/contexts/ToastContext';
 
 type PaymentMethod = 'unified' | 'qr-scan' | 'phone' | null;
 
@@ -199,8 +200,10 @@ function UnifiedPayment({
   onSuccess: () => void;
   onSwitchMethod: (method: 'qr-scan' | 'phone') => void;
 }) {
+  const { showToast } = useToast();
   const [session, setSession] = useState<POSPaymentSession | null>(null);
   const [timer, setTimer] = useState(300);
+  const [, setPollErrors] = useState(0);
 
   const formatAmount = (value: string) => {
     const num = parseInt(value) || 0;
@@ -224,6 +227,8 @@ function UnifiedPayment({
         setSession(paymentSession);
       } catch (error) {
         console.error('Failed to create payment session:', error);
+        showToast('error', 'فشل في إنشاء جلسة الدفع');
+        onBack();
       }
     };
 
@@ -237,6 +242,7 @@ function UnifiedPayment({
     const checkStatus = async () => {
       try {
         const updated = await posService.checkSessionStatus(session.id);
+        setPollErrors(0);
         if (updated.status === 'completed') {
           onSuccess();
         } else if (updated.status === 'failed' || updated.status === 'expired') {
@@ -244,6 +250,13 @@ function UnifiedPayment({
         }
       } catch (error) {
         console.error('Failed to check session status:', error);
+        setPollErrors(prev => {
+          if (prev + 1 >= 3) {
+            showToast('error', 'فقد الاتصال بالخادم. يرجى المحاولة لاحقاً');
+            onBack();
+          }
+          return prev + 1;
+        });
       }
     };
 
@@ -420,11 +433,13 @@ function QRScanPayment({ amount, onBack }: { amount: string; onBack: () => void;
 // Phone Payment Component
 // ============================================================
 function PhonePayment({ amount, onBack, onSuccess }: { amount: string; onBack: () => void; onSuccess: () => void }) {
+  const { showToast } = useToast();
   const [phone, setPhone] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
   const [recentCustomers, setRecentCustomers] = useState<RecentCustomer[]>([]);
   const [session, setSession] = useState<POSPaymentSession | null>(null);
   const [customerName, setCustomerName] = useState('');
+  const [, setPollErrors] = useState(0);
 
   const formatAmount = (value: string) => {
     const num = parseInt(value) || 0;
@@ -450,6 +465,7 @@ function PhonePayment({ amount, onBack, onSuccess }: { amount: string; onBack: (
     const checkStatus = async () => {
       try {
         const updated = await posService.checkSessionStatus(session.id);
+        setPollErrors(0);
         if (updated.status === 'completed') {
           onSuccess();
         } else if (updated.status === 'failed' || updated.status === 'expired') {
@@ -458,6 +474,14 @@ function PhonePayment({ amount, onBack, onSuccess }: { amount: string; onBack: (
         }
       } catch (error) {
         console.error('Failed to check session status:', error);
+        setPollErrors(prev => {
+          if (prev + 1 >= 3) {
+            showToast('error', 'فقد الاتصال بالخادم. يرجى المحاولة لاحقاً');
+            setIsWaiting(false);
+            setSession(null);
+          }
+          return prev + 1;
+        });
       }
     };
 
@@ -476,6 +500,7 @@ function PhonePayment({ amount, onBack, onSuccess }: { amount: string; onBack: (
       setSession(paymentSession);
     } catch (error) {
       console.error('Failed to create payment session:', error);
+      showToast('error', 'فشل في إنشاء جلسة الدفع');
       setIsWaiting(false);
     }
   };

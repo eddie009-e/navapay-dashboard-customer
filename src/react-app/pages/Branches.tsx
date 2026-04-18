@@ -5,10 +5,12 @@ import Button from '@/react-app/components/Button';
 import AddBranchModal from '@/react-app/components/AddBranchModal';
 import { branchesService, Branch, CreateBranchDto } from '../services';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '@/react-app/contexts/ToastContext';
 import { Link } from 'react-router';
 
 export default function Branches() {
   const { isEnterprise } = useAuth();
+  const { showToast } = useToast();
   const [branches, setBranches] = useState<Branch[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -31,6 +33,7 @@ export default function Branches() {
         setBranches(data);
       } catch (error) {
         console.error('Failed to load branches:', error);
+        showToast('error', 'فشل في تحميل الفروع');
       } finally {
         setIsLoading(false);
       }
@@ -57,8 +60,10 @@ export default function Branches() {
       const newBranch = await branchesService.create(createData);
       setBranches([...branches, newBranch]);
       setIsAddModalOpen(false);
+      showToast('success', 'تم إضافة الفرع بنجاح');
     } catch (error) {
       console.error('Failed to create branch:', error);
+      showToast('error', 'فشل في إضافة الفرع');
     }
   };
 

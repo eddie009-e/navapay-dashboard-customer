@@ -40,6 +40,7 @@ export default function Payroll() {
       setStats(statsResponse);
     } catch (error) {
       console.error('Failed to fetch bulk transfers:', error);
+      showToast('error', 'فشل في تحميل الدفعات الجماعية');
     } finally {
       setIsLoading(false);
     }
@@ -76,6 +77,7 @@ export default function Payroll() {
           amount: r.amount
         }))
       });
+      showToast('success', 'تم إنشاء الدفعة الجماعية بنجاح');
       fetchBulkTransfers();
     } catch {
       showToast('error', 'فشل في إنشاء الدفعة الجماعية');
